@@ -1,0 +1,22 @@
+.icon{
+    background-color: var(--primary-background);
+    width: 50px;
+    height: 50px;
+    display: inline-block;
+    padding: 11px;
+    border: 1px solid var(--text-decoration);
+    border-radius: 10%;
+    color: white
+}
+
+.icon.cart {
+    background-color: #228B22;
+}
+
+.icon.contact {
+    background-color: var(--accent-color);
+}
+
+.icon.user {
+    background-color: var(--secondary-color);
+}

@@ -1,0 +1,8 @@
+.customInput {
+  border-radius: 50px;
+  font-style: italic; 
+  font-size: 14px; 
+  &::placeholder{
+    color: purple !important;
+  }
+}
