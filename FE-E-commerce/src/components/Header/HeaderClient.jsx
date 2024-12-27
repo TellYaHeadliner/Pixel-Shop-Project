@@ -1,14 +1,13 @@
 /* Header gộp giữa HeaderOne và HeaderTwo */
 import HeaderOne from "./HeaderOne";
 import HeaderTwo from "./HeaderTwo";
-
-const Header = () => {
+const HeaderClient = () => {
     return (
-        <>
-            <HeaderOne />
-            <HeaderTwo />
-        </>
-    )
+      <header>
+        <HeaderOne />
+        <HeaderTwo />
+      </header>
+    );
 }
 
-export default Header;
+export default HeaderClient;
