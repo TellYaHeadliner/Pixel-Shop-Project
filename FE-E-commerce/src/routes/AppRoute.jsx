@@ -4,7 +4,7 @@ import { Routes, Route } from "react-router-dom";
 // import Contact from "../pages/LienHe";
 import Home from "../pages/Home";
 import NotFound from "../pages/NotFound";
-import Header from "../components/Header/Header";
+import Header from "../components/Header/HeaderClient";
 
 const AppRoutes = () => (
   <div>

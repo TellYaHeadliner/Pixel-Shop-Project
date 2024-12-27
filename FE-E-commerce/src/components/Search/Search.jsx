@@ -6,18 +6,19 @@ import styles from "./Search.module.css";
 
 const Search = () => {
   return (
-    <InputGroup>
-      <Form.Control
-        aria-label="Search"
-        aria-describedby="basic-addon2"
-        placeholder="Tìm kiếm"
-        className={styles.customInput}
-      />
-      <InputGroup.Text id="basic-addon1">
-        <BsSearch />
-      </InputGroup.Text>
-    </InputGroup>
-    // <input type="text" className={styles.customInput} placeholder="Tìm kiếm..." />
+    <div className={styles.searchBar}>
+      <InputGroup>
+        <Form.Control
+          aria-label="Search"
+          aria-describedby="basic-addon2"
+          placeholder="Tìm kiếm"
+          className={styles.searchInput}
+        />
+        <InputGroup.Text id="basic-addon1" className={styles.searchIcon}>
+          <BsSearch />
+        </InputGroup.Text>
+      </InputGroup>
+    </div>
   );
 }
 
