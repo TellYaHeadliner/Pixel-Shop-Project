@@ -9,7 +9,7 @@ class BlogController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $Blog = [
             'idBlog' => 1,
@@ -32,6 +32,7 @@ class BlogController extends Controller
             'success' => 'true',
             'message' => 'Lấy dữ liệu Blog thành công',
             'data' => $Blog,
+            'Request'=>$request->attributes->get('token')
         ]);
     }
 
