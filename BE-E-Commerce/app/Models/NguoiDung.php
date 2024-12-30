@@ -11,6 +11,10 @@ class NguoiDung extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    protected $table="nguoidung";
+    protected $primaryKey="idNguoidung";
+    public $timestamps=false;
+
     protected $fillable = [
         'idNguoiDung',
         'tenDangNhap',

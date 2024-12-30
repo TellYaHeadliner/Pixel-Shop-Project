@@ -25,16 +25,15 @@ class Jwt
         }
         try{
             $token=str_replace('Bearer ','',$token);
-            var_dump(time());
+           
             
             $decode=FirebaseJWT::decode($token,new Key(env('JWT_SECRET'),'HS256'));
-            var_dump($decode);
+          
             if($role && (!isset($decode->role))|| $decode->role != $role){
                 return response()->json(['error' => 'Bạn không có quyền truy cập'], 403);
             }
 
-            $request->attributes->set('token',$decode);
-
+           $request->attributes->set('token',$decode);
         } catch(\Firebase\JWT\ExpiredException $err){
             return response()->json(['error' => 'Token het han ' . $err->getMessage()], 401);
         }
