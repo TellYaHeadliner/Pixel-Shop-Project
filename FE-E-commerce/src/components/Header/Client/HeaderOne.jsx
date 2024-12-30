@@ -4,9 +4,9 @@ import Navbar from "react-bootstrap/Navbar";
 import { useState } from "react";
 
 
-import ButtonNavHeader from "../Button/ButtonNavHeader";
-import Search from "../Search/Search";
-import ModalLogin from "../Modals/ModalLogin";
+import ButtonNavHeader from "../../Button/Client/ButtonNavHeader";
+import Search from "../../Search/Client/Search";
+import ModalLogin from "../../Modals/Client/ModalLogin";
 import styles from "./HeaderOne.module.css"
 
 

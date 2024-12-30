@@ -1,8 +1,8 @@
 import { Routes, Route } from "react-router-dom";
 
 import MainLayout from "../components/layouts/MainLayout";
-import About from "../pages/Client/About";
 import Home from "../pages/Client/Home";
+import AdminLayout from "../components/layouts/AdminLayout";
 
 
 
@@ -12,7 +12,8 @@ const AppRoutes = () => {
       <Route path="/" element={<MainLayout />}>
         <Route index element={<Home />} />
       </Route>
-      <Route path="/about" element={<About />} />
+      <Route path="/admin" element={<AdminLayout />} />
+
     </Routes>
   );
 };
