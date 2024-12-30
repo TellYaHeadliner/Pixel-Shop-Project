@@ -17,7 +17,7 @@ class Jwt
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next ,$role = null): Response
+    public function handle(Request $request, Closure $next ,...$role): Response
     {
          $token = $request->header('Authorization');
         if(!$token){
@@ -28,8 +28,8 @@ class Jwt
            
             
             $decode=FirebaseJWT::decode($token,new Key(env('JWT_SECRET'),'HS256'));
-          
-            if($role && (!isset($decode->role))|| $decode->role != $role){
+            
+             if($role && (!isset($decode->role))|| !in_array($decode->role,$role)){
                 return response()->json(['error' => 'Bạn không có quyền truy cập'], 403);
             }
 
