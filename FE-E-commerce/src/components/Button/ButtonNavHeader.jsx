@@ -3,7 +3,7 @@ import { FaUser } from "react-icons/fa";
 import { FiShoppingCart } from "react-icons/fi";
 import PropTypes from "prop-types"; 
 
-import styles from "./ButtonNav.module.css";
+import styles from "./ButtonNavHeader.module.css";
 
 const mapIcon = {
   "Liên hệ": BsFillTelephoneFill,
@@ -11,7 +11,7 @@ const mapIcon = {
   "Đăng nhập": FaUser,
 };
 
-const ButtonNav = ({ name }) => {
+const ButtonNavHeader = ({ name }) => {
   const IconComponent = mapIcon[name];
   
   const iconClassName =
@@ -31,9 +31,9 @@ const ButtonNav = ({ name }) => {
   );
 };
 
-ButtonNav.propTypes = {
+ButtonNavHeader.propTypes = {
   name: PropTypes.string.isRequired, 
 };
 
-export default ButtonNav;
+export default ButtonNavHeader;
 
