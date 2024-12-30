@@ -1,0 +1,61 @@
+.supplier-management {
+    max-width: 800px;
+
+    .heading {
+        text-align: center;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .input-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        .input-field {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .add-button {
+            padding: 10px;
+            width: 13%;
+            float: right;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+
+            &:hover {
+                background-color: #0056b3;
+            }
+        }
+    }
+
+    .suppliers-list {
+        margin-top: 20px;
+
+        .list-heading {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .columns {
+            background-color: var(--bg);
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            border: 1px black solid;
+            gap: 10px;
+
+            .column {
+                border-right: 1px black solid;
+                padding: 10px;
+                background-color: var(--bg);
+                text-align: center;
+            }
+        }
+    }
+}
