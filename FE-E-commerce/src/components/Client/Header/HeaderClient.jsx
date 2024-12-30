@@ -1,6 +1,6 @@
 /* Header gộp giữa HeaderOne và HeaderTwo */
-import HeaderOne from "../Client/HeaderOne";
-import HeaderTwo from "../Client/HeaderTwo";
+import HeaderOne from "../Header/HeaderOne";
+import HeaderTwo from "../Header/HeaderTwo";
 const HeaderClient = () => {
     return (
       <header>

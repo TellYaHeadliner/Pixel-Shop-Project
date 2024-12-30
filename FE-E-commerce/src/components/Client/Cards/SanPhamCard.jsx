@@ -1,12 +1,14 @@
-import { Card, Container, Row, Col } from "react-bootstrap";
+import { Card } from "react-bootstrap";
 import { BsStar } from "react-icons/bs";
-
-import styles from "./SanPhamCard.module.css";
 
 function SanPhamCard() {
   return (
-    <Card className={styles.card}>
-      <Card.Img variant="top" src="/public/imgs/product.png" className="w-50 h-50"/>
+    <Card style={{ backgroundColor: "#9370DB", width: "431px" }} className="text-white">
+      <Card.Img
+        variant="top"
+        src="/public/imgs/product.png"
+        className="w-30 h-30"
+      />
       <Card.Body>
         <Card.Title>9,999,999đ</Card.Title>
         <Card.Title>LAPTOP GAMING MAX</Card.Title>

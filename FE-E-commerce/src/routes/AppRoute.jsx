@@ -1,15 +1,15 @@
 import { Routes, Route } from "react-router-dom";
 
-import MainLayout from "../components/layouts/MainLayout";
+import ClientLayout from "../components/Client/layouts/ClientLayout";
 import Home from "../pages/Client/Home";
-import AdminLayout from "../components/layouts/AdminLayout";
+import AdminLayout from "../components/Admin/layouts/AdminLayout";
 
 
 
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<MainLayout />}>
+      <Route path="/" element={<ClientLayout />}>
         <Route index element={<Home />} />
       </Route>
       <Route path="/admin" element={<AdminLayout />} />
