@@ -5,10 +5,10 @@ import Footer from "../Footer/Footer";
 
 export default function MainLayout() {
   return (
-    <div className="d-flex flex-column vh-100">
+    <div className="d-flex flex-column">
       <HeaderClient />
 
-      <main className="d-flex flex-grow-1">
+      <main className="flex-grow-1 ">
         <Outlet />
       </main>
 
