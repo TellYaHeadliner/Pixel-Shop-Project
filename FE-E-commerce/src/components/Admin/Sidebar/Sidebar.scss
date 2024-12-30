@@ -1,0 +1,76 @@
+:root {
+    --primary: #8037DE;
+    --whited: #fff;
+    --bg:#e7e7e7;
+}
+
+.sidebar {
+    width: 310px;
+    padding: 0 10px;
+    background-color: var(--primary);
+    margin-right: 50px;
+    color: var(--whited);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+
+    &-header {
+        padding: 16px;
+        text-align: center;
+        display: flex;
+        flex-direction: row;
+    }
+
+    &-avatar {
+        border-radius: 50%;
+        overflow: hidden;
+        width: 100px;
+        height: auto;
+        margin: 0 auto;
+
+        & img {
+            width: 100%;
+            height: auto;
+        }
+    }
+
+    &-admin-name {
+        margin: 10px 0 0;
+    }
+
+    &-menu {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        &-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.3s;
+            font-size: 120%;
+            font-weight: 500;
+            border-radius: 10px;
+            margin: 10px 0;
+
+            & a {
+                text-decoration: none;
+                color: var(--whited);
+            }
+
+            svg {
+                margin-right: 8px;
+                /* Khoảng cách giữa icon và text */
+                font-size: 18px;
+                /* Kích thước icon */
+                color: var(--whited);
+                /* Màu icon */
+            }
+
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.2);
+            }
+        }
+    }
+}
