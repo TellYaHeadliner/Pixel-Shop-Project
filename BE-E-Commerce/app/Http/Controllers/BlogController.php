@@ -9,8 +9,9 @@ class BlogController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $data=$request->attributes->get('token');
         $Blog = [
             'idBlog' => 1,
             'tieuDe' => 'Giới thiệu Laravel',
@@ -19,6 +20,7 @@ class BlogController extends Controller
             'hinhAnh' => 'laravel.jpg',
             'ngayDang' => '2024-12-25',
             'trangThai' => 1,
+            'name'=>$data->hoVaTen
         ];
 
         /*
@@ -30,8 +32,8 @@ class BlogController extends Controller
         */
         return response()->json([
             'success' => 'true',
-            'message' => 'Lấy dữ liệu Blog thành công',
             'data' => $Blog,
+            'Request'=>$request->attributes->get('token')
         ]);
     }
 
