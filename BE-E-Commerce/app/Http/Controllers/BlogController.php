@@ -28,7 +28,7 @@ class BlogController extends Controller
             - success: true/false
             - message: Thông báo về trạng thái
             - data: Dữ liệu Blog nếu có, nếu không trả về null
-            Trường hợp dữ liệu trả về đúng một dòng data nếu viết Tiếng Việt thì dữ liệu sẽ bị lỗi
+            Trường hợp dữ liệu trả về đúng một dòng data nếu viết Tiếng Việt thì dữ liệu sẽ bị lỗi 
         */
         return response()->json([
             'success' => 'true',

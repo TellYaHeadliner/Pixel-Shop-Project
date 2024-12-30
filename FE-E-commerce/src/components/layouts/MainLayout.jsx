@@ -1,21 +1,18 @@
-import { Outlet } from "react-router-dom"
+import { Outlet } from "react-router-dom";
 
-import Header from "../Header/Header";
+import HeaderClient from "../Header/Client/HeaderClient";
 import Footer from "../Footer/Footer";
 
-export default function MainLayout(){
-    <>
-      <div className="d-flex flex-column min-vh-100">
-        <Header />
+export default function MainLayout() {
+  return (
+    <div className="d-flex flex-column vh-100">
+      <HeaderClient />
 
-        <main className="flex-grow-1 py-1">
-          <div className="container">
-            <Outlet />
-          </div>
-        </main>
-        
-        <Footer />
-      </div>
-    </>;
-};
+      <main className="d-flex flex-grow-1">
+        <Outlet />
+      </main>
 
+      <Footer />
+    </div>
+  );
+}
