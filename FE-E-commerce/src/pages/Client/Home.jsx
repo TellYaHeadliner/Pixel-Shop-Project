@@ -1,6 +1,6 @@
 import { Container, Row, Col } from "react-bootstrap";
-import SanPhamNav from "../../components/Button/Client/SanPhamNav";
-import SanPhamCard from "../../components/Cards/Clients/SanPhamCard";
+import SanPhamNav from "../../components/Client/Button/SanPhamNav";
+import SanPhamCard from "../../components/Client/Cards/SanPhamCard";
 const Home = () => {
   return (
     <>
@@ -31,17 +31,37 @@ const Home = () => {
         <Row>
           <SanPhamNav title="Sản phẩm mới" />
         </Row>
-        <Row className="d-flex justify-content-center">
-          <Col md={4} className="p-1">
+        <Row className="my-4">
+          <Col lg={4} className="p-0 d-flex justify-content-center">
             <SanPhamCard />
           </Col>
-          <Col md={4} className="p-1">
+          <Col lg={4} className="p-0 d-flex justify-content-center">
             <SanPhamCard />
           </Col>
-          <Col md={4} className="p-1">
+          <Col lg={4} className="p-0 d-flex justify-content-center">
             <SanPhamCard />
           </Col>
         </Row>
+      </Container>
+
+      <Container fluid className="mt-3">
+        <Row>
+          <SanPhamNav title="Laptop" />
+        </Row>
+        <Row className="my-4">
+          <Col lg={4} className="p-0 d-flex justify-content-center">
+            <SanPhamCard />
+          </Col>
+          <Col lg={4} className="p-0 d-flex justify-content-center">
+            <SanPhamCard />
+          </Col>
+          <Col lg={4} className="p-0 d-flex justify-content-center">
+            <SanPhamCard />
+          </Col>
+        </Row>
+      </Container>
+      <Container fluid className="mt-3 p-0 d-flex justify-content-center">
+        <img src="/imgs/banner.png" alt="" className="w-100 vh-50"/>
       </Container>
     </>
   );
