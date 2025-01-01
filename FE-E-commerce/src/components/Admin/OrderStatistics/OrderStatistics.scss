@@ -1,0 +1,23 @@
+.order-statistics {
+    padding: 20px;
+
+    &__title {
+        margin-bottom: 20px;
+    }
+
+    &__row {
+        margin-bottom: 20px;
+    }
+
+    &__column {
+        height: 100%;
+    }
+
+    &__card {
+        height: 100%;
+    }
+
+    .ant-table {
+        height: 100%;
+    }
+}

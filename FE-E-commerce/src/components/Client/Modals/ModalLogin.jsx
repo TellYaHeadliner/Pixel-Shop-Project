@@ -1,11 +1,24 @@
 import PropTypes from "prop-types";
-import { Modal, Form, Button, Tab, Tabs } from "react-bootstrap";
+import { Modal, Form, DatePicker, Button, Tabs, Input, Radio, message, AutoComplete } from "antd"; // Import Ant Design components
 import { useState } from "react";
+import styles from "./ModalLogin.module.css";
+
+const { TabPane } = Tabs;
 
 const ModalLogin = ({ show, onClose }) => {
   const [key, setKey] = useState("Đăng nhập");
 
   const [capChaIsDone, setCapChaDone] = useState(false);
+
+   const handleLogin = (values) => {
+     if (values.captcha === captchaValue) {
+       message.success("Đăng nhập thành công!");
+     } else {
+       setCaptchaVerified(false);
+       message.error("Captcha chưa được xác minh!");
+       message.error("Mã captcha không chính xác!");
+     }
+   };
 
   return (
     <Modal
@@ -15,124 +28,81 @@ const ModalLogin = ({ show, onClose }) => {
       keyboard={false}
       className="modal-dialog-centered w-100 h-100"
     >
-      <Modal.Header closeButton>
-        <Modal.Title>
-          {key === "Đăng nhập" ? "Đăng nhập" : "Đăng ký"}
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Tabs
-          activeKey={key}
-          onSelect={(k) => setKey(k)}
-          className="mb-3 gap-2 d-flex flex-row"
-        >
-          <Tab eventKey="Đăng nhập" title="Đăng nhập">
-            <Form>
-              <Form.Group className="mb-3" controlId="formEmail">
-                <Form.Control type="email" placeholder="Tên/ Email" />
-              </Form.Group>
-              <Form.Group className="mb-3" controlId="Password">
-                <Form.Control type="password" placeholder="Password" />
-              </Form.Group>
-              <Button>Đăng nhập</Button>
-            </Form>
-          </Tab>
-          <Tab eventKey="Đăng ký" title="Đăng ký">
-            <Form>
-              <Form.Group className="mb-3" controlId="sex">
-                <Form.Label>Giới tính</Form.Label>
-                {["checkbox"].map((type) => (
-                  <div key={`inline-${type}`} className="mb-3">
-                    <Form.Check
-                      inline
-                      label="Anh"
-                      name="group1"
-                      type={type}
-                      id={`inline-${type}-1`}
-                    />
-                    <Form.Check
-                      inline
-                      label="Chị"
-                      name="group1"
-                      type={type}
-                      id={`inline-${type}-1`}
-                    />
-                  </div>
+      <Tabs activeKey={key} onChange={setKey}>
+        <TabPane tab="Đăng nhập" key="Đăng nhập">
+          <Form onFinish={handleLogin}>
+            <Form.Item name="email" label="Tên/ Email" rules={[{ required: true, message: 'Vui lòng nhập email!' }]}>
+              <Input type="email" placeholder="Tên/ Email" />
+            </Form.Item>
+            <Form.Item name="password" label="Mật khẩu" rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}>
+              <Input.Password placeholder="Password" />
+            </Form.Item>
+            <Form.Item label="Mã captcha" required>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <span style={{ marginRight: 8 }}>{captchaValue}</span>
+                <Input
+                  placeholder="Nhập mã captcha"
+                  name="captcha"
+                  rules={[{ required: true, message: 'Vui lòng nhập mã captcha!' }]}
+                />
+              </div>
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit">
+                Đăng nhập
+              </Button>
+            </Form.Item>
+          </Form>
+        </TabPane>
+        <TabPane tab="Đăng ký" key="Đăng ký">
+          <Form onFinish={handleRegister}>
+            <Form.Item label="Giới tính">
+              <Radio.Group>
+                <Radio value="male">Anh</Radio>
+                <Radio value="female">Chị</Radio>
+              </Radio.Group>
+            </Form.Item>
+            <Form.Item name="username" label="Tên đăng nhập" rules={[{ required: true, message: 'Vui lòng nhập tên đăng nhập!' }]}>
+              <Input placeholder="Tên đăng nhập" />
+            </Form.Item>
+            <Form.Item name="email" label="Email" rules={[{ required: true, message: 'Vui lòng nhập email!' }]}>
+              <Input type="email" />
+            </Form.Item>
+            <Form.Item name="password" label="Mật khẩu" rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}>
+              <Input.Password />
+            </Form.Item>
+            <Form.Item name="repeatPassword" label="Nhập lại mật khẩu" rules={[{ required: true, message: 'Vui lòng nhập lại mật khẩu!' }]}>
+              <Input.Password />
+            </Form.Item>
+            <Form.Item label="Ngày sinh">
+              <DatePicker />
+            </Form.Item>
+            <Form.Item name="city" label="Thành phố/Tỉnh" rules={[{ required: true, message: 'Vui lòng nhập thành phố/tỉnh!' }]}>
+              <Input />
+            </Form.Item>
+            <Form.Item name="address" label="Địa chỉ cụ thể" rules={[{ required: true, message: 'Vui lòng nhập địa chỉ!' }]}>
+              <Input />
+            </Form.Item>
+            <Form.Item className={styles.showotp} name="otp" label="Mã OTP" >
+                {[1, 2, 3, 4, 5, 6].map((num) => (
+                  <AutoComplete
+                    key={num}
+                    style={{ width: 35, marginRight: 8, textAlign: 'center' }}
+                    value={num.toString()}
+                  />
                 ))}
-              </Form.Group>
-              <div className="row mb-3">
-                <div className="col-lg-6">
-                  <Form.Group controlId="userName">
-                    <Form.Label>Tên đăng nhập</Form.Label>
-                    <Form.Control type="text" />
-                  </Form.Group>
-                </div>
-                <div className="col-lg-6">
-                  <Form.Group controlId="email">
-                    <Form.Label>Email</Form.Label>
-                    <Form.Control type="email" />
-                  </Form.Group>
-                </div>
-              </div>
-              <div className="row mb-3">
-                <div className="col-lg-6">
-                  <Form.Group controlId="password">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control type="password" />
-                  </Form.Group>
-                </div>
-                <div className="col-lg-6">
-                  <Form.Group controlId="repeatPassword">
-                    <Form.Label>Nhập lại mật khẩu</Form.Label>
-                    <Form.Control type="password" />
-                  </Form.Group>
-                </div>
-              </div>
-              <div className="row mb-3">
-                <div className="col-lg-4">
-                  <Form.Group controlId="day">
-                    <Form.Label>Ngày</Form.Label>
-                    <Form.Control type="number" min="1" max="31" />
-                  </Form.Group>
-                </div>
-                <div className="col-lg-4">
-                  <Form.Group controlId="month">
-                    <Form.Label>Tháng</Form.Label>
-                    <Form.Control type="number" min="1" max="12" />
-                  </Form.Group>
-                </div>
-                <div className="col-lg-4">
-                  <Form.Group controlId="year">
-                    <Form.Label>Năm</Form.Label>
-                    <Form.Control
-                      type="number"
-                      min="1900"
-                      max={new Date().getFullYear()}
-                    />
-                  </Form.Group>
-                </div>
-              </div>
-              <div className="row mb-3">
-                <div className="col-lg-6">
-                  <Form.Group controlId="thanhPhoTinh">
-                    <Form.Label>Thành phố/Tỉnh</Form.Label>
-                    <Form.Control type="text" />
-                  </Form.Group>
-                </div>
-                <div className="col-lg-6">
-                  <Form.Group controlId="diaChi">
-                    <Form.Label>Địa chỉ cụ thể</Form.Label>
-                    <Form.Control type="text" />
-                  </Form.Group>
-                </div>
-              </div>
-              <div className="d-flex justify-content-center">
-                <Button type="submit">Đăng ký</Button>
-              </div>
-            </Form>
-          </Tab>
-        </Tabs>
-      </Modal.Body>
+            </Form.Item>
+            <Form.Item  name="otp" label="Nhập mã OTP" rules={[{ required: true, message: 'Vui lòng nhập mã OTP!' }]}>
+              <AutoComplete />
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit">
+                Đăng ký
+              </Button>
+            </Form.Item>
+          </Form>
+        </TabPane>
+      </Tabs>
     </Modal>
   );
 };
@@ -140,7 +110,6 @@ const ModalLogin = ({ show, onClose }) => {
 ModalLogin.propTypes = {
   show: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  titleLogin: PropTypes.bool.isRequired,
 };
 
 export default ModalLogin;

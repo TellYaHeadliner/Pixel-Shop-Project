@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
+import { Row, Col, Card, Input, Button, Typography } from 'antd';
 import './CommentManagement.scss';
+
+const { Search } = Input;
+const { Title } = Typography;
 
 const CommentManagement = () => {
     const [searchParams, setSearchParams] = useState({
         date: '',
         stars: '',
     });
+
     const [comments, setComments] = useState([
         {
             productName: 'Sản phẩm A',
@@ -33,44 +38,55 @@ const CommentManagement = () => {
     };
 
     return (
-        <div>
-            <h2>Quản lý bình luận</h2>
-            <div className='search-container'>
-                <input
-                    type="text"
-                    name='fine-search'
-                    placeholder='Tìm kiếm '
-                />
-                <input
-                    type='date'
-                    name='date'
-                    value={searchParams.date}
-                    onChange={handleChange}
-                    placeholder='Ngày đăng'
-                />
-                <input
-                    type='number'
-                    name='stars'
-                    value={searchParams.stars}
-                    onChange={handleChange}
-                    placeholder='Số sao'
-                    min='1'
-                    max='5'
-                />
-                <button onClick={handleSearch}>Tìm kiếm</button>
-            </div>
+        <div className='comment-management'>
+            <Title level={2} style={{ textAlign: 'left' }}>Quản lý bình luận</Title>
             <hr />
+            <Row gutter={[16, 16]} style={{ marginBottom: '20px' }}>
+                <Col span={8}>
+                    <Search
+                        placeholder='Tìm kiếm bình luận'
+                        onSearch={handleSearch}
+                    />
+                </Col>
+                <Col span={8}>
+                    <Input
+                        type='date'
+                        name='date'
+                        value={searchParams.date}
+                        onChange={handleChange}
+                    />
+                </Col>
+                <Col span={8}>
+                    <Input
+                        type='number'
+                        name='stars'
+                        value={searchParams.stars}
+                        onChange={handleChange}
+                        placeholder='Số sao'
+                        min='1'
+                        max='5'
+                    />
+                </Col>
+            </Row>
+
             <div className='comments-list'>
-                <h3>Danh sách bình luận</h3>
+                <Title level={3}>Danh sách bình luận</Title>
                 {comments.map((comment, index) => (
-                    <div className='comment-item' key={index}>
-                        <h4>{comment.productName}</h4>
-                        <p>Số sao: {comment.stars}</p>
-                        <p>Tên người bình luận: {comment.commenterName}</p>
-                        <p>Ngày bình luận: {comment.commentDate}</p>
-                        <p>Nội dung: {comment.content}</p>
-                        <hr />
-                    </div>
+                    <Card className='comment-item' key={index} style={{ marginBottom: '15px' }}>
+                        <div className='comment-header'>
+                            <div className='comment-info'>
+                                <Title level={4} className='comment-product'>{comment.productName}</Title>
+                                <div className='comment-details'>
+                                    <span className='stars'>Số sao: {comment.stars}</span>
+                                    <span className='date'>Ngày: {comment.commentDate}</span>
+                                </div>
+                            </div>
+                            <div className='comment-content'>
+                                <span className='commenter'>Tên: {comment.commenterName}</span>
+                                <p>Nội dung: {comment.content}</p>
+                            </div>
+                        </div>
+                    </Card>
                 ))}
             </div>
         </div>

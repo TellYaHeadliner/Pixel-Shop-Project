@@ -12,12 +12,12 @@ const Home = () => {
           </Col>
           <Col md={6}>
             <img
-              src="/public/imgs/slideshow2.png"
+              src="/imgs/slideshow2.png"
               alt=""
               className="w-100 vh-50"
             />
             <img
-              src="/public/imgs/slideshow3.png"
+              src="/imgs/slideshow3.png"
               alt=""
               className="w-100 vh-50 mt-4"
             />
