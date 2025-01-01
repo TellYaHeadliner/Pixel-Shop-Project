@@ -31,6 +31,8 @@ const SupplierManagement = () => {
     return (
         <div className='supplier-management'>
             <h2 className='heading'>Nhà cung cấp</h2>
+            <hr />
+
             <div className='input-container'>
                 <input
                     type='text'
