@@ -12,7 +12,7 @@ class NguoiDung extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $table="nguoidung";
-    protected $primaryKey="idNguoidung";
+    protected $primaryKey="idNguoiDung";
     public $timestamps=false;
 
     protected $fillable = [

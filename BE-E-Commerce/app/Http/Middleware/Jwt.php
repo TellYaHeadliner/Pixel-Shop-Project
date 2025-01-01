@@ -19,6 +19,7 @@ class Jwt
      */
     public function handle(Request $request, Closure $next ,...$role): Response
     {
+        
          $token = $request->header('Authorization');
         if(!$token){
             return response()->json(['err'=>'Token chua duoc cung cap'],401);
