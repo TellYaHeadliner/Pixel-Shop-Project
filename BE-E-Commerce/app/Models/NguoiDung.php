@@ -22,16 +22,12 @@ class NguoiDung extends Authenticatable
         'hoVaTen',
         'ngaySinh',
         'gioiTinh',
-        'SDT',
+        'SĐT',
         'vaiTro',
         'email',
         'anhDaiDien'
     ];
 
-    protected $hidden = [
-        'matKhau', 
-        'remember_token',
-    ];
 
     protected function casts(): array
     {
