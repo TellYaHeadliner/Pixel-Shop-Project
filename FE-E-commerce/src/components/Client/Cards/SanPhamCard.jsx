@@ -6,7 +6,7 @@ function SanPhamCard() {
     <Card style={{ backgroundColor: "#9370DB", width: "431px" }} className="text-white">
       <Card.Img
         variant="top"
-        src="/public/imgs/product.png"
+        src="/imgs/product.png"
         className="w-30 h-30"
       />
       <Card.Body>

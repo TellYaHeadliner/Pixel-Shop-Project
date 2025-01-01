@@ -1,14 +1,15 @@
-.searchInput {
+/* .searchInput {
   border: none;
   border-radius: 25px 0 0 25px;
   outline: none;
   box-shadow: none;
-  &::placeholder{
+
+  &::placeholder {
     color: var(--primary-color) !important;
   }
 }
 
-.searchBar{
+.searchBar {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -30,4 +31,4 @@
   align-items: center;
   color: var(--primary-color) !important;
   padding: 0 10px;
-}
+} */

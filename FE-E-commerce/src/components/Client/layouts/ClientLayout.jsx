@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 
-import HeaderClient from "../Header/HeaderClient";
+import HeaderClient from "../Header/ClientHeader";
 import FooterClient from "../Footer/FooterClient";
 export default function ClientLayout() {
   return (

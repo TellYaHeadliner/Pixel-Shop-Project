@@ -1,9 +1,28 @@
 import PropTypes from "prop-types";
 import { Modal, Form, Button, Tab, Tabs } from "react-bootstrap";
 import { useState } from "react";
+import ReCAPTCHA from "react-google-recaptcha";
+import { message } from "antd"; // Import message for notifications
+import "dotenv/config"
 
 const ModalLogin = ({ show, onClose }) => {
   const [key, setKey] = useState("Đăng nhập");
+  const [captchaVerified, setCaptchaVerified] = useState(false);
+
+  const verifyCaptcha = (value) => {
+    if (value) {
+      setCaptchaVerified(true);
+      message.success("Captcha đã được xác minh thành công!");
+    } else {
+      setCaptchaVerified(false);
+      message.error("Captcha chưa được xác minh!");
+    }
+  };
+  console.log("Captcha: " + JSON.stringify(captchaVerified));
+  console.log("Captcha Site Key:", import.meta.env.VITE_RECAPTCHA_SITE_KEY_CLIENT);
+  if (!import.meta.env.VITE_RECAPTCHA_SITE_KEY_CLIENT) {
+    console.error("VITE_RECAPTCHA_SITE_KEY_CLIENT is not defined!");
+  }
   return (
     <Modal
       show={show}
@@ -28,10 +47,19 @@ const ModalLogin = ({ show, onClose }) => {
               <Form.Group className="mb-3" controlId="formEmail">
                 <Form.Control type="email" placeholder="Tên/ Email" />
               </Form.Group>
-              <Form.Group className="mb-3" controlId="Password">
+              <Form.Group className="mb-3" controlId="formPassword">
                 <Form.Control type="password" placeholder="Password" />
               </Form.Group>
-              <Button>Đăng nhập</Button>
+              {/* Add ReCAPTCHA here */}
+              <Form.Group className="mb-3">
+                <ReCAPTCHA
+                  sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY_CLIENT}
+                  onChange={verifyCaptcha}
+                />
+              </Form.Group>
+              <Button type="button" disabled={!captchaVerified}>
+                Đăng nhập
+              </Button>
             </Form>
           </Tab>
           <Tab eventKey="Đăng ký" title="Đăng ký">
@@ -52,7 +80,7 @@ const ModalLogin = ({ show, onClose }) => {
                       label="Chị"
                       name="group1"
                       type={type}
-                      id={`inline-${type}-1`}
+                      id={`inline-${type}-2`}
                     />
                   </div>
                 ))}
@@ -137,7 +165,6 @@ const ModalLogin = ({ show, onClose }) => {
 ModalLogin.propTypes = {
   show: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  titleLogin: PropTypes.bool.isRequired,
 };
 
 export default ModalLogin;

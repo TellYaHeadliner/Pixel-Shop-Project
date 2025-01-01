@@ -8,19 +8,19 @@ const Home = () => {
         <Row className="mt-3">
           <Col md={6}>
             <img
-              src="/public/imgs/slideshow1.png"
+              src="/imgs/slideshow1.png"
               alt=""
               className="w-100 h-100"
             />
           </Col>
           <Col md={6}>
             <img
-              src="/public/imgs/slideshow2.png"
+              src="/imgs/slideshow2.png"
               alt=""
               className="w-100 h-auto "
             />
             <img
-              src="/public/imgs/slideshow3.png"
+              src="/imgs/slideshow3.png"
               alt=""
               className="w-100 h-auto mt-4"
             />
