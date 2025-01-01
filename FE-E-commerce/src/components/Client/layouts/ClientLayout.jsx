@@ -7,7 +7,7 @@ export default function ClientLayout() {
     <div className="d-flex flex-column">
       <HeaderClient />
 
-      <main className="flex-grow-1 ">
+      <main className="flex-grow-1">
         <Outlet />
       </main>
 

@@ -4,13 +4,16 @@ import { useState } from "react";
 
 const ModalLogin = ({ show, onClose }) => {
   const [key, setKey] = useState("Đăng nhập");
+
+  const [capChaIsDone, setCapChaDone] = useState(false);
+
   return (
     <Modal
       show={show}
       onHide={onClose}
       backdrop="static"
       keyboard={false}
-      className="modal-dialog-centered w-100"
+      className="modal-dialog-centered w-100 h-100"
     >
       <Modal.Header closeButton>
         <Modal.Title>

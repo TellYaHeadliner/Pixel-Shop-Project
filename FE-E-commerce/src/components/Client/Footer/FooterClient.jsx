@@ -3,7 +3,7 @@ import { Container, Row, Col } from "react-bootstrap";
 import styles from "./FooterClient.module.css";
 const FooterClient = () => (
   <Container fluid className={`${styles.footerClient} py-4 text-white`}>
-    <Row className="px-5">
+    <Row className="px-4">
       <Col lg={6}>
         <img src="/imgs/logo.png" alt="" />
       </Col>
