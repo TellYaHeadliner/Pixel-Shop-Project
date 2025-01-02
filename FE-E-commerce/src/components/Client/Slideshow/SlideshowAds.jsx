@@ -1,31 +1,40 @@
-import Carousel from "react-bootstrap/Carousel";
 
-function SlideShowAds () {
+import { Carousel } from "antd";
+import styles from "./SlideShowAds.module.css"
+
+const SlideShowAds = ({ width = "100%" ,height = "100%" }) => {
   return (
-    <Carousel data-bs-theme="dark" controls={false} wrap={true}>
-      <Carousel.Item>
+    <Carousel
+      autoplay
+    >
+      <div>
         <img
-          className="d-block w-100 vh-100"
-          src="/public/imgs/slideshow1.png"
-          alt="First slide"
+          src="/imgs/slideshow1.png"
+          alt=""
+          className={styles.imageSlideShow}
+          style={{ width: width, height: height, objectFit: "cover" }}
         />
-      </Carousel.Item>
-      <Carousel.Item>
+      </div>
+      <div>
         <img
-          className="d-block w-100 vh-100"
-          src="/public/imgs/slideshow2.png"
-          alt="Second slide"
+          src="/imgs/slideshow2.png"
+          alt=""
+          className={styles.imageSlideShow}
+          style={{ width: width, height: height, objectFit: "cover" }}
         />
-      </Carousel.Item>
-      <Carousel.Item>
+      </div>
+      <div>
         <img
-          className="d-block w-100 vh-100"
-          src="/public/imgs/slideshow3.png"
-          alt="Third slide"
+          src="/imgs/slideshow3.png"
+          alt=""
+          className={styles.imageSlideShow}
+          style={{ width: width, height: height, objectFit: "cover" }}
         />
-      </Carousel.Item>
+      </div>
     </Carousel>
   );
 }
+
+
 
 export default SlideShowAds;

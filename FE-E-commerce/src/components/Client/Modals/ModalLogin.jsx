@@ -7,8 +7,8 @@ const { TabPane } = Tabs;
 
 const ModalLogin = ({ show, onClose }) => {
   const [key, setKey] = useState("Đăng nhập");
-
-  const [capChaIsDone, setCapChaDone] = useState(false);
+  const [captchaVerified, setCaptchaVerified] = useState(false);
+  const [captchaValue, setCaptchaValue] = useState("123456");
 
    const handleLogin = (values) => {
      if (values.captcha === captchaValue) {
@@ -18,6 +18,10 @@ const ModalLogin = ({ show, onClose }) => {
        message.error("Captcha chưa được xác minh!");
        message.error("Mã captcha không chính xác!");
      }
+   };
+
+   const handleRegister = () => {
+     message.success("Đăng ký thành công!");
    };
 
   return (

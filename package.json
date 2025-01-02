@@ -1,7 +1,8 @@
 {
   "dependencies": {
     "antd": "^5.22.7",
-    "prop-types": "^15.8.1"
+    "prop-types": "^15.8.1",
+    "recharts": "^2.15.0"
   },
   "devDependencies": {
     "sass-embedded": "^1.83.0"
