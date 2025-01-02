@@ -30,6 +30,13 @@ class CheckEmailSignUp
             } 
             return $next($request);
         }
+        else if(session("SignUp_VerificationEmail_TimeBlock_{$email}")<time()){
+            return response()->json([
+                'success'=>false,
+                'message'=>'Mã xác nhận đã bị vô hiệu hóa vui lòng nhấn nút gửi lại để nhận mã mới.',
+                'data'=>[]
+            ],403);
+        }
         return response()->json([
             'success'=>false,
             'message'=>'Sai mã xác nhận email',

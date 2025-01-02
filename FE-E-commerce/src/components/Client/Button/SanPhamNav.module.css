@@ -1,0 +1,33 @@
+.buttonBanner{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0 15px 0 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.buttonBanner:hover{
+    background-color: var(--accent-color);
+}
+
+.buttonText{
+    font-size: 36px;
+    font-weight: bold;
+}
+
+.buttonIcon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 2px solid white;
+    border-radius: 50%;
+}
+
+.arrow{
+    font-size: 36px;
+}
