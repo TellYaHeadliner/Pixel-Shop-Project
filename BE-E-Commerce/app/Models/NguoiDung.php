@@ -33,7 +33,6 @@ class NguoiDung extends Authenticatable
     {
         return [
             'ngaySinh' => 'datetime',
-            'matKhau' => 'hashed',
         ];
     }
 
