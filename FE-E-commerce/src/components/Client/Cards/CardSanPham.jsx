@@ -1,44 +1,20 @@
-import React from "react";
-import { Card } from "antd";
-import { BsStar } from "react-icons/bs";
-import "./SanPhamCard.module.scss"; // Nhớ import file CSS
+import { Card, Flex, Button } from "antd";
 
-const SanPhamCard = () => {
+function SanPhamCard() {
   return (
     <Card
-      className="san-pham-card"
-      style={{
-        backgroundColor: "#6626B9",
-        color: "#fff",
-        width: "80%",  // Hoặc một kích thước cụ thể như 431px
-        border: "none", // Bỏ viền nếu cần
-      }}
-      cover={
-        <img
-          alt="Product"
-          src="/imgs/product.png"
-          className="product-image"
-        />
-      }
+      bordered
+      title="LAPTOP GAMING MAX "
+      extra="HP"
+      style={{ width: "500", height: "400" }}
     >
-      <Card.Meta
-        title="9,999,999đ"
-        description={
-          <>
-            <h3 className="product-title">LAPTOP GAMING MAX</h3>
-            <p className="brand-name">HP</p>
-            <div className="star-rating">
-              <BsStar />
-              <BsStar />
-              <BsStar />
-              <BsStar />
-              <BsStar />
-            </div>
-          </>
-        }
-      />
+      <img src="/imgs/product_2.png" alt="product_2.png" style={{width: "100%"}} />
+      <Flex justify="space-between" align="flex-end" style={{ marginTop: "2rem" }}>
+        <h3>9,999,999 vnđ</h3>
+        <Button>Chi tiết</Button>
+      </Flex>
     </Card>
   );
-};
+}
 
 export default SanPhamCard;

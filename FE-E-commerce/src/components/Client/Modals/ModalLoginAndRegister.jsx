@@ -7,26 +7,30 @@ const { TabPane } = Tabs;
 
 const ModalLoginAndRegister = ({ show, onClose }) => {
   const [key, setKey] = useState("Đăng nhập");
+  const [captchaVerified, setCaptchaVerified] = useState(false);
   const [captchaValue, setCaptchaValue] = useState("123456");
 
-  const handleLogin = (values) => {
-    if (values.captcha === captchaValue) {
-      message.success("Đăng nhập thành công!");
-    } else {
-      message.error("Mã captcha không chính xác!");
-    }
-  };
+   const handleLogin = (values) => {
+     if (values.captcha === captchaValue) {
+       message.success("Đăng nhập thành công!");
+     } else {
+       setCaptchaVerified(false);
+       message.error("Captcha chưa được xác minh!");
+       message.error("Mã captcha không chính xác!");
+     }
+   };
 
-  const handleRegister = () => {
-    message.success("Đăng ký thành công!");
-  };
+   const handleRegister = () => {
+     message.success("Đăng ký thành công!");
+   };
 
   return (
     <Modal
-      visible={show}
-      onCancel={onClose}
-      footer={null} // Disable default footer
-      title={key === "Đăng nhập" ? "Đăng nhập" : "Đăng ký"}
+      show={show}
+      onHide={onClose}
+      backdrop="static"
+      keyboard={false}
+      className="modal-dialog-centered w-100 h-100"
     >
       <Tabs className={styles.login_register_form} activeKey={key} onChange={setKey}>
         <TabPane tab="Đăng nhập" key="Đăng nhập">
