@@ -75,7 +75,7 @@ CREATE TABLE `chitietlohang` (
 CREATE TABLE `cuoctrochuyen` (
   `idCuocTroChuyen` bigint NOT NULL,
   `idUser1` bigint NOT NULL,
-  `idUser2` bigint NOT NULL,
+  `idUser2` bigint ,
   `trangThai` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -102,7 +102,7 @@ CREATE TABLE `danhgia` (
 CREATE TABLE `danhmuc` (
   `idDanhMuc` bigint NOT NULL,
   `tenDanhMuc` tinytext NOT NULL,
-  `idDanhMucCha` bigint NOT NULL
+  `idDanhMucCha` bigint
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -116,7 +116,7 @@ CREATE TABLE `diachi` (
   `idNguoiDung` bigint NOT NULL,
   `diaChi` text NOT NULL,
   `sdt` varchar(10) NOT NULL,
-  `note` text NOT NULL,
+  `note` text ,
   `loaiDiaChi` tinytext NOT NULL,
   `macDinh` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -249,7 +249,7 @@ CREATE TABLE `sanpham` (
   `trangThai` tinyint(1) NOT NULL,
   `slug` text NOT NULL,
   `idDanhMuc` bigint NOT NULL,
-  `idKhuyenMai` bigint NOT NULL
+  `idKhuyenMai` bigint 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
