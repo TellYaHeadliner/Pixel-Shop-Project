@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Input, message } from 'antd';
+import ButtonProfile from '../../components/Client/Button/ButtonProfile';
 
 export default function ProfileLocation() {
     const [addresses, setAddresses] = useState([]); // Lưu danh sách địa chỉ
@@ -88,7 +89,7 @@ export default function ProfileLocation() {
     };
 
     return (
-        <div style={{ margin: 50 }}>
+        <div style={{ margin: 70 }}>
             <div>
                 <label>Địa chỉ:</label>
                 <Input
@@ -99,13 +100,12 @@ export default function ProfileLocation() {
                     onChange={(e) => setNewAddress(e.target.value)}
                 />
             </div>
-            <Button
+            <ButtonProfile
                 type="primary"
-                style={{ backgroundColor: '#53CCED', border: 0 }}
                 onClick={addAddress}
             >
                 Thêm địa chỉ
-            </Button>
+            </ButtonProfile>
 
             <div>
                 <h3>Danh sách địa chỉ:</h3>
@@ -158,13 +158,12 @@ export default function ProfileLocation() {
                         value={editedAddress}
                         onChange={(e) => setEditedAddress(e.target.value)}
                     />
-                    <Button
+                    <ButtonProfile
                         type="primary"
-                        style={{ marginTop: 10, backgroundColor: '#53CCED', border: 0 }}
                         onClick={handleEditSubmit}
                     >
                         Lưu thay đổi    
-                    </Button>
+                    </ButtonProfile>
                 </div>
             </Modal>
         </div>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button } from 'antd';
 import EditableField from '../../components/Client/Input/Profile'; // Import EditableField từ file khác
 import ModalProfile from '../../components/Client/Modals/ModalProfile';
-
+import ButtonProfile from '../../components/Client/Button/ButtonProfile';
 export default function ProfileInformation() {
     const [file, setFile] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);

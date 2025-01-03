@@ -1,5 +1,5 @@
 import { Outlet, useNavigate } from "react-router-dom";
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
@@ -65,10 +65,20 @@ const items = [
     return key;
   };
   const levelKeys = getLevelKeys(items);
+  
 
 export default function ProfileLayout (){
     const navigate = useNavigate();
     const [stateOpenKeys, setStateOpenKeys] = useState(['2', '23']);
+    const [userName, setUserName] = useState(''); // Tạo state để lưu tên người dùng
+
+    useEffect(() => {
+      // Giả sử bạn lấy dữ liệu người dùng từ API, context hoặc localStorage
+      const userData = {
+        name: 'John Doe', // Tên người dùng lấy từ nguồn dữ liệu
+      };
+      setUserName(userData.name); // Cập nhật state với tên người dùng
+    }, []);
     const onOpenChange = (openKeys) => {
         const currentOpenKey = openKeys.find((key) => stateOpenKeys.indexOf(key) === -1);
         // open
@@ -98,7 +108,7 @@ export default function ProfileLayout (){
                     <Space wrap size={16}>
                         <Avatar size={65} icon={<UserOutlined />} />
                     </Space>
-                    <div style={{marginTop:20, marginLeft:15}}><p>User</p></div>
+                    <div style={{marginTop:20, marginLeft:15}}><p>{userName}</p></div>
                 </div>
                 
                 <Menu

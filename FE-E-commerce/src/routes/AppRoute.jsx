@@ -14,6 +14,7 @@ import OrderStatistics from "../components/Admin/OrderStatistics/OrderStatistics
 import ProfileLayout from "../components/Client/layouts/ProfileLayout";
 import ProfileInformation from "../pages/Client/ProfileInformation";
 import ProfileLocation from "../pages/Client/ProfileLocation";
+import ProfileChangePassWord from "../pages/Client/ProfileChangePassWord";
 
 const AppRoutes = () => {
   return (
@@ -23,6 +24,7 @@ const AppRoutes = () => {
         <Route path="profile" element={<ProfileLayout/>}>
           <Route index element={<ProfileInformation/>}/>
           <Route path="locations" element={<ProfileLocation/>}/>
+          <Route path="/profile/changepassword" element={<ProfileChangePassWord/>}/>
   
         </Route>
       </Route>
