@@ -1,4 +1,4 @@
-import { Descriptions } from "antd";
+import { Descriptions, } from "antd";
 
 // Static data chỉnh theo đúng json
 const DescriptionsLapTop = () => {
