@@ -58,7 +58,7 @@ export default function ChangePassword() {
                     <Input
                         type={showPassword[field] ? 'text' : 'password'}
                         value={passwordData[field]}
-                        onChange={(e) => handleInputChange(field, e.target.value)} // Chỉnh sửa trực tiếp
+                        onChange={(e) => handleInputChange(field, e.target.value)} 
                         style={{width: 500}}
                         addonAfter={
                             <span

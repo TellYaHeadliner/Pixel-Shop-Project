@@ -3,25 +3,22 @@ import { Modal, Button, Input, message } from 'antd';
 import ButtonProfile from '../../components/Client/Button/ButtonProfile';
 
 export default function ProfileLocation() {
-    const [addresses, setAddresses] = useState([]); // Lưu danh sách địa chỉ
-    const [newAddress, setNewAddress] = useState(''); // Lưu địa chỉ mới nhập vào
-    const [isModalVisible, setIsModalVisible] = useState(false); // Trạng thái hiển thị modal
-    const [selectedAddress, setSelectedAddress] = useState(null); // Địa chỉ cần chỉnh sửa
-    const [editedAddress, setEditedAddress] = useState(''); // Địa chỉ sau khi chỉnh sửa
+    const [addresses, setAddresses] = useState([]); 
+    const [newAddress, setNewAddress] = useState(''); 
+    const [isModalVisible, setIsModalVisible] = useState(false); 
+    const [selectedAddress, setSelectedAddress] = useState(null); 
+    const [editedAddress, setEditedAddress] = useState(''); 
 
-    // Lấy danh sách địa chỉ đã lưu trong localStorage khi trang reload
     useEffect(() => {
         const savedAddresses = JSON.parse(localStorage.getItem('addresses')) || [];
         setAddresses(savedAddresses);
 
-        // Nếu có địa chỉ mặc định đã lưu, chọn địa chỉ đó làm mặc định
         const defaultAddress = savedAddresses.find(addr => addr.isDefault);
         if (defaultAddress) {
             setSelectedAddress(defaultAddress);
         }
     }, []);
 
-    // Hàm để thêm địa chỉ mới vào danh sách
     const addAddress = () => {
         if (newAddress === '') {
             message.error('Vui lòng nhập địa chỉ!');
@@ -41,32 +38,28 @@ export default function ProfileLocation() {
         const updatedAddresses = [...addresses, newAddressObj];
         setAddresses(updatedAddresses);
         localStorage.setItem('addresses', JSON.stringify(updatedAddresses));
-        setNewAddress(''); // Reset ô nhập địa chỉ
+        setNewAddress(''); 
     };
 
-    // Hàm để chọn địa chỉ làm mặc định
     const setDefaultAddress = (address) => {
         const updatedAddresses = addresses.map(addr =>
             addr.address === address ? { ...addr, isDefault: true } : { ...addr, isDefault: false }
         );
         setAddresses(updatedAddresses);
         localStorage.setItem('addresses', JSON.stringify(updatedAddresses));
-        setSelectedAddress(address); // Cập nhật địa chỉ mặc định
+        setSelectedAddress(address); 
     };
 
-    // Hàm mở modal chỉnh sửa địa chỉ
     const openEditModal = (address) => {
         setSelectedAddress(address);
-        setEditedAddress(address); // Đặt giá trị địa chỉ vào ô nhập
+        setEditedAddress(address); 
         setIsModalVisible(true);
     };
 
-    // Hàm để đóng modal
     const handleCancel = () => {
         setIsModalVisible(false);
     };
 
-    // Hàm để lưu địa chỉ đã chỉnh sửa
     const handleEditSubmit = () => {
         if (editedAddress === '') {
             message.error('Vui lòng nhập địa chỉ mới!');
@@ -81,7 +74,6 @@ export default function ProfileLocation() {
         setIsModalVisible(false);
     };
 
-    // Hàm để xóa địa chỉ
     const deleteAddress = (address) => {
         const updatedAddresses = addresses.filter(addr => addr.address !== address);
         setAddresses(updatedAddresses);
@@ -144,7 +136,6 @@ export default function ProfileLocation() {
                 )}
             </div>
 
-            {/* Modal chỉnh sửa địa chỉ */}
             <Modal
                 title="Chỉnh sửa địa chỉ"
                 visible={isModalVisible}

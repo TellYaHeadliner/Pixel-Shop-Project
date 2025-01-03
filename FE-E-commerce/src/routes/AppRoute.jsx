@@ -15,7 +15,7 @@ import ProfileLayout from "../components/Client/layouts/ProfileLayout";
 import ProfileInformation from "../pages/Client/ProfileInformation";
 import ProfileLocation from "../pages/Client/ProfileLocation";
 import ProfileChangePassWord from "../pages/Client/ProfileChangePassWord";
-
+import ProfileCompanyInformation from "../pages/Client/ProfileCompanyInformation";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -25,8 +25,8 @@ const AppRoutes = () => {
           <Route index element={<ProfileInformation/>}/>
           <Route path="locations" element={<ProfileLocation/>}/>
           <Route path="/profile/changepassword" element={<ProfileChangePassWord/>}/>
-  
         </Route>
+        <Route path="/about" element={<ProfileCompanyInformation/>}/>
       </Route>
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<WebsiteInfo />} /> 

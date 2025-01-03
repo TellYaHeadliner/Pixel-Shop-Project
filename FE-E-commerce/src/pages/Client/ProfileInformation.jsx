@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button } from 'antd';
-import EditableField from '../../components/Client/Input/Profile'; // Import EditableField từ file khác
+import EditableField from '../../components/Client/Input/Profile'; 
 import ModalProfile from '../../components/Client/Modals/ModalProfile';
 import ButtonProfile from '../../components/Client/Button/ButtonProfile';
 export default function ProfileInformation() {
     const [file, setFile] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [editField, setEditField] = useState(""); // Trường đang chỉnh sửa
+    const [editField, setEditField] = useState(""); 
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -16,7 +16,6 @@ export default function ProfileInformation() {
     });
 
     useEffect(() => {
-        // Giả sử bạn lấy dữ liệu từ API hoặc localStorage
         const savedData = {
             name: "John Doe",
             email: "john@example.com",
@@ -40,8 +39,8 @@ export default function ProfileInformation() {
     };
 
     const showModal = (field) => {
-        setEditField(field); // Ghi nhận trường đang chỉnh sửa
-        setIsModalVisible(true); // Hiển thị modal
+        setEditField(field);
+        setIsModalVisible(true);
     };
 
     const handleOk = () => {
@@ -69,8 +68,8 @@ export default function ProfileInformation() {
                             value={formData[field]}
                             type={field === "dob" ? "date" : "text"}
                             onChange={handleInputChange}
-                            onEditClick={() => showModal(field)}  // Gọi hàm mở modal
-                            disabled={false}  // Chỉnh sửa trường
+                            onEditClick={() => showModal(field)}
+                            disabled={false}
                         />
                     ))}
                 </div>
