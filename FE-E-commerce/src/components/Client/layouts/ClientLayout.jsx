@@ -1,19 +1,23 @@
 import { Outlet } from "react-router-dom";
+import { Layout } from "antd";
 
 import HeaderClient from "../Header/ClientHeader";
 import FooterClient from "../Footer/FooterClient";
+
+const { Header, Content, Footer } = Layout;
+
 export default function ClientLayout() {
   return (
-    <div className="d-flex flex-column">
-      <HeaderClient />
+  <Layout style={{ minHeight: "100vh"}}>
+    <HeaderClient />
 
-      <main className="flex-grow-1 ">
-        <Outlet />
-      </main>
+    <Content style={{ flexGrow: 1, padđing: "16px"}}>
+      <Outlet />
+    </Content>
 
-      <footer className="mt-4">
-        <FooterClient />
-      </footer>
-    </div>
+    <Footer style={{ marginTop: "16px" }}>
+      <FooterClient />
+    </Footer>
+  </Layout>
   );
 }

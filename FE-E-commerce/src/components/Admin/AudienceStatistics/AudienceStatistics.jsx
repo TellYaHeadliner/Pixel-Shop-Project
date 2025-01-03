@@ -1,6 +1,9 @@
-import React from 'react';
-import { Card, Row, Col } from 'antd';
-import { Bar } from '@ant-design/charts';
+
+import BarChart from "../Charts/BarChart";
+
+import LineChart from "../Charts/LineChart";
+import PieChart from "../Charts/PieChart";
+
 
 const AudienceStatistics = () => {
     const data = [
@@ -26,33 +29,12 @@ const AudienceStatistics = () => {
         },
     ];
 
-    const config = {
-        data,
-        xField: 'type',
-        yField: 'value',
-        label: {
-            position: 'bottom', // 'top', 'bottom', 'middle'
-            style: {
-                fill: '#FFFFFF', // Màu chữ
-                opacity: 0.6, // Độ mờ
-            },
-        },
-        meta: {
-            type: { alias: 'Thống kê' },
-            value: { alias: 'Số lượng' },
-        },
-    };
 
     return (
         <div>
-            <h2>Thống kê đối tượng</h2>
-            <Row gutter={16}>
-                <Col span={24}>
-                    <Card title="Thống kê sản phẩm" bordered={false}>
-                        <Bar {...config} />
-                    </Card>
-                </Col>
-            </Row>
+            <PieChart />
+            <BarChart />
+            <LineChart />
         </div>
     );
 };

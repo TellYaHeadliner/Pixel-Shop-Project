@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import { useState } from 'react';
 import { Input, Button, Checkbox, Tree, Dropdown, Menu, Typography, Space } from 'antd';
 import './CategoryManagement.scss';
 

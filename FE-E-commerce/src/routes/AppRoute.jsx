@@ -11,15 +11,18 @@ import BatchManagement from "../components/Admin/BatchManagement/BatchManagement
 import CommentManagement from "../components/Admin/CommentManagement/CommentManagement";
 import AudienceStatistics from "../components/Admin/AudienceStatistics/AudienceStatistics";
 import OrderStatistics from "../components/Admin/OrderStatistics/OrderStatistics";
+import Contact from "../components/Admin/Contact/Contact";
+import DetailProduct from "../pages/Client/DetailProduct"
 
 const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<ClientLayout />}>
         <Route index element={<Home />} />
+        <Route path="/product" element={<DetailProduct />} />
       </Route>
       <Route path="/admin" element={<AdminLayout />}>
-        <Route index element={<WebsiteInfo />} /> 
+        <Route index element={<WebsiteInfo />} />
         <Route path="suppliers" element={<SupplierManagement />} />
         <Route path="categories" element={<CategoryManagement />} />
         <Route path="products" element={<ProductManagement />} />
@@ -27,6 +30,7 @@ const AppRoutes = () => {
         <Route path="comments" element={<CommentManagement />} />
         <Route path="audience-statistics" element={<AudienceStatistics />} />
         <Route path="order-statistics" element={<OrderStatistics />} />
+        <Route path="contact" element={<Contact />} />
       </Route>
     </Routes>
   );
