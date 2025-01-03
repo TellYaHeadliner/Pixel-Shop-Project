@@ -1,23 +1,23 @@
-import { Outlet } from "react-router-dom";
+import React from "react";
 import { Layout } from "antd";
-
+import { Outlet } from "react-router-dom";
 import HeaderClient from "../Header/ClientHeader";
 import FooterClient from "../Footer/FooterClient";
-
-const { Header, Content, Footer } = Layout;
+import "./ClientLayout.scss"
+const { Content, Footer } = Layout;
 
 export default function ClientLayout() {
   return (
-  <Layout style={{ minHeight: "100vh"}}>
-    <HeaderClient />
+    <Layout className="layout" >
+      <HeaderClient />
 
-    <Content style={{ flexGrow: 1, padđing: "16px"}}>
-      <Outlet />
-    </Content>
+      <Content style={{ padding: '20px' }}>
+        <Outlet />
+      </Content>
 
-    <Footer style={{ marginTop: "16px" }}>
-      <FooterClient />
-    </Footer>
-  </Layout>
+      <Footer style={{ width: '100%', padding: '0' }}>
+        <FooterClient />
+      </Footer>
+    </Layout>
   );
 }

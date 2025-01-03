@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 
-import ClientLayout from "../components/Client/layouts/ClientLayout";
-import Home from "../pages/Client/Home";
+import ClientLayout from "../components/Client/Layouts/ClientLayout";
+import Home from "../pages/Client/Home/Home";
 import AdminLayout from "../components/Admin/layouts/AdminLayout";
 import WebsiteInfo from "../components/Admin/WebsiteInfo/WebsiteInfo";
 import SupplierManagement from "../components/Admin/SupplierManagement/SupplierManagement";

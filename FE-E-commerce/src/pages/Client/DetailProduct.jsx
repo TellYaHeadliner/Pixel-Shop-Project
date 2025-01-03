@@ -12,7 +12,7 @@ import DescriptionsProduct from "../../components/Client/Descriptions/Descriptio
 import Review from "../../components/Client/Input/Review";
 import RatingStar from "../../components/Client/Input/RatingStar";
 import TableComment from "../../components/Client/Table/TableComment";
-import SanPhamCard from "../../components/Client/Cards/SanPhamCard";
+import SanPhamCard from "../../components/Client/Cards/CardSanPham";
 
 
 const DetailProduct = () => {

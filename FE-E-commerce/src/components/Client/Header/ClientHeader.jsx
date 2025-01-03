@@ -1,29 +1,28 @@
-import { useState } from "react";
-import { Layout, Input, Button, Tree } from "antd";
+import React, { useState } from "react";
+import { Layout, Button, Tree, Badge } from "antd";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { FaUser, FaBars } from "react-icons/fa";
 import { FiShoppingCart } from "react-icons/fi";
-import ModalLogin from "../Modals/ModalLogin";
+import ModalLoginAndRegister from "../Modals/ModalLoginAndRegister";
 import styles from "./ClientHeader.module.scss";
 
 const { Header } = Layout;
 
 // Mapping icon names to their respective components
-const mapIcon = {
+const iconMap = {
   "Liên hệ": BsFillTelephoneFill,
   "Giỏ hàng": FiShoppingCart,
   "Đăng nhập": FaUser,
 };
 
-// ButtonNavHeader component
-const ButtonNavHeader = ({ name, onClick, backgroundColor }) => {
-  const IconComponent = mapIcon[name];
+// IconButtonNavHeader component
+const IconButtonNavHeader = ({ name, onClick, className }) => {
+  const IconComponent = iconMap[name];
 
   return (
     <div
-      className={styles.button}
+      className={`${styles.button} ${className}`} // Thêm className cho nút
       onClick={onClick}
-      style={{ backgroundColor }}
       role="button"
       tabIndex={0}
       onKeyPress={(e) => { if (e.key === 'Enter') onClick(); }}
@@ -34,7 +33,6 @@ const ButtonNavHeader = ({ name, onClick, backgroundColor }) => {
           <IconComponent size="24px" color="#fff" />
         </span>
       )}
-      <span className={styles.buttonText}>{name}</span>
     </div>
   );
 };
@@ -43,6 +41,7 @@ const ClientHeader = () => {
   const [showModalLogin, setShowModalLogin] = useState(false);
   const [titleLogin, setTitleLogin] = useState(false);
   const [showTree, setShowTree] = useState(false);
+  const [cartItemCount, setCartItemCount] = useState(20); // Số lượng giỏ hàng
 
   const handleShowModalLogin = (isLogin = true) => {
     setTitleLogin(isLogin);
@@ -70,6 +69,14 @@ const ClientHeader = () => {
       children: [
         { title: 'Danh mục 2-1', key: '0-1-0' },
         { title: 'Danh mục 2-2', key: '0-1-1' },
+        {
+          title: 'Danh mục 2-3',
+          key: '0-1-2',
+          children: [
+            { title: 'Danh mục 2-3-1', key: '0-1-2-0' },
+            { title: 'Danh mục 2-3-2', key: '0-1-2-1' },
+          ],
+        },
       ],
     },
   ];
@@ -77,35 +84,44 @@ const ClientHeader = () => {
   return (
     <Header className={styles.header}>
       <div className={styles.searchAndButtons}>
-        <Input.Search
-          placeholder="Tìm kiếm"
-          size="large"
-          className={styles.searchInput}
-          style={{ width: '70%', height: '70%' }}
-        />
-        <ButtonNavHeader name="Liên hệ" backgroundColor="#4CAF50" />
-        <ButtonNavHeader name="Giỏ hàng" backgroundColor="#FF9800" />
-        <ButtonNavHeader
-          name="Đăng nhập"
-          backgroundColor="#2196F3"
-          onClick={() => handleShowModalLogin(true)}
-        />
+        <div className={styles.searchContainer}>
+          <input
+            className={styles.searchInput}
+            type="text"
+            placeholder="Tìm kiếm"
+          />
+        </div>
+        <Badge>
+          <IconButtonNavHeader
+            name="Liên hệ"
+            className={styles.contactButton}
+          />
+        </Badge>
+        <Badge count={cartItemCount} overflowCount={10}>
+          <IconButtonNavHeader
+            name="Giỏ hàng"
+            className={styles.cartButton}
+          />
+          <p className={styles.cartButton_total}>Tổng: 200k</p>
+        </Badge>
+        <Badge>
+          <IconButtonNavHeader
+            name="Đăng nhập"
+            className={styles.loginButton}
+            onClick={() => handleShowModalLogin(true)}
+          />
+        </Badge>
       </div>
 
       <div className={styles.topRow}>
-        <Button onClick={toggleTree} icon={<FaBars />} className={styles.menuButton}>
+        <Button onClick={toggleTree} icon={<FaBars />} className={styles.CategoryButton}>
           DANH MỤC SẢN PHẨM
+          {showTree && (
+            <div className={styles.tree}>
+              <Tree showLine treeData={treeData} style={{ flex: 1 }} />
+            </div>
+          )}
         </Button>
-        {showTree && (
-          <div className={styles.tree}>
-            <Tree
-              showLine
-              treeData={treeData}
-              defaultExpandAll
-              style={{ flex: 1 }}
-            />
-          </div>
-        )}
         <nav className={styles.navigation}>
           <a href="/" className={styles.link}>Trang chủ</a>
           <a href="/about" className={styles.link}>Giới thiệu</a>
@@ -121,7 +137,7 @@ const ClientHeader = () => {
         </div>
       </div>
 
-      <ModalLogin
+      <ModalLoginAndRegister
         show={showModalLogin}
         onClose={handleCloseModalLogin}
         titleLogin={titleLogin}
@@ -131,5 +147,3 @@ const ClientHeader = () => {
 };
 
 export default ClientHeader;
-
-
