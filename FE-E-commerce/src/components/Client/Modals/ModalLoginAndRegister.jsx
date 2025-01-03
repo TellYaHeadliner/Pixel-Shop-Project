@@ -1,11 +1,11 @@
 import PropTypes from "prop-types";
 import { Modal, Form, DatePicker, Button, Tabs, Input, Radio, message, AutoComplete } from "antd"; // Import Ant Design components
 import { useState } from "react";
-import styles from "./ModalLogin.module.css";
+import styles from "./ModalLoginAndRegister.module.scss";
 
 const { TabPane } = Tabs;
 
-const ModalLogin = ({ show, onClose }) => {
+const ModalLoginAndRegister = ({ show, onClose }) => {
   const [key, setKey] = useState("Đăng nhập");
   const [captchaValue, setCaptchaValue] = useState("123456");
 
@@ -28,7 +28,7 @@ const ModalLogin = ({ show, onClose }) => {
       footer={null} // Disable default footer
       title={key === "Đăng nhập" ? "Đăng nhập" : "Đăng ký"}
     >
-      <Tabs activeKey={key} onChange={setKey}>
+      <Tabs className={styles.login_register_form} activeKey={key} onChange={setKey}>
         <TabPane tab="Đăng nhập" key="Đăng nhập">
           <Form onFinish={handleLogin}>
             <Form.Item name="email" label="Tên/ Email" rules={[{ required: true, message: 'Vui lòng nhập email!' }]}>
@@ -48,7 +48,7 @@ const ModalLogin = ({ show, onClose }) => {
               </div>
             </Form.Item>
             <Form.Item>
-              <Button type="primary" htmlType="submit">
+              <Button className={styles.login_btn} type="primary" htmlType="submit">
                 Đăng nhập
               </Button>
             </Form.Item>
@@ -56,12 +56,6 @@ const ModalLogin = ({ show, onClose }) => {
         </TabPane>
         <TabPane tab="Đăng ký" key="Đăng ký">
           <Form onFinish={handleRegister}>
-            <Form.Item label="Giới tính">
-              <Radio.Group>
-                <Radio value="male">Anh</Radio>
-                <Radio value="female">Chị</Radio>
-              </Radio.Group>
-            </Form.Item>
             <Form.Item name="username" label="Tên đăng nhập" rules={[{ required: true, message: 'Vui lòng nhập tên đăng nhập!' }]}>
               <Input placeholder="Tên đăng nhập" />
             </Form.Item>
@@ -83,20 +77,26 @@ const ModalLogin = ({ show, onClose }) => {
             <Form.Item name="address" label="Địa chỉ cụ thể" rules={[{ required: true, message: 'Vui lòng nhập địa chỉ!' }]}>
               <Input />
             </Form.Item>
-            <Form.Item className={styles.showotp} name="otp" label="Mã OTP" >
-                {[1, 2, 3, 4, 5, 6].map((num) => (
-                  <AutoComplete
-                    key={num}
-                    style={{ width: 35, marginRight: 8, textAlign: 'center' }}
-                    value={num.toString()}
-                  />
-                ))}
+            <Form.Item label="Giới tính">
+              <Radio.Group>
+                <Radio value="male">Anh</Radio>
+                <Radio value="female">Chị</Radio>
+              </Radio.Group>
             </Form.Item>
-            <Form.Item  name="otp" label="Nhập mã OTP" rules={[{ required: true, message: 'Vui lòng nhập mã OTP!' }]}>
+            <Form.Item className={styles.showotp} name="otp" label="Mã OTP" >
+              {[1, 2, 3, 4, 5, 6].map((num) => (
+                <AutoComplete
+                  key={num}
+                  style={{ width: 35, marginRight: 8, textAlign: 'center' }}
+                  value={num.toString()}
+                />
+              ))}
+            </Form.Item>
+            <Form.Item name="otp" label="Nhập mã OTP" rules={[{ required: true, message: 'Vui lòng nhập mã OTP!' }]}>
               <AutoComplete />
             </Form.Item>
             <Form.Item>
-              <Button type="primary" htmlType="submit">
+              <Button className={styles.register_btn} type="primary" htmlType="submit">
                 Đăng ký
               </Button>
             </Form.Item>
@@ -107,9 +107,9 @@ const ModalLogin = ({ show, onClose }) => {
   );
 };
 
-ModalLogin.propTypes = {
+ModalLoginAndRegister.propTypes = {
   show: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
 };
 
-export default ModalLogin;
+export default ModalLoginAndRegister;

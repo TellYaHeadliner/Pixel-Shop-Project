@@ -1,0 +1,32 @@
+.modalLogin {
+    width: 500px;
+    height: 200px;
+    margin: 0 auto;
+}
+
+.showotp {
+    margin-left: 40px;
+}
+
+.register {
+    &_btn {
+        position: absolute;
+        right: 0;
+        width: 130px;
+        height: 35px;
+    }
+}
+
+.login {
+    &_btn {
+        position: absolute;
+        right: 0;
+        width: 130px;
+        height: 35px;
+    }
+}
+
+.login_register_form {
+    width: 30vw;
+    position: relative;
+}
