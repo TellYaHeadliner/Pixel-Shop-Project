@@ -11,12 +11,20 @@ import BatchManagement from "../components/Admin/BatchManagement/BatchManagement
 import CommentManagement from "../components/Admin/CommentManagement/CommentManagement";
 import AudienceStatistics from "../components/Admin/AudienceStatistics/AudienceStatistics";
 import OrderStatistics from "../components/Admin/OrderStatistics/OrderStatistics";
+import ProfileLayout from "../components/Client/layouts/ProfileLayout";
+import ProfileInformation from "../pages/Client/ProfileInformation";
+import ProfileLocation from "../pages/Client/ProfileLocation";
 
 const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<ClientLayout />}>
         <Route index element={<Home />} />
+        <Route path="profile" element={<ProfileLayout/>}>
+          <Route index element={<ProfileInformation/>}/>
+          <Route path="locations" element={<ProfileLocation/>}/>
+  
+        </Route>
       </Route>
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<WebsiteInfo />} /> 
