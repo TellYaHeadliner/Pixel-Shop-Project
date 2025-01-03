@@ -12,7 +12,7 @@ class NguoiDung extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $table="nguoidung";
-    protected $primaryKey="idNguoidung";
+    protected $primaryKey="idNguoiDung";
     public $timestamps=false;
 
     protected $fillable = [
@@ -22,16 +22,12 @@ class NguoiDung extends Authenticatable
         'hoVaTen',
         'ngaySinh',
         'gioiTinh',
-        'SDT',
+        'SĐT',
         'vaiTro',
         'email',
         'anhDaiDien'
     ];
 
-    protected $hidden = [
-        'matKhau', 
-        'remember_token',
-    ];
 
     protected function casts(): array
     {

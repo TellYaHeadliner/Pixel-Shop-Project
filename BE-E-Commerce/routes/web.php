@@ -5,10 +5,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DanhMucController;
-
-
+use App\Http\Middleware\CheckEmailSignUp;
 Route::controller(UserController::class)->group(function(){
     Route::post('/api/login',[UserController::class, 'login']);
+    Route::post('/api/VerificationEmail',[UserController::class, 'sendVerificationEmail']);
+    Route::post('/api/signup',[UserController::class, 'signup'])->middleware(CheckEmailSignUp::class);
 });
 
 Route::controller(DanhMucController::class)->group(function(){

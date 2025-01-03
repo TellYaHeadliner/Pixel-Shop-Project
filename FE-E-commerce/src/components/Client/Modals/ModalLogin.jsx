@@ -1,19 +1,63 @@
 import PropTypes from "prop-types";
-import { Modal, Form, DatePicker, Button, Tabs, Input, Radio, message, AutoComplete } from "antd"; // Import Ant Design components
+import {
+  Modal,
+  Form,
+  DatePicker,
+  Button,
+  Tabs,
+  Input,
+  Radio,
+  message,
+  AutoComplete,
+} from "antd"; // Import Ant Design components
 import { useState } from "react";
 import styles from "./ModalLogin.module.css";
+import axios from 'axios';
 
 const { TabPane } = Tabs;
 
 const ModalLogin = ({ show, onClose }) => {
   const [key, setKey] = useState("Đăng nhập");
-  const [captchaValue, setCaptchaValue] = useState("123456");
+  const [captcha, setCaptcha] = useState("000000");
+  const [showCaptcha, setShowCaptcha] = useState(false);
+  const [session,setSession]=useState('');
 
-  const handleLogin = (values) => {
-    if (values.captcha === captchaValue) {
-      message.success("Đăng nhập thành công!");
-    } else {
-      message.error("Mã captcha không chính xác!");
+  axios.defaults.withCredentials=true;
+
+  const handleLogin = async (values) => {
+    try {
+      const { tenDangNhap, matKhau, captcha } = values;
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/login",
+        { tenDangNhap, matKhau, captcha , session  },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          }
+        }
+      );  
+      if (response.data.success) {
+        console.log(response.data);// show data trả về
+        setShowCaptcha(false);
+        message.success(response.data.message);
+      }
+    } catch (error) {   
+      const data = error.response.data;
+      if (!data.success) {   
+          if (data.data.solanthu === 5){  
+            setShowCaptcha(false);
+            message.error(data.message);           
+          } 
+          else if(data.data.solanthu >=3){
+            setShowCaptcha(true);
+            message.error(data.message);
+            if (data.data.captcha) {
+              setCaptcha(data.data.captcha);
+            }  
+          } else{   
+            message.error(data.message);
+          }
+      }  
     }
   };
 
@@ -31,22 +75,41 @@ const ModalLogin = ({ show, onClose }) => {
       <Tabs activeKey={key} onChange={setKey}>
         <TabPane tab="Đăng nhập" key="Đăng nhập">
           <Form onFinish={handleLogin}>
-            <Form.Item name="email" label="Tên/ Email" rules={[{ required: true, message: 'Vui lòng nhập email!' }]}>
-              <Input type="email" placeholder="Tên/ Email" />
+            <Form.Item
+              name="tenDangNhap"
+              label="Tên/ Email"
+              rules={[{ required: true, message: "Vui lòng nhập email!" }]}
+            >
+              <Input type="email" name="email" placeholder="Tên/ Email" />
             </Form.Item>
-            <Form.Item name="password" label="Mật khẩu" rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}>
-              <Input.Password placeholder="Password" />
+        
+            <Form.Item
+              name="session"
+              style={{ display: 'none' }}
+            >
+              <Input />
             </Form.Item>
-            <Form.Item label="Mã captcha" required>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <span style={{ marginRight: 8 }}>{captchaValue}</span>
-                <Input
-                  placeholder="Nhập mã captcha"
-                  name="captcha"
-                  rules={[{ required: true, message: 'Vui lòng nhập mã captcha!' }]}
-                />
-              </div>
+            <Form.Item
+              name="matKhau"
+              label="Mật khẩu"
+              rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
+            >
+              <Input.Password name="matKhau" placeholder="Password" />
             </Form.Item>
+            {showCaptcha && (
+              <Form.Item
+                label="Mã captcha"
+                name="captcha"
+                rules={[
+                  { required: true, message: "Vui lòng nhập mã captcha!" },
+                ]}
+              >
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <span style={{ marginRight: 8 }}>{captcha}</span>
+                  <Input name="captcha" placeholder="Nhập mã captcha" />
+                </div>
+              </Form.Item>
+            )}
             <Form.Item>
               <Button type="primary" htmlType="submit">
                 Đăng nhập
@@ -62,39 +125,54 @@ const ModalLogin = ({ show, onClose }) => {
                 <Radio value="female">Chị</Radio>
               </Radio.Group>
             </Form.Item>
-            <Form.Item name="username" label="Tên đăng nhập" rules={[{ required: true, message: 'Vui lòng nhập tên đăng nhập!' }]}>
+            <Form.Item
+              name="username"
+              label="Tên đăng nhập"
+              rules={[
+                { required: true, message: "Vui lòng nhập tên đăng nhập!" },
+              ]}
+            >
               <Input placeholder="Tên đăng nhập" />
             </Form.Item>
-            <Form.Item name="email" label="Email" rules={[{ required: true, message: 'Vui lòng nhập email!' }]}>
+            <Form.Item
+              name="email"
+              label="Email"
+              rules={[{ required: true, message: "Vui lòng nhập email!" }]}
+            >
               <Input type="email" />
             </Form.Item>
-            <Form.Item name="password" label="Mật khẩu" rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}>
+            <Form.Item
+              name="password"
+              label="Mật khẩu"
+              rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
+            >
               <Input.Password />
             </Form.Item>
-            <Form.Item name="repeatPassword" label="Nhập lại mật khẩu" rules={[{ required: true, message: 'Vui lòng nhập lại mật khẩu!' }]}>
+            <Form.Item
+              name="repeatPassword"
+              label="Nhập lại mật khẩu"
+              rules={[
+                { required: true, message: "Vui lòng nhập lại mật khẩu!" },
+              ]}
+            >
               <Input.Password />
             </Form.Item>
             <Form.Item label="Ngày sinh">
               <DatePicker />
             </Form.Item>
-            <Form.Item name="city" label="Thành phố/Tỉnh" rules={[{ required: true, message: 'Vui lòng nhập thành phố/tỉnh!' }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item name="address" label="Địa chỉ cụ thể" rules={[{ required: true, message: 'Vui lòng nhập địa chỉ!' }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item className={styles.showotp} name="otp" label="Mã OTP" >
-                {[1, 2, 3, 4, 5, 6].map((num) => (
-                  <AutoComplete
-                    key={num}
-                    style={{ width: 35, marginRight: 8, textAlign: 'center' }}
-                    value={num.toString()}
-                  />
-                ))}
-            </Form.Item>
-            <Form.Item  name="otp" label="Nhập mã OTP" rules={[{ required: true, message: 'Vui lòng nhập mã OTP!' }]}>
-              <AutoComplete />
-            </Form.Item>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <Form.Item
+                name="captcha"
+                label="Nhập mã OTP gửi qua email"
+                rules={[{ required: true, message: "Vui lòng nhập mã OTP!" }]}
+                style={{ marginBottom: 0 }} // Để loại bỏ khoảng cách không cần thiết
+              >
+                <Input />
+              </Form.Item>
+              <Button type="primary" htmlType="submit">
+                Gửi mã
+              </Button>
+            </div>
             <Form.Item>
               <Button type="primary" htmlType="submit">
                 Đăng ký
