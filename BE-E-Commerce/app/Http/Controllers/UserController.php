@@ -18,7 +18,7 @@ class UserController extends Controller
     {
         $data = $request->all();
         $soLanThuToiDa = 5;
-        $timeBlock = time() + 300; // giây
+        $timeBlock = time() + 10; // giây
 
         $User = NguoiDung::where('tenDangNhap', '=', $data['tenDangNhap'])
             ->orWhere('email', '=', $data['tenDangNhap'])
@@ -33,8 +33,6 @@ class UserController extends Controller
                 ]
             ], 403);
         }
-
-
         $soLanThu = session()->get("login_solanthu_{$User['idNguoiDung']}", 0);
         $thoiGianMoKhoa = session()->get("login_timeblock_{$User['idNguoiDung']}", null);
         if ($thoiGianMoKhoa && time() <= $thoiGianMoKhoa) {
@@ -130,16 +128,24 @@ class UserController extends Controller
     function signup(Request $request)
     {
         $data = $request->all();
-        if ($request->hasFile('anhDaiDien')) {
-            $file = $request->files('anhDaiDien');
 
-            if (!File::exists(public_path('imgs/') . $file->getClientOriginalName())) {
-                $file->move(public_path('imgs/' . $file->getClientOriginalName()));
-            }
-            $data['anhDaiDien'] = $file->getClientOriginalName();
-        } else {
-            $data['anhDaiDien'] = 'anhDaiDienDefault.jpg';
+        if($request->input('matKhau')!=$request->input('repeatMatKhau')){
+            return response()->json([
+                'success' => false,
+                'message' => 'Mật khẩu không trùng khớp!',
+                'data' => []
+            ],403);
         }
+        // if ($request->hasFile('anhDaiDien')) {
+        //     $file = $request->files('anhDaiDien');
+
+        //     if (!File::exists(public_path('imgs/') . $file->getClientOriginalName())) {
+        //         $file->move(public_path('imgs/' . $file->getClientOriginalName()));
+        //     }
+        //     $data['anhDaiDien'] = $file->getClientOriginalName();
+        // } else {
+        //     $data['anhDaiDien'] = 'anhDaiDienDefault.jpg';
+        // }
         try {
             NguoiDung::create([
                 'tenDangNhap' => $data['tenDangNhap'],
@@ -147,17 +153,17 @@ class UserController extends Controller
                 'hoVaTen' => $data['hoVaTen'],
                 'ngaySinh' => DateTime::createFromFormat('d-m-Y', $data['ngaySinh']),
                 'gioiTinh' => $data['gioiTinh'],
-                'SĐT' => $data['SĐT'],
-                'vaiTro' => $data['vaiTro'],
+                'SĐT' => '0',
+                'vaiTro' => 3,
                 'email' => $data['email'],
-                'anhDaiDien' => $data['anhDaiDien']
+                'anhDaiDien' => 'anhDaiDienDefault.jpg',
             ]);
         } catch (\Exception $err) {
             return response()->json([
                 'success' => false,
-                'message' => 'Đăng ký không thành công ' . $err,
+                'message' => 'Đăng ký không thành công, vui lòng thử lại!',
                 'data' => []
-            ]);
+            ],403);
         }
         session()->forget(["SignUp_VerificationEmail_{$data['email']}", "SignUp_VerificationEmail_TimeBlock_{$data['email']}"]);
         return response()->json([
@@ -174,13 +180,13 @@ class UserController extends Controller
         if (NguoiDung::where('tenDangNhap', '=', $data['tenDangNhap'])->first()) {
             return Response()->json([
                 'success' => false,
-                'err' => "Tên đăng nhập đã tồn tại",
+                'message' => "Tên đăng nhập đã tồn tại",
             ], 403);
         }
         if (NguoiDung::where('email', '=', $data['tenDangNhap'])->first()) {
             return Response()->json([
                 'success' => false,
-                'err' => "Email đã tồn tại",
+                'message' => "Email đã tồn tại",
             ], 403);
         }
 
@@ -188,8 +194,6 @@ class UserController extends Controller
             Mail::to($data['email'])->send(new sendVerificationEmail($data['name'], $captcha));
             session()->put("SignUp_VerificationEmail_{$data['email']}", $captcha);
             session()->put("SignUp_VerificationEmail_TimeBlock_{$data['email']}", time() + 180);
-            var_dump(session("SignUp_VerificationEmail_{$data['email']}"));
-            var_dump(session("SignUp_VerificationEmail_TimeBlock_{$data['email']}"));
             return response()->json([
                 'success' => true,
                 'message' => 'Gửi mã thành công',

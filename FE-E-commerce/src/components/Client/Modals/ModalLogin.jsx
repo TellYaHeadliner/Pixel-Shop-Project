@@ -12,57 +12,141 @@ import {
 } from "antd"; // Import Ant Design components
 import { useState } from "react";
 import styles from "./ModalLogin.module.css";
-import axios from 'axios';
+import axios from "axios";
 
 const { TabPane } = Tabs;
 
 const ModalLogin = ({ show, onClose }) => {
+  const [formRegister] = Form.useForm();
   const [key, setKey] = useState("Đăng nhập");
   const [captcha, setCaptcha] = useState("000000");
   const [showCaptcha, setShowCaptcha] = useState(false);
-  const [session,setSession]=useState('');
+  const [isDisabled, setIsDisabled] = useState(false); 
+  const [countdown, setCountdown] = useState(0); 
 
-  axios.defaults.withCredentials=true;
+  axios.defaults.withCredentials = true;
 
   const handleLogin = async (values) => {
     try {
       const { tenDangNhap, matKhau, captcha } = values;
       const response = await axios.post(
         "http://127.0.0.1:8000/api/login",
-        { tenDangNhap, matKhau, captcha , session  },
+        { tenDangNhap, matKhau, captcha },
         {
           headers: {
             "Content-Type": "application/json",
-          }
+          },
         }
-      );  
+      );
+
       if (response.data.success) {
-        console.log(response.data);// show data trả về
+        console.log(response.data);
         setShowCaptcha(false);
         message.success(response.data.message);
       }
-    } catch (error) {   
+    } catch (error) {
       const data = error.response.data;
-      if (!data.success) {   
-          if (data.data.solanthu === 5){  
-            setShowCaptcha(false);
-            message.error(data.message);           
-          } 
-          else if(data.data.solanthu >=3){
-            setShowCaptcha(true);
-            message.error(data.message);
-            if (data.data.captcha) {
-              setCaptcha(data.data.captcha);
-            }  
-          } else{   
-            message.error(data.message);
+      if (!data.success) {
+        if (data.data.solanthu === 5) {
+          setShowCaptcha(false);
+          message.error(data.message);
+        } else if (data.data.solanthu >= 3) {
+          setShowCaptcha(true);
+          message.error(data.message);
+          if (data.data.captcha) {
+            setCaptcha(data.data.captcha);
           }
-      }  
+        } else {
+          message.error(data.message);
+        }
+      }
     }
   };
 
-  const handleRegister = () => {
-    message.success("Đăng ký thành công!");
+  const handleRegister = async (values) => {
+    try {
+      const {
+        gioiTinh,
+        tenDangNhap,
+        hoVaTen,
+        email,
+        matKhau,
+        repeatMatKhau,
+        ngaySinh,
+        captcha,
+      } = values;
+
+      // Kiểm tra mật khẩu và nhập lại mật khẩu
+      if (matKhau !== repeatMatKhau) {
+        message.error("Mật khẩu và nhập lại mật khẩu không khớp!");
+        return;
+      }
+
+      const formattedNgaySinh = ngaySinh.format("DD-MM-YYYY");
+
+      // Gửi dữ liệu đăng ký qua API
+      const response = await axios.post("http://127.0.0.1:8000/api/signup", {
+        gioiTinh,
+        tenDangNhap,
+        hoVaTen,
+        email,
+        matKhau,
+        repeatMatKhau,
+        ngaySinh: formattedNgaySinh,
+        captcha,
+      });
+      if (response.data.success) {
+        message.success(response.data.message || "Đăng ký thành công!");
+        formRegister.resetFields();
+        setKey("Đăng nhập");
+      }
+    } catch (error) {
+      message.error(error.response.data.message);
+    }
+  };
+
+  const handleVerificationEmail = async () => {
+    try {
+      const values = await formRegister.validateFields([
+        "tenDangNhap",
+        "email",
+        "hoVaTen",
+        "matKhau",
+        "repeatMatKhau",
+        "ngaySinh",
+      ]);
+
+      const email = values.email;
+      const tenDangNhap = values.tenDangNhap;
+      const name = values.hoVaTen;
+
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/VerificationEmail",
+        { email, tenDangNhap, name },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.data.success) {
+        setIsDisabled(true);
+        setCountdown(180); 
+        message.success(response.data.message + " qua email:" + email);
+        const timer = setInterval(() => {
+          setCountdown((prev) => {
+            if (prev <= 1) {
+              clearInterval(timer); 
+              setIsDisabled(false); 
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+      }
+    } catch (error) { 
+      message.error(error.data.message);
+    }
   };
 
   return (
@@ -77,16 +161,18 @@ const ModalLogin = ({ show, onClose }) => {
           <Form onFinish={handleLogin}>
             <Form.Item
               name="tenDangNhap"
-              label="Tên/ Email"
-              rules={[{ required: true, message: "Vui lòng nhập email!" }]}
+              label="Tên đăng nhập/ Email"
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng nhập email hoặc tên đăng nhập!",
+                },
+              ]}
             >
-              <Input type="email" name="email" placeholder="Tên/ Email" />
+              <Input name="email" placeholder="Tên/ Email" />
             </Form.Item>
-        
-            <Form.Item
-              name="session"
-              style={{ display: 'none' }}
-            >
+
+            <Form.Item name="session" style={{ display: "none" }}>
               <Input />
             </Form.Item>
             <Form.Item
@@ -118,15 +204,19 @@ const ModalLogin = ({ show, onClose }) => {
           </Form>
         </TabPane>
         <TabPane tab="Đăng ký" key="Đăng ký">
-          <Form onFinish={handleRegister}>
-            <Form.Item label="Giới tính">
+          <Form form={formRegister} onFinish={handleRegister}>
+            <Form.Item
+              name="gioiTinh"
+              label="Giới tính"
+              rules={[{ required: true, message: "Vui lòng chọn giới tính!" }]}
+            >
               <Radio.Group>
-                <Radio value="male">Anh</Radio>
-                <Radio value="female">Chị</Radio>
+                <Radio value="1">Anh</Radio>
+                <Radio value="0">Chị</Radio>
               </Radio.Group>
             </Form.Item>
             <Form.Item
-              name="username"
+              name="tenDangNhap"
               label="Tên đăng nhập"
               rules={[
                 { required: true, message: "Vui lòng nhập tên đăng nhập!" },
@@ -135,21 +225,30 @@ const ModalLogin = ({ show, onClose }) => {
               <Input placeholder="Tên đăng nhập" />
             </Form.Item>
             <Form.Item
+              name="hoVaTen"
+              label="Họ và Tên:"
+              rules={[
+                { required: true, message: "Vui lòng nhập họ tên của bạn!" },
+              ]}
+            >
+              <Input placeholder="Nguyễn Văn A" />
+            </Form.Item>
+            <Form.Item
               name="email"
               label="Email"
               rules={[{ required: true, message: "Vui lòng nhập email!" }]}
             >
-              <Input type="email" />
+              <Input type="email" placeholder="abc@gmail.com" />
             </Form.Item>
             <Form.Item
-              name="password"
+              name="matKhau"
               label="Mật khẩu"
               rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
             >
               <Input.Password />
             </Form.Item>
             <Form.Item
-              name="repeatPassword"
+              name="repeatMatKhau"
               label="Nhập lại mật khẩu"
               rules={[
                 { required: true, message: "Vui lòng nhập lại mật khẩu!" },
@@ -157,7 +256,11 @@ const ModalLogin = ({ show, onClose }) => {
             >
               <Input.Password />
             </Form.Item>
-            <Form.Item label="Ngày sinh">
+            <Form.Item
+              name="ngaySinh"
+              label="Ngày sinh"
+              rules={[{ required: true, message: "Vui lòng nhập email!" }]}
+            >
               <DatePicker />
             </Form.Item>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -169,8 +272,12 @@ const ModalLogin = ({ show, onClose }) => {
               >
                 <Input />
               </Form.Item>
-              <Button type="primary" htmlType="submit">
-                Gửi mã
+              <Button
+                type="primary"
+                onClick={handleVerificationEmail}
+                disabled={isDisabled}
+              >
+                {isDisabled ? `Gửi lại sau ${countdown}s` : "Gửi mã"}
               </Button>
             </div>
             <Form.Item>

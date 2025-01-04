@@ -17,10 +17,10 @@ class CheckEmailSignUp
     {
         $captcha=$request->input('captcha');
         $email=$request->input('email');
-        var_dump(session("SignUp_VerificationEmail_{$email}"));
-        var_dump(session("SignUp_VerificationEmail_TimeBlock_{$email}"));
+       
         if(session()->has("SignUp_VerificationEmail_{$email}")&&session("SignUp_VerificationEmail_TimeBlock_{$email}")>time())
         {
+           
             if($captcha!=session("SignUp_VerificationEmail_{$email}")){
                 return response()->json([
                     'success'=>false,
@@ -30,10 +30,11 @@ class CheckEmailSignUp
             } 
             return $next($request);
         }
-        else if(session("SignUp_VerificationEmail_TimeBlock_{$email}")<time()){
+        else if(session()->has("SignUp_VerificationEmail_TimeBlock_{$email}")&&session("SignUp_VerificationEmail_TimeBlock_{$email}")<time()){
+            
             return response()->json([
                 'success'=>false,
-                'message'=>'Mã xác nhận đã bị vô hiệu hóa vui lòng nhấn nút gửi lại để nhận mã mới.',
+                'message'=>'Mã xác nhận đã bị vô hiệu hóa vui lòng nhấn nút gửi mã để nhận mã mới.',
                 'data'=>[]
             ],403);
         }
