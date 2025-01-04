@@ -81,6 +81,10 @@ const ClientHeader = () => {
     },
   ];
 
+  const onSelect = (selectedKeys, info) => {
+    console.log('Selected:', selectedKeys, info);
+  };
+
   return (
     <Header className={styles.header}>
       <div className={styles.searchAndButtons}>
@@ -116,12 +120,17 @@ const ClientHeader = () => {
       <div className={styles.topRow}>
         <Button onClick={toggleTree} icon={<FaBars />} className={styles.CategoryButton}>
           DANH MỤC SẢN PHẨM
-          {showTree && (
-            <div className={styles.tree}>
-              <Tree showLine treeData={treeData} style={{ flex: 1 }} />
-            </div>
-          )}
         </Button>
+        {showTree && (
+          <div className={styles.tree}>
+            <Tree
+              showLine
+              treeData={treeData}
+              onSelect={onSelect} // Đảm bảo onSelect được gọi
+              style={{ flex: 1 }}
+            />
+          </div>
+        )}
         <nav className={styles.navigation}>
           <a href="/" className={styles.link}>Trang chủ</a>
           <a href="/about" className={styles.link}>Giới thiệu</a>

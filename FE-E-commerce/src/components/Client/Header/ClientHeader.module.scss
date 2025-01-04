@@ -7,7 +7,7 @@
     margin: 1vw 6vw 0;
     height: 160px;
     width: 82vw;
-    z-index: 1;
+    z-index: 10;
     border-radius: 500px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Thêm bóng đổ cho header
 }
@@ -16,6 +16,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative;
+
 }
 
 .searchAndButtons {
@@ -85,7 +87,6 @@
     outline: none;
     transition: color 0.3s ease;
     border: none;
-    position: relative;
     font-size: 17px;
 
     &:hover {
@@ -119,9 +120,9 @@
 
 .tree {
     position: absolute;
-    width: 100%;
-    left: 1%;
-    top: 110%;
+    width: 23%;
+    left: -1%;
+    top: 80%;
     font-size: 19px;
     border-radius: 0 0 10px 10px;
     animation: showUptoDown 0.15s ease-in;

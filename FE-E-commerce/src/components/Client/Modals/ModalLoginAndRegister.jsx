@@ -10,27 +10,26 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
   const [captchaVerified, setCaptchaVerified] = useState(false);
   const [captchaValue, setCaptchaValue] = useState("123456");
 
-   const handleLogin = (values) => {
-     if (values.captcha === captchaValue) {
-       message.success("Đăng nhập thành công!");
-     } else {
-       setCaptchaVerified(false);
-       message.error("Captcha chưa được xác minh!");
-       message.error("Mã captcha không chính xác!");
-     }
-   };
+  const handleLogin = (values) => {
+    if (values.captcha === captchaValue) {
+      message.success("Đăng nhập thành công!");
+    } else {
+      setCaptchaVerified(false);
+      message.error("Captcha chưa được xác minh!");
+      message.error("Mã captcha không chính xác!");
+    }
+  };
 
-   const handleRegister = () => {
-     message.success("Đăng ký thành công!");
-   };
+  const handleRegister = () => {
+    message.success("Đăng ký thành công!");
+  };
 
   return (
     <Modal
-      show={show}
-      onHide={onClose}
-      backdrop="static"
-      keyboard={false}
-      className="modal-dialog-centered w-100 h-100"
+      title={key === "Đăng nhập" ? "Đăng Nhập" : "Đăng Ký"}
+      visible={show} // Sử dụng visible thay vì show
+      onCancel={onClose} // Sử dụng onCancel thay vì onHide
+      footer={null}
     >
       <Tabs className={styles.login_register_form} activeKey={key} onChange={setKey}>
         <TabPane tab="Đăng nhập" key="Đăng nhập">
