@@ -20,7 +20,7 @@ const DetailProduct = () => {
   return (
     <div style={{ marginTop: "16px" }}>
       <Row justify="center" align="middle" gutter={[16, 16]}>
-        <Col lg="16">
+        <Col md="16">
           <ImageProduct />
           <HeadingProduct />
           <Row justify="flex-start" align="middle">
@@ -38,7 +38,7 @@ const DetailProduct = () => {
             <ThemSanPham />
           </div>
         </Col>
-        <Col lg="16">
+        <Col md="16">
           <DescriptionLapTop />
         </Col>
       </Row>
