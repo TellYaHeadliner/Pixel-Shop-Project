@@ -1,0 +1,14 @@
+.default-bnbg{
+	border-radius: 10px;
+	background-color: #D9D9D9;
+}
+
+.back-button {
+	@extend .default-bnbg;
+	width: 170px;
+}
+
+.body-form{
+	@extend .default-bnbg;
+	margin-top: 20px;
+}
