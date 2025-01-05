@@ -11,7 +11,7 @@ export default function ClientLayout() {
     <Layout className="layout" >
       <HeaderClient />
 
-      <Content style={{ padding: '20px',marginTop:"160px" }}>
+      <Content style={{ padding: '20px', marginTop: "160px" }}>
         <Outlet />
       </Content>
 

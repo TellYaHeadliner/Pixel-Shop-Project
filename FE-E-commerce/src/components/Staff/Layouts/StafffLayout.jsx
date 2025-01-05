@@ -1,15 +1,14 @@
 import { Layout } from 'antd';
 import { Routes, Route, Outlet } from 'react-router-dom';
-import "./AdminLayout.scss"; // Đảm bảo import CSS
-import Sidebar from '../Sidebar/Sidebar';
-import "./AdminLayout.scss";
+import "./StaffLayout.scss"; // Đảm bảo import CSS
+import StaffSidebar from '../Sidebar/Sidebar';
 const { Content, Sider } = Layout;
 
-export default function AdminLayout() {
+export default function StaffLayout() {
     return (
         <Layout style={{ minHeight: '100vh' }}>
             <Sider>
-                <Sidebar />
+                <StaffSidebar />
             </Sider>
             <Layout style={{ marginLeft: '180px' }}>
                 <Content style={{ margin: 0, minHeight: 280 }}>
