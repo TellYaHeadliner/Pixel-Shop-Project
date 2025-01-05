@@ -3,49 +3,33 @@ import { Row, Col, Layout, Image } from "antd";
 import SanPhamNav from "../../../components/Client/Button/SanPhamNav";
 import SanPhamCard from "../../../components/Client/Cards/CardSanPham";
 import "./Home.scss"
+import SlideShowAds from "../../../components/Client/Slideshow/SlideShowAds";
 const { Content } = Layout;
 
 const Home = () => {
   return (
-    <Layout className="user-home-layout" >
+    <Layout className="user-home-layout">
       <Content
         className="user-home-content"
         style={{
-          imageRendering: 'optimizeQuality',
-        }}>
-        <Row gutter={[100, 10]} >
-          <Col span={13}>
-            <Image
-              src="/imgs/slideshow1.png"
-              alt=""
-              height='93%'
-              width='110%'
-              style={{
-                imageRendering: 'optimizeQuality',
-              }}
-              preview={false}
+          imageRendering: "optimizeQuality",
+        }}
+      >
+        <Row gutter={[20, 20]}>
+          <Col xs={24} lg={12}>
+            <SlideShowAds
+              linkImg="/imgs/slideshow1.png"
             />
           </Col>
-          <Col span={1}>
-            <Image
-              src="/imgs/slideshow2.png"
-              preview={false}
-              width='470px'
-              style={{
-                imageRendering: 'optimizeQuality',
-                marginBottom: '30px'
-              }}
-            />
-            <Image
-              src="/imgs/slideshow3.png"
-              alt=""
-              preview={false}
-              width='470px'
-              style={{
-                imageRendering: 'optimizeQuality',
-                margin: '0'
-              }}
-            />
+          <Col xs={24} md={12}>
+            <Row gutter={[16, 16]}>
+              <Col span={24}>
+                <SlideShowAds height="25%" linkImg="/imgs/slideshow2.png" />
+              </Col>
+              <Col span={24}>
+                <SlideShowAds height="25%" linkImg="/imgs/slideshow3.png" />
+              </Col>
+            </Row>
           </Col>
         </Row>
 
@@ -53,13 +37,13 @@ const Home = () => {
           <SanPhamNav title="Sản phẩm mới" />
         </div>
         <Row gutter={[16, 16]} className="my-4">
-          <Col span={8} className="p-0 d-flex justify-content-center">
+          <Col xs={24} sm={12} lg={8}>
             <SanPhamCard />
           </Col>
-          <Col span={8} className="p-0 d-flex justify-content-center">
+          <Col xs={24} sm={12} lg={8}>
             <SanPhamCard />
           </Col>
-          <Col span={8} className="p-0 d-flex justify-content-center">
+          <Col xs={24} sm={12} lg={8}>
             <SanPhamCard />
           </Col>
         </Row>
@@ -68,28 +52,22 @@ const Home = () => {
           <SanPhamNav title="Laptop" />
         </div>
         <Row gutter={[16, 16]} className="my-4">
-          <Col span={8} className="p-0 d-flex justify-content-center">
+          <Col xs={24} sm={12} lg={8}>
             <SanPhamCard />
           </Col>
-          <Col span={8} className="p-0 d-flex justify-content-center">
+          <Col xs={24} sm={12} lg={8}>
             <SanPhamCard />
           </Col>
-          <Col span={8} className="p-0 d-flex justify-content-center">
+          <Col xs={24} sm={12} lg={8}>
             <SanPhamCard />
           </Col>
         </Row>
 
-        <div className="mt-3">
-          <Image
-            src="/imgs/banner.png"
-            alt=""
-            width="100%"
-            preview={false}
-            style={{ maxHeight: '50vh', objectFit: 'cover', imageRendering: 'optimizeQuality', }}
-          />
+        <div className="mt-3">  
+          
         </div>
       </Content>
-    </Layout >
+    </Layout>
   );
 };
 
