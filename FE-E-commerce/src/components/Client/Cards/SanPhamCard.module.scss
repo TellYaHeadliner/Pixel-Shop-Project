@@ -1,28 +1,3 @@
-.san-pham-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  }
-}
-
-.product-image {
-  object-fit: fill; // Đảm bảo hình ảnh không bị biến dạng
-  height: 300px; // Có thể điều chỉnh chiều cao theo nhu cầu
-}
-
-.product-title {
-  margin: 0;
-  font-size: 1.5rem; // Kích thước chữ tiêu đề
-}
-
-.brand-name {
-  margin: 0;
-  color: rgba(255, 255, 255, 0.8); // Màu sắc cho tên thương hiệu
-}
-
-.star-rating {
-  display: flex;
-  gap: 4px; // Khoảng cách giữa các ngôi sao
+.SanPhamCard {
+  width: 90%;
 }

@@ -4,7 +4,7 @@ import ClientLayout from "../components/Client/Layouts/ClientLayout";
 import Home from "../pages/Client/Home/Home";
 import DetailProduct from "../pages/Client/DetailProduct";
 
-import AdminLayout from "../components//Admin/layouts/AdminLayout";
+import AdminLayout from "../components/Admin/Layouts/AdminLayout";
 import SupplierManagement from "../pages/Admin/SupplierManagement/SupplierManagement";
 import CategoryManagement from "../pages/Admin/CategoryManagement/CategoryManagement";
 import ProductManagement from "../pages/Admin/ProductManagement/ProductManagement";
@@ -14,6 +14,9 @@ import AudienceStatistics from "../pages/Admin/AudienceStatistics/AudienceStatis
 import OrderStatistics from "../pages/Admin/OrderStatistics/OrderStatistics";
 import Contact from "../pages/Admin/Contact/Contact";
 import WebsiteInfo from "../pages/Admin/WebsiteInfo/WebsiteInfo";
+
+import StaffLayout from "../components/Staff/Layouts/StafffLayout";
+import StaffContact from "../pages/Staff/Contact/Contact";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -31,6 +34,11 @@ const AppRoutes = () => {
         <Route path="audience-statistics" element={<AudienceStatistics />} />
         <Route path="order-statistics" element={<OrderStatistics />} />
         <Route path="contact" element={<Contact />} />
+      </Route>
+      <Route path="/staff" element={<StaffLayout />}>
+        <Route index element={<StaffContact />} />
+        {/* <Route path="orders" element={<StaffContact />} />
+        <Route path="customer_consulting" element={<StaffContact />} /> */}
       </Route>
     </Routes>
   );
