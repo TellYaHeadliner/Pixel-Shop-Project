@@ -48,7 +48,7 @@ export default function ChangePassword() {
     };
 
     return (
-        <div style={{margin: '70px', width:500 }}>
+        <div style={{marginLeft:100, width:500 }}>
             <h2>Thay đổi mật khẩu</h2>
             {['oldPassword', 'newPassword', 'confirmPassword'].map((field) => (
                 <div key={field} style={{ marginBottom: '20px', height: '70px' }}>
@@ -64,8 +64,10 @@ export default function ChangePassword() {
                             <span
                                 onClick={() => togglePasswordVisibility(field)}
                                 style={{ cursor: 'pointer' }}
+                                
                             >
-                                {showPassword[field] ? <EyeTwoTone /> : <EyeInvisibleOutlined />}
+                                 {showPassword[field] ? <EyeTwoTone /> : <EyeInvisibleOutlined />}
+                               
                             </span>
                         }
                     />

@@ -1,0 +1,21 @@
+#img {
+    image-rendering: optimizeQuality;
+}
+
+#slide-show {
+    object-fit: cover;
+    margin: 100px;
+}
+
+.user-home {
+    &-layout {
+        background-color: r(--bgva);
+    }
+
+    &-content {
+        padding: 20px 30px;
+        height: 100%;
+        margin: 0 0;
+        background-color: var(--bg);
+    }
+}

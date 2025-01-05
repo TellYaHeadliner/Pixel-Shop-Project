@@ -81,7 +81,7 @@ export default function ProfileLocation() {
     };
 
     return (
-        <div style={{ margin: 70 }}>
+        <div style={{ marginLeft: 100 }}>
             <div>
                 <label>Địa chỉ:</label>
                 <Input

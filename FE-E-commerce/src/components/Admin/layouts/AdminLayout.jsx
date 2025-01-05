@@ -1,4 +1,3 @@
-import React from 'react';
 import { Layout } from 'antd';
 import { Routes, Route } from 'react-router-dom';
 import "./AdminLayout.scss"; // Đảm bảo import CSS
@@ -11,6 +10,7 @@ import BatchManagement from '../BatchManagement/BatchManagement';
 import CommentManagement from '../CommentManagement/CommentManagement';
 import AudienceStatistics from '../AudienceStatistics/AudienceStatistics';
 import OrderStatistics from '../OrderStatistics/OrderStatistics';
+import Contact from '../Contact/Contact';
 
 const { Content, Sider } = Layout;
 
@@ -25,12 +25,14 @@ export default function AdminLayout() {
                     <Routes>
                         <Route path="/" element={<WebsiteInfo />} /> {/* Route mặc định */}
                         <Route path="suppliers" element={<SupplierManagement />} />
+                        <Route path="suppliers" element={<SupplierManagement />} />
                         <Route path="categories" element={<CategoryManagement />} />
                         <Route path="products" element={<ProductManagement />} />
                         <Route path="batches" element={<BatchManagement />} />
                         <Route path="comments" element={<CommentManagement />} />
                         <Route path="audience-statistics" element={<AudienceStatistics />} />
                         <Route path="order-statistics" element={<OrderStatistics />} />
+                        <Route path="contact" element={<Contact />} /> 
                     </Routes>
                 </Content>
             </Layout>

@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
+import { Input, Button, Table, Typography, Row, Col } from 'antd';
 import './SupplierManagement.scss';
+
+const { Title } = Typography;
 
 const SupplierManagement = () => {
     const [inputs, setInputs] = useState({
@@ -28,72 +31,94 @@ const SupplierManagement = () => {
         });
     };
 
+    const columns = [
+        {
+            title: 'Tên',
+            dataIndex: 'name',
+            key: 'name',
+        },
+        {
+            title: 'Địa chỉ',
+            dataIndex: 'address',
+            key: 'address',
+        },
+        {
+            title: 'Số điện thoại',
+            dataIndex: 'phone',
+            key: 'phone',
+        },
+        {
+            title: 'Email',
+            dataIndex: 'email',
+            key: 'email',
+        },
+        {
+            title: 'Sản phẩm',
+            dataIndex: 'product',
+            key: 'product',
+        },
+    ];
+
     return (
         <div className='supplier-management'>
-            <h2 className='heading'>Nhà cung cấp</h2>
-            <div className='input-container'>
-                <input
-                    type='text'
-                    name='name'
-                    placeholder='Tên nhà cung cấp'
-                    value={inputs.name}
-                    onChange={handleChange}
-                    className='input-field'
-                />
-                <input
-                    type='text'
-                    name='address'
-                    placeholder='Địa chỉ'
-                    value={inputs.address}
-                    onChange={handleChange}
-                    className='input-field'
-                />
-                <input
-                    type='tel'
-                    name='phone'
-                    placeholder='Số điện thoại'
-                    value={inputs.phone}
-                    onChange={handleChange}
-                    className='input-field'
-                />
-                <input
-                    type='email'
-                    name='email'
-                    placeholder='Email'
-                    value={inputs.email}
-                    onChange={handleChange}
-                    className='input-field'
-                />
-                <input
-                    type='text'
-                    name='product'
-                    placeholder='Sản phẩm cung cấp'
-                    value={inputs.product}
-                    onChange={handleChange}
-                    className='input-field'
-                />
-                <button onClick={handleSubmit} className='add-button'>Thêm</button>
-            </div>
+            <Title level={2} className='heading'>Nhà cung cấp</Title>
             <hr />
-            <div className='suppliers-list'>
-                <h3 className='list-heading'>Danh sách nhà cung cấp</h3>
-                <div className='columns'>
-                    <div className='column'>Tên</div>
-                    <div className='column'>Địa chỉ</div>
-                    <div className='column'>Số điện thoại</div>
-                    <div className='column'>Email</div>
-                    <div className='column'>Sản phẩm</div>
-                </div>
-                {suppliers.map((supplier, index) => (
-                    <div className='columns' key={index}>
-                        <div className='column'>{supplier.name}</div>
-                        <div className='column'>{supplier.address}</div>
-                        <div className='column'>{supplier.phone}</div>
-                        <div className='column'>{supplier.email}</div>
-                        <div className='column'>{supplier.product}</div>
-                    </div>
-                ))}
-            </div>
+
+            <Row gutter={16}>
+                <Col span={4}>
+                    <Input
+                        name='name'
+                        placeholder='Tên nhà cung cấp'
+                        value={inputs.name}
+                        onChange={handleChange}
+                    />
+                </Col>
+                <Col span={4}>
+                    <Input
+                        name='address'
+                        placeholder='Địa chỉ'
+                        value={inputs.address}
+                        onChange={handleChange}
+                    />
+                </Col>
+                <Col span={4}>
+                    <Input
+                        name='phone'
+                        placeholder='Số điện thoại'
+                        value={inputs.phone}
+                        onChange={handleChange}
+                    />
+                </Col>
+                <Col span={4}>
+                    <Input
+                        name='email'
+                        placeholder='Email'
+                        value={inputs.email}
+                        onChange={handleChange}
+                    />
+                </Col>
+                <Col span={4}>
+                    <Input
+                        name='product'
+                        placeholder='Sản phẩm cung cấp'
+                        value={inputs.product}
+                        onChange={handleChange}
+                    />
+                </Col>
+                <Col span={4}>
+                    <Button type='primary' onClick={handleSubmit}>
+                        Thêm
+                    </Button>
+                </Col>
+            </Row>
+
+            <hr />
+            <Title level={3} className='list-heading'>Danh sách nhà cung cấp</Title>
+            <Table
+                dataSource={suppliers.map((supplier, index) => ({ key: index, ...supplier }))}
+                columns={columns}
+                pagination={false}
+            />
         </div>
     );
 };

@@ -58,8 +58,9 @@ export default function ProfileInformation() {
 
     return (
         <div>
-            <form className="d-flex" style={{ margin: 100 }}>
-                <div className="d-block">
+            <form className="d-flex" style={{ marginLeft:15 }}>
+                <div className="d-block" style={{width:'550px'}}>
+                    <h2>Thông tin cá nhân</h2>
                     {["name", "email", "dob", "address"].map((field) => (
                         <EditableField
                             key={field}
@@ -70,11 +71,12 @@ export default function ProfileInformation() {
                             onChange={handleInputChange}
                             onEditClick={() => showModal(field)}
                             disabled={false}
+
                         />
                     ))}
                 </div>
 
-                <div style={{ marginLeft: 50 }}>
+                <div >
                     {imagePreview && (
                         <div>
                             <h3>Ảnh đại diện:</h3>
@@ -82,9 +84,9 @@ export default function ProfileInformation() {
                                 src={imagePreview}
                                 alt="Preview"
                                 style={{
-                                    width: '150px',
-                                    height: '150px',
-                                    marginLeft: '150px',
+                                    width: '100px',
+                                    height: '100px',
+                                    marginLeft: '170px',
                                     borderRadius: '50%',
                                 }}
                             />
@@ -95,10 +97,11 @@ export default function ProfileInformation() {
                             type="file"
                             accept="image/*"
                             onChange={handleFileChange}
-                            style={{ width: '500px', height: '40px', margin: 20 }}
+                            style={{ width: '500px', height: '40px', marginTop:20 }}
+
                         />
                     </label>
-                    {file && <p>File đã chọn: {file}</p>}
+                    {/* {file && <p>File đã chọn: {file}</p>} */}
                 </div>
             </form>
 

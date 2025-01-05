@@ -70,45 +70,40 @@ const items = [
 export default function ProfileLayout (){
     const navigate = useNavigate();
     const [stateOpenKeys, setStateOpenKeys] = useState(['2', '23']);
-    const [userName, setUserName] = useState(''); // Tạo state để lưu tên người dùng
+    const [userName, setUserName] = useState('');
 
     useEffect(() => {
-      // Giả sử bạn lấy dữ liệu người dùng từ API, context hoặc localStorage
       const userData = {
-        name: 'John Doe', // Tên người dùng lấy từ nguồn dữ liệu
+        name: 'John Doe', 
       };
-      setUserName(userData.name); // Cập nhật state với tên người dùng
+      setUserName(userData.name); 
     }, []);
     const onOpenChange = (openKeys) => {
         const currentOpenKey = openKeys.find((key) => stateOpenKeys.indexOf(key) === -1);
-        // open
         if (currentOpenKey !== undefined) {
         const repeatIndex = openKeys
             .filter((key) => key !== currentOpenKey)
             .findIndex((key) => levelKeys[key] === levelKeys[currentOpenKey]);
         setStateOpenKeys(
             openKeys
-            // remove repeat key
             .filter((_, index) => index !== repeatIndex)
-            // remove current level all child
             .filter((key) => levelKeys[key] <= levelKeys[currentOpenKey]),
         );
         } else {
-        // close
         setStateOpenKeys(openKeys);
         }
     };
     const onMenuClick = (e) => {
-        navigate(e.key); // Điều hướng đến đường dẫn từ key của menu
+        navigate(e.key);
       };
     return (
         <div className="d-flex">
             <div>
-                <div className="d-flex" style={{margin:10}}>  
+                <div className="d-flex" style={{margin:20}}>  
                     <Space wrap size={16}>
                         <Avatar size={65} icon={<UserOutlined />} />
                     </Space>
-                    <div style={{marginTop:20, marginLeft:15}}><p>{userName}</p></div>
+                    <div style={{marginTop:35, marginLeft:15}}><p>{userName}</p></div>
                 </div>
                 
                 <Menu
@@ -119,13 +114,18 @@ export default function ProfileLayout (){
                     onClick={onMenuClick}
                     style={{
                         width: 256,
-                        fontSize: 20,
-                        marginTop:30,
+                        fontSize: 15,
+                        marginTop:20,
+                        backgroundColor:'#E8F8D7',
+                        borderRadius:20,
+                        marginLeft:10,
+                        height:500
+                        
                     }}
                     items={items}
                 />
             </div>
-            <div>
+            <div style={{marginTop:100}}>
                 <Outlet/>
             </div>
         </div>

@@ -1,0 +1,7 @@
+.noLabel .ant-descriptions-item-label {
+    display: none;
+}
+
+.noLabel .ant-descriptions-item{
+    border-left: none
+}

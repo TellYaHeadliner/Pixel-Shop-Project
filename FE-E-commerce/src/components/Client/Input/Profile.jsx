@@ -19,7 +19,7 @@ export default function EditableField({ label, name, value, onChange, onEditClic
                 name={name}
                 value={value}
                 onChange={onChange}
-                style={{ width: '500px', height: '40px', margin: 20 }}
+                style={{ width: '250px', height: '30px', margin:15 }}
                 disabled={disabled}
             />
             {type === "password" && (
