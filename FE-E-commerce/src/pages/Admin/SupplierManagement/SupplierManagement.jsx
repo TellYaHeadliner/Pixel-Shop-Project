@@ -48,6 +48,9 @@ const SupplierManagement = () => {
 													label="Tên nhà cung cấp:"
 													labelCol={{span: 7}}
 													wrapperCol={{span: 15}}
+													rules={[
+														{required: true, whitespace: true, message: 'Vui lòng nhập tên nhà cung cấp!'}
+													]}
 												>
 													<Input/>
 												</Form.Item>
@@ -56,6 +59,9 @@ const SupplierManagement = () => {
 													label="Tên người liên hệ:"
 													labelCol={{span: 7}}
 													wrapperCol={{span: 15}}
+													rules={[
+														{required: true, whitespace: true, message: 'Vui lòng nhập tên người liên hệ!'}
+													]}
 												>
 													<Input/>
 												</Form.Item>
@@ -64,6 +70,9 @@ const SupplierManagement = () => {
 													label="Địa chỉ:"
 													labelCol={{span: 7}}
 													wrapperCol={{span: 15}}
+													rules={[
+														{required: true, whitespace: true, message: 'Vui lòng nhập địa chỉ nhà cung cấp!'}
+													]}
 												>
 													<Input/>
 												</Form.Item>
@@ -74,6 +83,13 @@ const SupplierManagement = () => {
 													label="Số điện thoại:"
 													labelCol={{span: 7}}
 													wrapperCol={{span: 15}}
+													rules={[
+														{required: true, message: 'Vui lòng nhập số điện thoại!'},
+														{
+															pattern: /^0\d{9}$/,
+															message: 'Số điện thoại phải có 10 chữ số và bắt đầu bằng 0!',
+														}
+													]}
 												>
 													<Input/>
 												</Form.Item>
@@ -82,6 +98,10 @@ const SupplierManagement = () => {
 													label="Email:"
 													labelCol={{span: 7}}
 													wrapperCol={{span: 15}}
+													rules={[
+														{ required: true, message: 'Vui lòng nhập email!' },
+														{ type: 'email', message: 'Định dạng email không hợp lệ!' },
+													]}
 												>
 													<Input/>
 												</Form.Item>
