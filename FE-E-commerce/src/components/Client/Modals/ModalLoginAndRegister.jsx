@@ -8,7 +8,6 @@ import {
   Input,
   Radio,
   message,
-  AutoComplete,
 } from "antd"; // Import Ant Design components
 import { useState } from "react";
 import styles from "./ModalLoginAndRegister.module.scss";

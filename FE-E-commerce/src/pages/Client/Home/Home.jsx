@@ -1,5 +1,4 @@
-import React from "react";
-import { Row, Col, Layout, Image, Typography, Card } from "antd";
+import { Row, Col, Layout, Typography, Card, Flex } from "antd";
 import { AiOutlineCheck } from "react-icons/ai";
 
 import SanPhamNav from "../../../components/Client/Button/SanPhamNav";
@@ -19,19 +18,15 @@ const Home = () => {
           imageRendering: "optimizeQuality",
         }}
       >
-        <Row gutter={[20, 20]}>
-          <Col xs={24} lg={12}>
-            <SlideShowAds linkImg="/imgs/slideshow1.png" />
+        <Row gutter={[16, 16]}>
+          <Col xs={24} md={14}>
+              <SlideShowAds linkImg="/imgs/slideshow1.png" width="100%" height="300px" />
           </Col>
-          <Col xs={24} md={12}>
-            <Row gutter={[16, 16]}>
-              <Col span={24}>
-                <SlideShowAds height="25%" linkImg="/imgs/slideshow2.png" />
-              </Col>
-              <Col span={24}>
-                <SlideShowAds height="25%" linkImg="/imgs/slideshow3.png" />
-              </Col>
-            </Row>
+          <Col xs={24} md={10}>
+            <Flex gap="middle" vertical>
+              <SlideShowAds linkImg="/imgs/slideshow2.png" width="100%" height="50%" />
+              <SlideShowAds linkImg="/imgs/slideshow3.png" width="100%" height="50%" />
+            </Flex>
           </Col>
         </Row>
 
