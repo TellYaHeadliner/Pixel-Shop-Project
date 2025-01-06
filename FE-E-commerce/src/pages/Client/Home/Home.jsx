@@ -1,5 +1,4 @@
-import React from "react";
-import { Row, Col, Layout, Image, Typography, Card, Flex } from "antd";
+import { Row, Col, Layout, Typography, Card, Flex } from "antd";
 import { AiOutlineCheck } from "react-icons/ai";
 
 import SanPhamNav from "../../../components/Client/Button/SanPhamNav";

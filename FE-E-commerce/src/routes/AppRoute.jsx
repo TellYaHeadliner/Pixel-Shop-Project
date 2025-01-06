@@ -14,6 +14,7 @@ import AudienceStatistics from "../pages/Admin/AudienceStatistics/AudienceStatis
 import OrderStatistics from "../pages/Admin/OrderStatistics/OrderStatistics";
 import Contact from "../pages/Admin/Contact/Contact";
 import WebsiteInfo from "../pages/Admin/WebsiteInfo/WebsiteInfo";
+import BusinessStatistics from "../pages/Admin/BusinessStatistics/BusinessStatistics";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -31,6 +32,7 @@ const AppRoutes = () => {
         <Route path="audience-statistics" element={<AudienceStatistics />} />
         <Route path="order-statistics" element={<OrderStatistics />} />
         <Route path="contact" element={<Contact />} />
+        <Route path="business-statistics" element={<BusinessStatistics />} />
       </Route>
     </Routes>
   );
