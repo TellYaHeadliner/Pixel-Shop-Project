@@ -15,8 +15,7 @@ const AudienceStatistics = lazy(() => import("../pages/Admin/AudienceStatistics/
 const OrderStatistics = lazy(() => import("../pages/Admin/OrderStatistics/OrderStatistics"));
 const Contact = lazy(() => import("../pages/Admin/Contact/Contact"));
 const WebsiteInfo = lazy(() => import("../pages/Admin/WebsiteInfo/WebsiteInfo"));
-const BusinessStatistics = lazy(() => "../pages/Admin/BusinessStatistics/BusinessStatistics");
-
+const BusinessStatistics = lazy(() => import("../pages/Admin/BusinessStatistics/BusinessStatistics"));
 
 const StaffLayout = lazy(() => import("../components/Staff/Layouts/StafffLayout"));
 const StaffContact = lazy(() => import("../pages/Staff/Contact/Contact"));
