@@ -3,6 +3,8 @@ import { Layout, Button, Tree, Badge } from "antd";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { FaUser, FaBars } from "react-icons/fa";
 import { FiShoppingCart } from "react-icons/fi";
+import { useNavigate } from "react-router-dom"; // Thêm import này
+
 import ModalLoginAndRegister from "../Modals/ModalLoginAndRegister";
 import styles from "./ClientHeader.module.scss";
 
@@ -38,10 +40,11 @@ const IconButtonNavHeader = ({ name, onClick, className }) => {
 };
 
 const ClientHeader = () => {
+  const navigate = useNavigate(); // Khởi tạo hook navigate
   const [showModalLogin, setShowModalLogin] = useState(false);
   const [titleLogin, setTitleLogin] = useState(false);
   const [showTree, setShowTree] = useState(false);
-  const [cartItemCount, setCartItemCount] = useState(20); // Số lượng giỏ hàng
+  const [cartItemCount, setCartItemCount] = useState(0); // Số lượng giỏ hàng
 
   const handleShowModalLogin = (isLogin = true) => {
     setTitleLogin(isLogin);
@@ -81,6 +84,10 @@ const ClientHeader = () => {
     },
   ];
 
+  const handleCartClick = () => {
+    navigate("/cart");
+  };
+
   const onSelect = (selectedKeys, info) => {
     console.log('Selected:', selectedKeys, info);
   };
@@ -101,10 +108,11 @@ const ClientHeader = () => {
             className={styles.contactButton}
           />
         </Badge>
-        <Badge count={cartItemCount} overflowCount={10}>
+        <Badge count={cartItemCount} overflowCount={99}>
           <IconButtonNavHeader
             name="Giỏ hàng"
             className={styles.cartButton}
+            onClick={handleCartClick} // Thêm hàm click vào giỏ hàng
           />
           <p className={styles.cartButton_total}>Tổng: 200k</p>
         </Badge>
