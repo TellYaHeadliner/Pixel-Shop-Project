@@ -4,7 +4,7 @@ import { UploadOutlined } from '@ant-design/icons';
 import { EllipsisOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import './ProductManagementAdd.scss'
-import CkeditorInsert from "../../../components/Client/Ckeditor/CkeditorInsert"
+import CkeditorInsert from "../../../components/Admin/CKeditor/CkeditorInsert"
 const ProductManagement = () => {
     const [searchTerm, setSearchTerm] = useState('');
 		const navigate = useNavigate();
