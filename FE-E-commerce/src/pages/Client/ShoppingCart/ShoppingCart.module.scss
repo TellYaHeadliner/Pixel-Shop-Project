@@ -1,0 +1,46 @@
+.cartContainer {
+    padding: 20px;
+    background-color: #f0f2f5;
+  }
+  
+  .cartItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .productInfo {
+    flex: 1;
+  }
+  
+  .quantityControls {
+    display: flex;
+    align-items: center;
+  
+    button {
+      width: 30px;
+      height: 30px;
+    }
+  
+    input {
+      width: 50px;
+      text-align: center;
+      margin: 0 5px;
+    }
+  }
+  
+  .totalAmount {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .orderButton {
+    padding: 10px 20px;
+  }
