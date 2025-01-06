@@ -31,9 +31,9 @@ const AppRoutes = () => {
       <Routes>
         <Route path="/" element={<ClientLayout />}>
           <Route index element={<Home />} />
-          <Route path="/product" element={<DetailProduct />} />
-          <Route path="/payment" element={<Payment />} />
-          <Route path="/shoppingcart" element={<ShoppingCart />} />
+          <Route path="product" element={<DetailProduct />} />
+          <Route path="payment" element={<Payment />} />
+          <Route path="shoppingcart" element={<ShoppingCart />} />
         </Route>
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<WebsiteInfo />} />
