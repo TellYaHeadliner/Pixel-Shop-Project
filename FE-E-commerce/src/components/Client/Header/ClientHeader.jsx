@@ -85,7 +85,7 @@ const ClientHeader = () => {
   ];
 
   const handleCartClick = () => {
-    navigate("/cart");
+    navigate("/shoppingcart");
   };
 
   const onSelect = (selectedKeys, info) => {

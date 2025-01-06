@@ -19,17 +19,17 @@ const Home = () => {
           imageRendering: "optimizeQuality",
         }}
       >
-        <Row gutter={[20, 20]}>
-          <Col xs={24} lg={12}>
+        <Row gutter={[20, 20]} className="image-layout">
+          <Col xs={24} lg={14} className="large-image-col">
             <SlideShowAds linkImg="/imgs/slideshow1.png" />
           </Col>
-          <Col xs={24} md={12}>
-            <Row gutter={[16, 16]}>
+          <Col xs={24} lg={10} className="small-images-col">
+            <Row gutter={[16, 16]} className="small-images">
               <Col span={24}>
-                <SlideShowAds height="25%" linkImg="/imgs/slideshow2.png" />
+                <SlideShowAds height="50%" linkImg="/imgs/slideshow2.png" />
               </Col>
               <Col span={24}>
-                <SlideShowAds height="25%" linkImg="/imgs/slideshow3.png" />
+                <SlideShowAds height="50%" linkImg="/imgs/slideshow3.png" />
               </Col>
             </Row>
           </Col>

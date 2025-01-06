@@ -1,0 +1,70 @@
+
+.sidebar {
+    width: 310px;
+    padding: 0 10px;
+    background-color: var(--primary);
+    margin-right: 50px;
+    color: var(--whited);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: fixed;
+
+    &-header {
+        padding: 16px;
+        text-align: center;
+        display: flex;
+        flex-direction: row;
+    }
+
+    &-avatar {
+        border-radius: 50%;
+        overflow: hidden;
+        width: 100px;
+        height: auto;
+        margin: 0 auto;
+
+        & img {
+            width: 100%;
+            height: auto;
+        }
+    }
+
+    &-staff-name {
+        margin: 10px 0 0;
+    }
+
+    &-menu {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+
+        &-item {
+            cursor: pointer;
+            display: flex;
+            border-radius: 10px;
+            align-content: center;
+            justify-content: center;
+
+            & a {
+                height: 40px;
+                width: 300px;
+                padding: 20px 20px 40px 10px;
+                text-decoration: none;
+                font-size: 16px;
+                font-weight: bold;
+                color: var(--whited);
+            }
+
+            svg {
+                margin-right: 8px;
+                font-size: 18px;
+                color: var(--whited);
+            }
+
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.2);
+            }
+        }
+    }
+}
