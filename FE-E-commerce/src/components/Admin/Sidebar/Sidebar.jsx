@@ -58,6 +58,11 @@ const Sidebar = () => {
               <SettingOutlined /> Quản lý liên hệ
             </Link>
           </li>
+          <li className="sidebar-menu-item">
+            <Link to="/admin/business-statistics">
+              <SettingOutlined /> Thống kê doanh thu
+            </Link>
+          </li>
         </ul>
       </div>
     );

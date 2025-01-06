@@ -1,28 +1,33 @@
+import React, { Suspense, lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 
-import ClientLayout from "../components/Client/Layouts/ClientLayout";
-import Home from "../pages/Client/Home/Home";
 
-import AdminLayout from "../components/Admin/layouts/AdminLayout";
 import ProfileLayout from "../components/Client/layouts/ProfileLayout";
 import ProfileInformation from "../pages/Client/ProfileInformation";
 import ProfileLocation from "../pages/Client/ProfileLocation";
 import ProfileChangePassWord from "../pages/Client/ProfileChangePassWord";
 import ProfileCompanyInformation from "../pages/Client/ProfileCompanyInformation";
 import ProfileProductloved from "../pages/Client/ProfileProductloved";
-import DetailProduct from "../pages/Client/DetailProduct"
-import SupplierManagement from "../pages/Admin/SupplierManagement/SupplierManagement";
-import CategoryManagement from "../pages/Admin/CategoryManagement/CategoryManagement";
-import ProductManagement from "../pages/Admin/ProductManagement/ProductManagement";
-import BatchManagement from "../pages/Admin/BatchManagement/BatchManagement";
-import CommentManagement from "../pages/Admin/CommentManagement/CommentManagement";
-import AudienceStatistics from "../pages/Admin/AudienceStatistics/AudienceStatistics";
-import OrderStatistics from "../pages/Admin/OrderStatistics/OrderStatistics";
-import Contact from "../pages/Admin/Contact/Contact";
-import WebsiteInfo from "../pages/Admin/WebsiteInfo/WebsiteInfo";
 
-import StaffLayout from "../components/Staff/Layouts/StafffLayout";
-import StaffContact from "../pages/Staff/Contact/Contact";
+const ClientLayout = lazy(() => import("../components/Client/Layouts/ClientLayout"));
+const Home = lazy(() => import("../pages/Client/Home/Home"));
+const DetailProduct = lazy(() => import("../pages/Client/DetailProduct"));
+
+const AdminLayout = lazy(() => import("../components/Admin/Layouts/AdminLayout"));
+const SupplierManagement = lazy(() => import("../pages/Admin/SupplierManagement/SupplierManagement"));
+const CategoryManagement = lazy(() => import("../pages/Admin/CategoryManagement/CategoryManagement"));
+const ProductManagement = lazy(() => import("../pages/Admin/ProductManagement/ProductManagement"));
+const BatchManagement = lazy(() => import("../pages/Admin/BatchManagement/BatchManagement"));
+const CommentManagement = lazy(() => import("../pages/Admin/CommentManagement/CommentManagement"));
+const AudienceStatistics = lazy(() => import("../pages/Admin/AudienceStatistics/AudienceStatistics"));
+const OrderStatistics = lazy(() => import("../pages/Admin/OrderStatistics/OrderStatistics"));
+const Contact = lazy(() => import("../pages/Admin/Contact/Contact"));
+const WebsiteInfo = lazy(() => import("../pages/Admin/WebsiteInfo/WebsiteInfo"));
+const BusinessStatistics = lazy(() => import("../pages/Admin/BusinessStatistics/BusinessStatistics"));
+
+const StaffLayout = lazy(() => import("../components/Staff/Layouts/StafffLayout"));
+const StaffContact = lazy(() => import("../pages/Staff/Contact/Contact"));
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -48,11 +53,7 @@ const AppRoutes = () => {
         <Route path="audience-statistics" element={<AudienceStatistics />} />
         <Route path="order-statistics" element={<OrderStatistics />} />
         <Route path="contact" element={<Contact />} />
-      </Route>
-      <Route path="/staff" element={<StaffLayout />}>
-        <Route index element={<StaffContact />} />
-        {/* <Route path="orders" element={<StaffContact />} />
-        <Route path="customer_consulting" element={<StaffContact />} /> */}
+        <Route path="business-statistics" element={<BusinessStatistics />} />
       </Route>
     </Routes>
   );
