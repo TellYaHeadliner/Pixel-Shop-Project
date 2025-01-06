@@ -58,7 +58,7 @@ export default function ProfileInformation() {
 
     return (
         <div>
-            <form className="d-flex" style={{ marginLeft:15 }}>
+            <form className="d-flex" style={{ marginLeft:50 }}>
                 <div className="d-block" style={{width:'550px'}}>
                     <h2>Thông tin cá nhân</h2>
                     {["name", "email", "dob", "address"].map((field) => (

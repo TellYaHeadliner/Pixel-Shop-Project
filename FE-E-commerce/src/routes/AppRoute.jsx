@@ -9,6 +9,7 @@ import ProfileInformation from "../pages/Client/ProfileInformation";
 import ProfileLocation from "../pages/Client/ProfileLocation";
 import ProfileChangePassWord from "../pages/Client/ProfileChangePassWord";
 import ProfileCompanyInformation from "../pages/Client/ProfileCompanyInformation";
+import ProfileProductloved from "../pages/Client/ProfileProductloved";
 import DetailProduct from "../pages/Client/DetailProduct"
 import SupplierManagement from "../pages/Admin/SupplierManagement/SupplierManagement";
 import CategoryManagement from "../pages/Admin/CategoryManagement/CategoryManagement";
@@ -31,6 +32,8 @@ const AppRoutes = () => {
           <Route index element={<ProfileInformation/>}/>
           <Route path="locations" element={<ProfileLocation/>}/>
           <Route path="changepassword" element={<ProfileChangePassWord/>}/>
+          <Route path="productloved" element={<ProfileProductloved/>}/>
+
         </Route>
         <Route path="/about" element={<ProfileCompanyInformation/>}/>
         <Route path="/product" element={<DetailProduct />} />
