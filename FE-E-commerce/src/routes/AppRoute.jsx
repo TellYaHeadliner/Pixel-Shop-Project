@@ -9,6 +9,7 @@ const AdminLayout = lazy(() => import("../components/Admin/Layouts/AdminLayout")
 const SupplierManagement = lazy(() => import("../pages/Admin/SupplierManagement/SupplierManagement"));
 const CategoryManagement = lazy(() => import("../pages/Admin/CategoryManagement/CategoryManagement"));
 const ProductManagement = lazy(() => import("../pages/Admin/ProductManagement/ProductManagement"));
+const ProductManagementAdd = lazy(() => import("../pages/Admin/ProductManagement/ProductManagementAdd"));
 const BatchManagement = lazy(() => import("../pages/Admin/BatchManagement/BatchManagement"));
 const CommentManagement = lazy(() => import("../pages/Admin/CommentManagement/CommentManagement"));
 const AudienceStatistics = lazy(() => import("../pages/Admin/AudienceStatistics/AudienceStatistics"));
@@ -31,7 +32,10 @@ const AppRoutes = () => {
         <Route index element={<WebsiteInfo />} />
         <Route path="suppliers" element={<SupplierManagement />} />
         <Route path="categories" element={<CategoryManagement />} />
-        <Route path="products" element={<ProductManagement />} />
+				<Route path="products">
+					<Route index element={<ProductManagement />} />
+					<Route path="add" element={<ProductManagementAdd />} />
+				</Route>
         <Route path="batches" element={<BatchManagement />} />
         <Route path="comments" element={<CommentManagement />} />
         <Route path="audience-statistics" element={<AudienceStatistics />} />
