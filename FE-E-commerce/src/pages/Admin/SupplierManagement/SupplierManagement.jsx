@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Button, Input,Form, message } from 'antd';
 import './SupplierManagement.scss';
-import { Input, Button, Table, Typography, Row, Col } from 'antd';
+import { Input, Table, Typography, Row, Col, Button,Form, message } from 'antd';
 
 
 const { Title } = Typography;
