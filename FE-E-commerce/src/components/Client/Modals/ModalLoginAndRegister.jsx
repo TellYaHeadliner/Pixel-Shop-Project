@@ -11,7 +11,7 @@ import {
   AutoComplete,
 } from "antd"; // Import Ant Design components
 import { useState } from "react";
-import styles from "./ModalLoginAndRegister.module.css";
+import styles from "./ModalLoginAndRegister.module.scss";
 import axios from "axios";
 
 const { TabPane } = Tabs;
@@ -145,7 +145,7 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
         }, 1000);
       }
     } catch (error) { 
-      message.error(error.data.message);
+      message.error(error.response.data.message);
     }
   };
 
