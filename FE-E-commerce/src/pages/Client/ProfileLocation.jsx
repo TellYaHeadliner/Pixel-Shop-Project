@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Button, Input, message } from 'antd';
+import { Modal, Button, Input, message, Select, Form } from 'antd';
 import ButtonProfile from '../../components/Client/Button/ButtonProfile';
 
+const { Option } = Select;
+
 export default function ProfileLocation() {
-    const [addresses, setAddresses] = useState([]); 
-    const [newAddress, setNewAddress] = useState(''); 
-    const [isModalVisible, setIsModalVisible] = useState(false); 
-    const [selectedAddress, setSelectedAddress] = useState(null); 
-    const [editedAddress, setEditedAddress] = useState(''); 
+    const [addresses, setAddresses] = useState([]);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isAddAddressModalVisible, setIsAddAddressModalVisible] = useState(false);
+    const [selectedAddressId, setSelectedAddressId] = useState(null);
+    const [editedAddress, setEditedAddress] = useState('');
+    const [form] = Form.useForm();
 
     useEffect(() => {
         const savedAddresses = JSON.parse(localStorage.getItem('addresses')) || [];
@@ -15,44 +18,51 @@ export default function ProfileLocation() {
 
         const defaultAddress = savedAddresses.find(addr => addr.isDefault);
         if (defaultAddress) {
-            setSelectedAddress(defaultAddress);
+            setSelectedAddressId(defaultAddress.id);
         }
     }, []);
 
-    const addAddress = () => {
-        if (newAddress === '') {
-            message.error('Vui lòng nhập địa chỉ!');
-            return;
-        }
+    const addAddress = (values) => {
+        const { fullName, phoneNumber, city, specificAddress, isOffice } = values;
 
         if (addresses.length >= 10) {
             message.error('Đã đạt giới hạn tối đa 10 địa chỉ!');
             return;
         }
 
-        const newAddressObj = { 
-            address: newAddress, 
-            isDefault: false 
+        const newAddressObj = {
+            id: Date.now(), // Tạo ID duy nhất
+            fullName,
+            phoneNumber,
+            city,
+            specificAddress,
+            isOffice,
+            isDefault: false,
         };
 
         const updatedAddresses = [...addresses, newAddressObj];
         setAddresses(updatedAddresses);
         localStorage.setItem('addresses', JSON.stringify(updatedAddresses));
-        setNewAddress(''); 
+
+        form.resetFields();
+        setIsAddAddressModalVisible(false);
+
+        message.success('Địa chỉ đã được thêm thành công!');
     };
 
-    const setDefaultAddress = (address) => {
+    const setDefaultAddress = (id) => {
         const updatedAddresses = addresses.map(addr =>
-            addr.address === address ? { ...addr, isDefault: true } : { ...addr, isDefault: false }
+            addr.id === id ? { ...addr, isDefault: true } : { ...addr, isDefault: false }
         );
         setAddresses(updatedAddresses);
         localStorage.setItem('addresses', JSON.stringify(updatedAddresses));
-        setSelectedAddress(address); 
+        setSelectedAddressId(id);
     };
 
-    const openEditModal = (address) => {
-        setSelectedAddress(address);
-        setEditedAddress(address); 
+    const openEditModal = (id) => {
+        const addressToEdit = addresses.find(addr => addr.id === id);
+        setSelectedAddressId(id);
+        setEditedAddress(addressToEdit.specificAddress);
         setIsModalVisible(true);
     };
 
@@ -67,37 +77,91 @@ export default function ProfileLocation() {
         }
 
         const updatedAddresses = addresses.map(addr =>
-            addr.address === selectedAddress ? { ...addr, address: editedAddress } : addr
+            addr.id === selectedAddressId ? { ...addr, specificAddress: editedAddress } : addr
         );
         setAddresses(updatedAddresses);
         localStorage.setItem('addresses', JSON.stringify(updatedAddresses));
         setIsModalVisible(false);
     };
 
-    const deleteAddress = (address) => {
-        const updatedAddresses = addresses.filter(addr => addr.address !== address);
+    const deleteAddress = (id) => {
+        const updatedAddresses = addresses.filter(addr => addr.id !== id);
         setAddresses(updatedAddresses);
         localStorage.setItem('addresses', JSON.stringify(updatedAddresses));
+        message.success('Địa chỉ đã được xóa!');
     };
 
     return (
-        <div style={{ marginLeft: 100 }}>
+        <div style={{ marginLeft: 10 }}>
             <div>
-                <label>Địa chỉ:</label>
-                <Input
-                    type="text"
-                    name="address"
-                    style={{ width: '500px', height: '40px', margin: 20 }}
-                    value={newAddress}
-                    onChange={(e) => setNewAddress(e.target.value)}
-                />
+                <h2>Địa chỉ</h2>
+                <ButtonProfile
+                    type="primary"
+                    onClick={() => setIsAddAddressModalVisible(true)}
+                    style={{ marginLeft: 700 }}
+                >
+                    Thêm địa chỉ
+                </ButtonProfile>
             </div>
-            <ButtonProfile
-                type="primary"
-                onClick={addAddress}
+
+            {/* Modal thêm địa chỉ */}
+            <Modal
+                title="Thêm địa chỉ mới"
+                visible={isAddAddressModalVisible}
+                onCancel={() => setIsAddAddressModalVisible(false)}
+                footer={null}
+                width={800}
             >
-                Thêm địa chỉ
-            </ButtonProfile>
+                <Form form={form} layout="vertical" onFinish={addAddress}>
+                    <div style={{ display: 'flex' }}>
+                        <Form.Item
+                            label="Họ và tên"
+                            name="fullName"
+                            rules={[{ required: true, message: 'Vui lòng nhập họ và tên!' }]}
+                        >
+                            <Input type="text" style={{ width: '300px', height: '40px' }} />
+                        </Form.Item>
+
+                        <Form.Item
+                            label="Số điện thoại"
+                            name="phoneNumber"
+                            rules={[{ required: true, message: 'Vui lòng nhập số điện thoại!' }]}
+                            style={{ marginLeft: 50 }}
+                        >
+                            <Input type="text" style={{ width: '300px', height: '40px' }} />
+                        </Form.Item>
+                    </div>
+
+                    <Form.Item
+                        label="Tỉnh/Thành phố"
+                        name="city"
+                        rules={[{ required: true, message: 'Vui lòng nhập tỉnh thành!' }]}
+                    >
+                        <Input type="text" style={{ width: '100%', height: '40px' }} />
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Địa chỉ cụ thể"
+                        name="specificAddress"
+                        rules={[{ required: true, message: 'Vui lòng nhập địa chỉ cụ thể!' }]}
+                    >
+                        <Input type="text" style={{ width: '100%', height: '40px' }} />
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Loại địa chỉ"
+                        name="isOffice"
+                        rules={[{ required: true, message: 'Vui lòng chọn loại địa chỉ!' }]}
+                    >
+                        <Select style={{ width: '120px', height: '40px' }}>
+                            <Option value={false}>Nhà riêng</Option>
+                            <Option value={true}>Văn phòng</Option>
+                        </Select>
+                    </Form.Item>
+
+                    <ButtonProfile htmlType="submit">Thêm địa chỉ</ButtonProfile>
+                </Form>
+            </Modal>
 
             <div>
                 <h3>Danh sách địa chỉ:</h3>
@@ -105,28 +169,30 @@ export default function ProfileLocation() {
                     <p>Chưa có địa chỉ nào</p>
                 ) : (
                     <ul>
-                        {addresses.map((address, index) => (
-                            <li key={index}>
-                                {address.address}
+                        {addresses.map((address) => (
+                            <li key={address.id}>
+                                {address.fullName}, {address.phoneNumber}, {address.city}, {address.specificAddress}
+                                {address.isOffice && <span style={{ color: 'blue', marginLeft: 10 }}>(Văn phòng)</span>}
+                                {!address.isOffice && <span style={{ color: 'brown', marginLeft: 10 }}>(Nhà riêng)</span>}
                                 {address.isDefault && <span style={{ color: 'green', marginLeft: 10 }}>(Mặc định)</span>}
                                 <Button
                                     style={{ marginLeft: 10 }}
                                     type="link"
-                                    onClick={() => setDefaultAddress(address.address)}
+                                    onClick={() => setDefaultAddress(address.id)}
                                 >
                                     Chọn làm mặc định
                                 </Button>
                                 <Button
                                     style={{ marginLeft: 10 }}
                                     type="link"
-                                    onClick={() => openEditModal(address.address)}
+                                    onClick={() => openEditModal(address.id)}
                                 >
                                     Chỉnh sửa
                                 </Button>
                                 <Button
                                     style={{ marginLeft: 10 }}
                                     type="link"
-                                    onClick={() => deleteAddress(address.address)}
+                                    onClick={() => deleteAddress(address.id)}
                                 >
                                     Xóa
                                 </Button>
@@ -149,11 +215,8 @@ export default function ProfileLocation() {
                         value={editedAddress}
                         onChange={(e) => setEditedAddress(e.target.value)}
                     />
-                    <ButtonProfile
-                        type="primary"
-                        onClick={handleEditSubmit}
-                    >
-                        Lưu thay đổi    
+                    <ButtonProfile type="primary" onClick={handleEditSubmit}>
+                        Lưu thay đổi
                     </ButtonProfile>
                 </div>
             </Modal>

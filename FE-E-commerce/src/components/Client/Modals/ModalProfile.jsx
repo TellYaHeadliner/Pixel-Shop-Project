@@ -2,7 +2,7 @@
 import React from 'react';
 import { Modal } from 'antd';
 
-export default function ModalProfile({ visible, field, value, onOk, onCancel, onChange }) {
+export default function ModalProfile({ visible, field, value, onOk, onCancel, onChange, type }) {
   return (
     <Modal
       title={`Chỉnh sửa ${field}`}
@@ -12,8 +12,9 @@ export default function ModalProfile({ visible, field, value, onOk, onCancel, on
     >
       <div>
         <label>{field}:</label>
+        {/* Kiểm tra trường hợp có kiểu nhập liệu đặc biệt */}
         <input
-          type={field === "dob" ? "date" : "text"}
+          type={type || "text"} 
           name={field}
           value={value}
           onChange={onChange}

@@ -6,24 +6,21 @@ import { useNavigate } from "react-router-dom"; // Import useNavigate
 const initialData = [
   {
     key: "1",
-    name: "Laptop",
-    priceproduct: "1000",
-    quantityproduct: "1",
-    totalpriceproduct: "1000",
+    tenSanPham: "Laptop",
+    gia: "1000",
+    
   },
   {
     key: "2",
-    name: "Smartphone",
-    priceproduct: "500",
-    quantityproduct: "2",
-    totalpriceproduct: "1000",
+    tenSanPham: "Smartphone",
+    gia: "500",
+    
   },
   {
     key: "3",
-    name: "Headphones",
-    priceproduct: "200",
-    quantityproduct: "3",
-    totalpriceproduct: "600",
+    tenSanPham: "Headphones",
+    gia: "200",
+   
   },
 ];
 
@@ -55,8 +52,8 @@ export default function ProfileProductloved() {
   const columns = [
     {
       title: "Tên sản phẩm",
-      dataIndex: "name",
-      key: "nameproduct",
+      dataIndex: "tenSanPham",
+      key: "tenSanPham",
       render: (text, record) => (
         <a
           onClick={() => navigate(`/product/${record.key}`)} 
@@ -68,8 +65,8 @@ export default function ProfileProductloved() {
     },
     {
       title: "Giá",
-      dataIndex: "priceproduct",
-      key: "priceproduct",
+      dataIndex: "gia",
+      key: "gia",
     },
     {
       key: "action",

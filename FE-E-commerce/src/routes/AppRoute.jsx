@@ -8,6 +8,7 @@ import ProfileLocation from "../pages/Client/ProfileLocation";
 import ProfileChangePassWord from "../pages/Client/ProfileChangePassWord";
 import ProfileCompanyInformation from "../pages/Client/ProfileCompanyInformation";
 import ProfileProductloved from "../pages/Client/ProfileProductloved";
+import ContactInformation from "../pages/Client/ContactInformation";
 
 const ClientLayout = lazy(() => import("../components/Client/Layouts/ClientLayout"));
 const Home = lazy(() => import("../pages/Client/Home/Home"));
@@ -40,6 +41,7 @@ const AppRoutes = () => {
           <Route path="productloved" element={<ProfileProductloved/>}/>
 
         </Route>
+        <Route path="contact" element={<ContactInformation/>}/>
         <Route path="/about" element={<ProfileCompanyInformation/>}/>
         <Route path="/product" element={<DetailProduct />} />
       </Route>

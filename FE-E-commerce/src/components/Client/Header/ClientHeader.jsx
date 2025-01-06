@@ -106,6 +106,7 @@ const ClientHeader = () => {
           <IconButtonNavHeader
             name="Liên hệ"
             className={styles.contactButton}
+            onClick={()=>(navigate("/contact"))}
           />
         </Badge>
         <Badge count={cartItemCount} overflowCount={99}>

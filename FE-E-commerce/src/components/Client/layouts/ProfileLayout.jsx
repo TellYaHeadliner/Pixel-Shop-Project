@@ -108,7 +108,7 @@ export default function ProfileLayout() {
           items={modifiedItems}
         />
       </div>
-      <div style={{ marginLeft: 25 }}>
+      <div style={{ marginLeft: 30 }}>
         <Outlet />
       </div>
     </div>
