@@ -1,73 +1,44 @@
-/* ClientHeader.module.scss */
-
 .header {
     display: flex;
     flex-direction: column;
-    /* Stack top row and search/buttons */
-    background: #8037de;
-    /* Background color */
-    padding: 0 36px;
-    /* Padding around the header */
-    height: 180px;
+    position: fixed;
+    background-color: var(--header);
+    padding: 0 56px;
+    margin: 1vw 6vw 0;
+    height: 160px;
+    width: 82vw;
+    z-index: 10;
+    border-radius: 500px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Thêm bóng đổ cho header
 }
 
 .topRow {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
-    /* Space between elements in the row */
-}
+    position: relative;
 
-.menuButton {
-    margin-right: auto;
-    border-radius: 10;
-}
-
-.menuItems {
-    display: flex;
-    /* Align menu items horizontally */
-    align-items: center;
-    /* Center align items */
-}
-
-.link {
-    color: white;
-    text-decoration: none;
-    margin: 0 65px;
-
-    &:hover {
-        text-decoration: underline;
-    }
-}
-
-.logo {
-    margin-left: auto;
-}
-
-.logoImage {
-    width: 80px;
-    /* Set logo width */
-    height: auto;
-    /* Maintain aspect ratio */
 }
 
 .searchAndButtons {
     display: flex;
     align-items: center;
-    /* Vertically center the search and buttons */
-    margin-top: 16px;
-    /* Space above search and buttons */
 }
 
 .searchInput {
-    height: 50px;
-    /* Increase height */
-    font-size: 18px;
-    /* Make text larger */
-    width: 600px;
-    /* Width for the search input */
-    /* Space between search and buttons */
-    border-radius: 5px;
+    width: 55vw;
+    height: 55px;
+    padding: 0 25px;
+    font-size: 20px;
+    outline: none;
+    border-radius: 50px;
+    margin: 15px 0 10px 0;
+    border: 1px solid var(--border-color); // Thêm viền cho input
+    transition: border-color 0.3s;
+
+    &:focus {
+        border-color: var(--focus-color); // Thay đổi viền khi focus
+    }
 }
 
 .button {
@@ -75,56 +46,99 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 0px 10px;
-    border-radius: 10px;
+    border-radius: 20px;
+    margin: 0 0px 0 25px;
+    padding: 15px 20px;
+    transition: background-color 0.3s ease;
     cursor: pointer;
-    margin: 0 20px;
     color: white;
-    height: 75px;
-    width: 100px;
 }
 
-.buttonText {
-    text-align: center;
-    font-size: 90%;
-    letter-spacing: 1px;
+.contactButton {
+    background-color: #FFD700; // Màu cho nút liên hệ
 }
 
-.ButtonNavHeader {}
+.cartButton {
+    background-color: #228B22; // Màu cho nút giỏ hàng
+    position: relative;
+
+    &_total {
+        position: absolute;
+        bottom: -100;
+        left: 25%;
+        width: 120%;
+        font-size: 14px;
+        font-weight: bolder;
+    }
+}
+
+.loginButton {
+    background-color: #FF6347; // Màu cho nút đăng nhập
+}
 
 .icon {
     width: 30px;
     height: 30px;
-    margin: 10px 0;
+}
+
+.CategoryButton {
+    background-color: transparent;
+    color: var(--darktext);
+    outline: none;
+    transition: color 0.3s ease;
+    border: none;
+    font-size: 17px;
+
+    &:hover {
+        color: var(--hover-color);
+    }
+}
+
+.link {
+    color: var(--darktext);
+    text-decoration: none;
+    margin: 0 55px;
+    font-size: 23px;
+    font-weight: bolder;
+    transition: color 0.3s;
+
+    &:hover {
+        text-decoration: underline;
+        color: red;
+    }
+}
+
+.logo {
+    margin-right: 17px;
+
+    &Image {
+        width: 80px;
+        height: auto;
+        border-radius: 1000px;
+    }
 }
 
 .tree {
     position: absolute;
-    width: 201.2px;
-    height: fit-content;
-    padding: 13px 10px 10px;
-    left: 2.1%;
-    top: 17.9%;
-    font-size: 16px;
+    width: 23%;
+    left: -1%;
+    top: 80%;
+    font-size: 19px;
     border-radius: 0 0 10px 10px;
-    animation: showUptoDown 0.5s ease-in;
-}
+    animation: showUptoDown 0.15s ease-in;
 
-.tree-hidden {
-    display: none;
-    width: 201.2px;
+    &-hidden {
+        display: none;
+        width: 201.2px;
+    }
 }
 
 @keyframes showUptoDown {
     0% {
-        height: 0px;
         opacity: 0;
-        font-size: 10px;
     }
 
     100% {
-        height: fit-content;
         opacity: 1;
-        font-size: 16px;
     }
 }

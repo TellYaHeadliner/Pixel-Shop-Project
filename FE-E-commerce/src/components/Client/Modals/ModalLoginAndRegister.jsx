@@ -11,12 +11,12 @@ import {
   AutoComplete,
 } from "antd"; // Import Ant Design components
 import { useState } from "react";
-import styles from "./ModalLogin.module.css";
+import styles from "./ModalLoginAndRegister.module.scss";
 import axios from "axios";
 
 const { TabPane } = Tabs;
 
-const ModalLogin = ({ show, onClose }) => {
+const ModalLoginAndRegister = ({ show, onClose }) => {
   const [formRegister] = Form.useForm();
   const [key, setKey] = useState("Đăng nhập");
   const [captcha, setCaptcha] = useState("000000");
@@ -101,6 +101,7 @@ const ModalLogin = ({ show, onClose }) => {
         setKey("Đăng nhập");
       }
     } catch (error) {
+				console.error(error.response.data);
       message.error(error.response.data.message);
     }
   };
@@ -145,6 +146,7 @@ const ModalLogin = ({ show, onClose }) => {
         }, 1000);
       }
     } catch (error) { 
+			console.error(error.response.data);
       message.error(error.data.message);
     }
   };
@@ -292,9 +294,9 @@ const ModalLogin = ({ show, onClose }) => {
   );
 };
 
-ModalLogin.propTypes = {
+ModalLoginAndRegister.propTypes = {
   show: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
 };
 
-export default ModalLogin;
+export default ModalLoginAndRegister;

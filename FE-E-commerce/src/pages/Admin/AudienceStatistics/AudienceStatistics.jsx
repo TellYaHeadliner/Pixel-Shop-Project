@@ -1,6 +1,11 @@
 import React from 'react';
 import { Card, Row, Col } from 'antd';
 import { Bar } from '@ant-design/charts';
+import BarChart from "../Charts/BarChart";
+
+import LineChart from "../Charts/LineChart";
+import PieChart from "../Charts/PieChart";
+
 
 const AudienceStatistics = () => {
     const data = [
@@ -53,6 +58,10 @@ const AudienceStatistics = () => {
                     </Card>
                 </Col>
             </Row>
+        {/* <div>
+            <PieChart />
+            <BarChart />
+            <LineChart /> */}
         </div>
     );
 };

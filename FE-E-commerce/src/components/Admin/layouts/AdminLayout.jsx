@@ -1,4 +1,3 @@
-import React from 'react';
 import { Layout } from 'antd';
 import { Routes, Route, Outlet } from 'react-router-dom';
 import "./AdminLayout.scss"; // Đảm bảo import CSS
@@ -12,18 +11,19 @@ import CommentManagement from '../../../pages/Admin/CommentManagement/CommentMan
 import AudienceStatistics from '../../../pages/Admin/AudienceStatistics/AudienceStatistics';
 import OrderStatistics from '../../../pages/Admin/OrderStatistics/OrderStatistics';
 
+import "./AdminLayout.scss";
 const { Content, Sider } = Layout;
 
 
 export default function AdminLayout() {
     return (
         <Layout style={{ minHeight: '100vh' }}>
-            <Sider width={300} className="sidebar">
+            <Sider>
                 <Sidebar />
             </Sider>
-            <Layout style={{ padding: '0 24px 24px' }}>
+            <Layout style={{ marginLeft: '180px' }}>
                 <Content style={{ margin: 0, minHeight: 280 }}>
-                    <Outlet/>
+                    <Outlet />
                 </Content>
             </Layout>
         </Layout>

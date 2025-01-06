@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
+import { Button, Input,Form, message } from 'antd';
 import './SupplierManagement.scss';
+import { Input, Button, Table, Typography, Row, Col } from 'antd';
+
+
+const { Title } = Typography;
 
 const SupplierManagement = () => {
     const [inputs, setInputs] = useState({
