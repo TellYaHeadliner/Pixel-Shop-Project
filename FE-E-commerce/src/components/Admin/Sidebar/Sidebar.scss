@@ -1,18 +1,13 @@
-:root {
-    --whited: #fff;
-    --bg: #e7e7e7;
-}
-
 .sidebar {
     width: 310px;
     padding: 0 10px;
-    background-color: var(--primary);
-    margin-right: 50px;
+    margin-right: 40px;
     color: var(--whited);
     display: flex;
     flex-direction: column;
     height: 100vh;
     position: fixed;
+    background-color: var(--primary);
 
     &-header {
         padding: 16px;

@@ -18,10 +18,8 @@ const { Content, Sider } = Layout;
 export default function AdminLayout() {
     return (
         <Layout style={{ minHeight: '100vh' }}>
-            <Sider>
-                <Sidebar />
-            </Sider>
-            <Layout style={{ marginLeft: '180px' }}>
+            <Sidebar />
+            <Layout style={{ marginLeft: '340px' }}>
                 <Content style={{ margin: 0, minHeight: 280 }}>
                     <Outlet />
                 </Content>
