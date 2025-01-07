@@ -6,6 +6,8 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DanhMucController;
 use App\Http\Controllers\ThongTinController;
+use App\Http\Controllers\NhaCungCapController;
+
 use App\Http\Middleware\CheckEmailSignUp;
 Route::controller(UserController::class)->group(function(){
     Route::post('/api/login',[UserController::class, 'login']);
@@ -21,6 +23,10 @@ Route::controller(ThongTinController::class)->group(function(){
 	Route::get('/api/getThongTin',[ThongTinController::class, 'get']);
 });
 
+Route::controller(NhaCungCapController::class)->group(function(){
+	Route::post('/api/addNhaCungCap',[NhaCungCapController::class,'add']);
+	Route::get('/api/listNhaCungCap',[NhaCungCapController::class,'getList']);
+});
 
 
 
