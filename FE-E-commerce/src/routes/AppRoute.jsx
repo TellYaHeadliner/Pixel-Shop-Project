@@ -1,7 +1,9 @@
 import React, { Suspense, lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 
+
 //client management
+
 const ClientLayout = lazy(() => import("../components/Client/Layouts/ClientLayout"));
 const Home = lazy(() => import("../pages/Client/Home/Home"));
 const DetailProduct = lazy(() => import("../pages/Client/DetailProduct"));
