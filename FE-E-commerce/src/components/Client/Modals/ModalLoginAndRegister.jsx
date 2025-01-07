@@ -100,6 +100,7 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
         setKey("Đăng nhập");
       }
     } catch (error) {
+				console.error(error.response.data);
       message.error(error.response.data.message);
     }
   };
@@ -144,6 +145,7 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
         }, 1000);
       }
     } catch (error) { 
+			console.error(error.response.data);
       message.error(error.data.message);
     }
   };

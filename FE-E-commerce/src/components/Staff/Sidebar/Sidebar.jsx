@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { UserOutlined, ShoppingCartOutlined, DashboardOutlined, SettingOutlined } from '@ant-design/icons';
+import { UserOutlined, ShoppingCartOutlined, DashboardOutlined } from '@ant-design/icons';
 import './Sidebar.scss';
 
 const StaffSidebar = () => {
