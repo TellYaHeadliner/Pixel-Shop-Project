@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from "react";
+import {  lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 
 const ClientLayout = lazy(() => import("../components/Client/Layouts/ClientLayout"));
@@ -23,6 +23,9 @@ const StaffContact = lazy(() => import("../pages/Staff/Contact/Contact"));
 const AppRoutes = () => {
   return (
     <Routes>
+      <Route path="/staff" element={<StaffLayout />}>
+        <Route index element={<StaffContact />} />
+      </Route>
       <Route path="/" element={<ClientLayout />}>
         <Route index element={<Home />} />
         <Route path="/product" element={<DetailProduct />} />

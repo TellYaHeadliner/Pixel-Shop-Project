@@ -1,5 +1,4 @@
 import { Layout } from 'antd';
-import { Routes, Route, Outlet } from 'react-router-dom';
 import "./StaffLayout.scss"; // Đảm bảo import CSS
 import StaffSidebar from '../Sidebar/Sidebar';
 const { Content, Sider } = Layout;
