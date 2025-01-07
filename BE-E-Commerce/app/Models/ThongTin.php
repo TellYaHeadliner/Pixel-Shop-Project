@@ -9,6 +9,7 @@ class ThongTin extends Model
 {
     use HasFactory;
 
+		protected $table = "thongtin";
     protected $fillable = [
         'dichVu',
         'facebook',
@@ -17,5 +18,11 @@ class ThongTin extends Model
         'tiktok'
     ];
 
-    
+		static function Add(){
+			
+		}
+
+		static function Get(){
+			return ThongTin::all()->first();
+		}
 }

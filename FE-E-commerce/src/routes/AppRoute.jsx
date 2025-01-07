@@ -41,7 +41,10 @@ const AppRoutes = () => {
           <Route index element={<WebsiteInfo />} />
           <Route path="suppliers" element={<SupplierManagement />} />
           <Route path="categories" element={<CategoryManagement />} />
-          <Route path="products" element={<ProductManagement />} />
+          <Route path="products">
+						<Route index element={<ProductManagement />}/>
+						<Route path="add" element={<ProductManagementAdd/>} />
+					</Route>
           <Route path="batches" element={<BatchManagement />} />
           <Route path="comments" element={<CommentManagement />} />
           <Route path="audience-statistics" element={<AudienceStatistics />} />
