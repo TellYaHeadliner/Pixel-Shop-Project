@@ -5,13 +5,12 @@ import Sidebar from '../Sidebar/Sidebar';
 import "./AdminLayout.scss";
 const { Content, Sider } = Layout;
 
+
 export default function AdminLayout() {
     return (
         <Layout style={{ minHeight: '100vh' }}>
-            <Sider>
-                <Sidebar />
-            </Sider>
-            <Layout style={{ marginLeft: '180px' }}>
+            <Sidebar />
+            <Layout style={{ marginLeft: '350px' }}>
                 <Content style={{ margin: 0, minHeight: 280 }}>
                     <Outlet />
                 </Content>

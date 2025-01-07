@@ -8,7 +8,6 @@ import {
   Input,
   Radio,
   message,
-  AutoComplete,
 } from "antd"; // Import Ant Design components
 import { useState } from "react";
 import styles from "./ModalLoginAndRegister.module.scss";
@@ -101,6 +100,7 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
         setKey("Đăng nhập");
       }
     } catch (error) {
+				console.error(error.response.data);
       message.error(error.response.data.message);
     }
   };

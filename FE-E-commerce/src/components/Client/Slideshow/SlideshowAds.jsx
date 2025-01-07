@@ -1,6 +1,6 @@
 import { Carousel } from "antd";
 
-const SlideShowAds = ({ width = "100%" ,height = "100%", linkImg }) => {
+const SlideShowAds = ({ width ,height, linkImg }) => {
   return (
     <>
       <Carousel autoplay>

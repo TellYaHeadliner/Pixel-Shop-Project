@@ -9,11 +9,16 @@
 
 .user-home {
     &-layout {
+<<<<<<< HEAD
+        background-color: r(--bgva);
+=======
         background-color: var(--bg);
+        margin: 10px 30px;
+>>>>>>> 65bbf4e39a4c0e9e18b2e71226eebc9aaf0f64ba
     }
 
     &-content {
-        padding: 20px 30px;
+        padding: 20px 20px;
         height: 100%;
         margin: 0 0;
         background-color: var(--bg);
