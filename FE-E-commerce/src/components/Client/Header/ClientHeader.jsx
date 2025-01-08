@@ -44,7 +44,7 @@ const ClientHeader = () => {
   const [showModalLogin, setShowModalLogin] = useState(false);
   const [titleLogin, setTitleLogin] = useState(false);
   const [showTree, setShowTree] = useState(false);
-  const [cartItemCount, setCartItemCount] = useState(0); // Số lượng giỏ hàng
+  const [cartItemCount, setCartItemCount] = useState(3); // Số lượng giỏ hàng
 
   const handleShowModalLogin = (isLogin = true) => {
     setTitleLogin(isLogin);

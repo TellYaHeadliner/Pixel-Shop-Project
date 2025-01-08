@@ -13,6 +13,14 @@ class GioHang extends Model
         'idNguoiDung',
         'idSanPham'
     ];
+    protected $table="giohang";
+    public static function findByPrimaryKeys($idSanPham, $idNguoiDung)
+    {
+        return self::where('idSanPham', $idSanPham)
+                    ->where('idNguoiDung', $idNguoiDung)
+                    ->first();
+    }
+    public $timestamps=false;
 
     public function nguoidung(){
         return $this->hasMany(NguoiDung::class, 'idNguoiDung', 'idNguoiDung');

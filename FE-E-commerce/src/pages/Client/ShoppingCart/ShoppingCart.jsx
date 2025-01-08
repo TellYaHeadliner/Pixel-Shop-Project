@@ -1,18 +1,42 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Layout, Button, Input, Checkbox } from "antd";
 import { AiFillDelete } from "react-icons/ai";
 import { useNavigate } from "react-router-dom"; // Thêm import này
 import styles from "./ShoppingCart.module.scss"; // Đảm bảo bạn có file SCSS tương ứng
+import axios from "axios";
 
 const { Content } = Layout;
 
 const ShoppingCart = () => {
   const navigate = useNavigate();
-  const [cartItems, setCartItems] = useState([
-    { id: 1, name: "Sản phẩm A", price: 100000, quantity: 1, selected: false },
-    { id: 2, name: "Sản phẩm B", price: 200000, quantity: 1, selected: false },
-    { id: 3, name: "Sản phẩm C", price: 200000, quantity: 1, selected: false },
-  ]);
+  const [cartItems, setCartItems] = useState([]);
+  const [loading, setLoading] = useState(true); 
+
+  axios.defaults.withCredentials = true;
+
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/api/getListSanPhamGioHang");
+        console.log(response.data.data.listSanPham);
+        const listSanPham = response.data.data.listSanPham;
+
+      const mappedItems = listSanPham.map((item) => ({
+        id: item.idSanPham,
+        name: item.tenSanPham,
+        price: item.gia,
+        quantity: item.soLuong,
+        selected: false, 
+      }));
+
+       setCartItems(mappedItems);
+      } catch (error) {
+        console.error("Lỗi khi gọi API:", error);
+      }
+    };
+
+    fetchCartItems();
+  },[]);
 
   const handleIncrease = (id) => {
     setCartItems((prevItems) =>
