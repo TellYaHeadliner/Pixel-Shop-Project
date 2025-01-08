@@ -1,5 +1,6 @@
 import { Table } from "antd"
-import Star from "../Descriptions/Star"
+import Star from "../Descriptions/Star";
+
 const columns = [
     {
         title: 'Tên người bình luận',
