@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Button, Input, Checkbox } from "antd";
+import { Layout, Button, Input, Checkbox, message } from "antd";
 import { AiFillDelete } from "react-icons/ai";
-import { useNavigate } from "react-router-dom"; // Thêm import này
-import styles from "./ShoppingCart.module.scss"; // Đảm bảo bạn có file SCSS tương ứng
+import { useNavigate } from "react-router-dom";
+import styles from "./ShoppingCart.module.scss"; 
 import axios from "axios";
 
 const { Content } = Layout;
@@ -10,50 +10,100 @@ const { Content } = Layout;
 const ShoppingCart = () => {
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(false);
 
   axios.defaults.withCredentials = true;
 
   useEffect(() => {
     const fetchCartItems = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/getListSanPhamGioHang");
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/getListSanPhamGioHang"
+        );
         console.log(response.data.data.listSanPham);
         const listSanPham = response.data.data.listSanPham;
 
-      const mappedItems = listSanPham.map((item) => ({
-        id: item.idSanPham,
-        name: item.tenSanPham,
-        price: item.gia,
-        quantity: item.soLuong,
-        selected: false, 
-      }));
+        const mappedItems = listSanPham.map((item) => ({
+          id: item.idSanPham,
+          name: item.tenSanPham,
+          price: item.gia,
+          quantity: item.soLuong,
+          selected: false,
+        }));
 
-       setCartItems(mappedItems);
+        setCartItems(mappedItems);
       } catch (error) {
-        console.error("Lỗi khi gọi API:", error);
+        console.error("Lỗi:", error);
       }
     };
 
     fetchCartItems();
-  },[]);
+  }, []);
 
-  const handleIncrease = (id) => {
-    setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-      )
-    );
+  const callAPIUpdateSoLuong = async (idSanPham, soLuong) => {
+    setLoading(true);   
+    try {
+      const response = await axios.put(
+        "http://127.0.0.1:8000/api/updateSoLuongSanPhamGioHang",
+        {
+          idSanPham: idSanPham,
+          soLuong: soLuong,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.data.success) {
+        console.log(response.data);
+        return true;
+      }
+    } catch (err) {
+      return false;
+    }finally {
+      setLoading(false); 
+    }
   };
 
-  const handleDecrease = (id) => {
-    setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === id && item.quantity > 1
-          ? { ...item, quantity: item.quantity - 1 }
-          : item
-      )
+  const handleIncrease = async (id) => {
+    if (loading) return;
+    let index = cartItems.findIndex((item) => item.id === id);
+    console.log(cartItems[index].quantity + 1);
+    console.log(cartItems[index].id);
+
+    const callAPIupdate = await callAPIUpdateSoLuong(
+      cartItems[index].id,
+      cartItems[index].quantity + 1
     );
+
+    if (callAPIupdate) {
+      setCartItems((prevItems) =>
+        prevItems.map((item) =>
+          item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+        )
+      );
+    }
+  };
+
+  const handleDecrease = async (id) => {
+    if (loading) return;
+    let index = cartItems.findIndex((item) => item.id === id);
+    console.log(cartItems[index].quantity - 1);
+    console.log(cartItems[index].id);
+
+    const callAPIupdate = await callAPIUpdateSoLuong(
+      cartItems[index].id,
+      cartItems[index].quantity - 1
+    );
+
+    if (callAPIupdate) {
+      setCartItems((prevItems) =>
+        prevItems.map((item) =>
+          item.id === id ? { ...item, quantity: item.quantity - 1 } : item
+        )
+      );
+    }
   };
 
   const handleRemove = (id) => {
@@ -75,8 +125,11 @@ const ShoppingCart = () => {
     );
   };
 
-  const selectedItems = cartItems.filter(item => item.selected);
-  const totalAmount = selectedItems.reduce((total, item) => total + item.price * item.quantity, 0);
+  const selectedItems = cartItems.filter((item) => item.selected);
+  const totalAmount = selectedItems.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
 
   const handlePaymentClick = () => {
     navigate("/payment", { state: { selectedItems } });
@@ -87,7 +140,9 @@ const ShoppingCart = () => {
       <Content className={styles.cartContainer}>
         <h2>Giỏ hàng</h2>
         <Button onClick={toggleSelectAll} style={{ marginBottom: 20 }}>
-          {cartItems.every((item) => item.selected) ? "Bỏ chọn tất cả" : "Chọn tất cả"}
+          {cartItems.every((item) => item.selected)
+            ? "Bỏ chọn tất cả"
+            : "Chọn tất cả"}
         </Button>
         <div className={styles.cartContent}>
           <div className={styles.cartItems}>
@@ -98,10 +153,16 @@ const ShoppingCart = () => {
                   onChange={() => toggleSelectItem(item.id)}
                 />
                 <h3 className={styles.cartItem_title}>{item.name}</h3>
-                <p className={styles.cartItem_price}>{item.price.toLocaleString()} đ</p>
+                <p className={styles.cartItem_price}>
+                  {item.price.toLocaleString()} đ
+                </p>
                 <div className={styles.quantityControls}>
                   <Button onClick={() => handleDecrease(item.id)}>-</Button>
-                  <Input value={item.quantity} readOnly style={{ width: "50px", textAlign: "center" }} />
+                  <Input
+                    value={item.quantity}
+                    readOnly
+                    style={{ width: "50px", textAlign: "center" }}
+                  />
                   <Button onClick={() => handleIncrease(item.id)}>+</Button>
                   <Button
                     type="primary"
@@ -116,7 +177,11 @@ const ShoppingCart = () => {
           </div>
           <div className={styles.totalContainer}>
             <h3>Tổng tiền: {totalAmount.toLocaleString()} đ</h3>
-            <Button type="primary" className={styles.orderButton} onClick={handlePaymentClick}>
+            <Button
+              type="primary"
+              className={styles.orderButton}
+              onClick={handlePaymentClick}
+            >
               Đặt hàng ngay
             </Button>
           </div>
