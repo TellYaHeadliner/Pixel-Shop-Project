@@ -30,27 +30,31 @@ const StaffContact = lazy(() => import("../pages/Staff/Contact/StaffContact"));
 
 const AppRoutes = () => {
   return (
-    <Routes>
-      <Route path="/" element={<ClientLayout />}>
-        <Route index element={<Home />} />
-        <Route path="product" element={<DetailProduct />} />
-        <Route path="payment" element={<Payment />} />
-        <Route path="shoppingcart" element={<ShoppingCart />} />
-      </Route>
-      <Route path="/admin" element={<AdminLayout />}>
-        <Route index element={<WebsiteInfo />} />
-        <Route path="suppliers" element={<SupplierManagement />} />
-        <Route path="categories" element={<CategoryManagement />} />
-        <Route path="products" element={<ProductManagement />} />
-        <Route path="batches" element={<BatchManagement />} />
-        <Route path="comments" element={<CommentManagement />} />
-        <Route path="audience-statistics" element={<AudienceStatistics />} />
-        <Route path="order-statistics" element={<OrderStatistics />} />
-        <Route path="contact" element={<Contact />} />
-      </Route>
-      <Route path="/staff" element={<StaffLayout />}>
-        <Route index element={<StaffContact />} />
-        {/* <Route path="orders" element={<StaffContact />} />
+      <Routes>
+        <Route path="/" element={<ClientLayout />}>
+          <Route index element={<Home />} />
+          <Route path="product" element={<DetailProduct />} />
+          <Route path="payment" element={<Payment />} />
+          <Route path="shoppingcart" element={<ShoppingCart />} />
+        </Route>
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<WebsiteInfo />} />
+          <Route path="suppliers" element={<SupplierManagement />} />
+          <Route path="categories" element={<CategoryManagement />} />
+          <Route path="products">
+						<Route index element={<ProductManagement />}/>
+						<Route path="add" element={<ProductManagementAdd/>} />
+					</Route>
+          <Route path="batches" element={<BatchManagement />} />
+          <Route path="comments" element={<CommentManagement />} />
+          <Route path="audience-statistics" element={<AudienceStatistics />} />
+          <Route path="order-statistics" element={<OrderStatistics />} />
+          <Route path="contact" element={<Contact />} />
+          <Route path="business-statistics" element={<BusinessStatistics />} />
+        </Route>
+        <Route path="/staff" element={<StaffLayout />}>
+          <Route index element={<StaffContact />} />
+          {/* <Route path="orders" element={<StaffContact />} />
           <Route path="customer_consulting" element={<StaffContact />} /> */}
       </Route>
       <Route path="/staff" element={<StaffLayout />}>
