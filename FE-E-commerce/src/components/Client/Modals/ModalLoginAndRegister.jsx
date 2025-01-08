@@ -145,8 +145,7 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
         }, 1000);
       }
     } catch (error) { 
-			console.error(error.response.data);
-      message.error(error.data.message);
+      message.error(error.response.data.message);
     }
   };
 

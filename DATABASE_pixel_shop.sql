@@ -86,9 +86,9 @@ CREATE TABLE `cuoctrochuyen` (
 --
 
 CREATE TABLE `danhgia` (
-  `idNguoidung` bigint NOT NULL,
+  `idNguoiDung` bigint NOT NULL,
   `idSanPham` bigint NOT NULL,
-  `noidung` text NOT NULL,
+  `noiDung` text NOT NULL,
   `soSao` tinyint(1) NOT NULL,
   `ngayGio` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -207,7 +207,7 @@ CREATE TABLE `nguoidung` (
   `ngaySinh` date NOT NULL,
   `matKhau` tinytext NOT NULL,
   `gioiTinh` tinyint(1) NOT NULL,
-  `SĐT` varchar(10),
+  `sdt` varchar(10),
   `vaiTro` tinyint(1) NOT NULL,
   `email` tinytext NOT NULL,
   `anhDaiDien` text NOT NULL
@@ -266,8 +266,8 @@ CREATE TABLE `thongsosanpham` (
   `RAMToiDa` int DEFAULT NULL,
   `loaiRAM` text DEFAULT NULL,
   `busRAM` int DEFAULT NULL,
-  `soluongkheRAM` int DEFAULT NULL,
-  `dungluongROM` int(11) DEFAULT NULL,
+  `soLuongKheRAM` int DEFAULT NULL,
+  `dungLuongROM` int(11) DEFAULT NULL,
   `loaiROM` text DEFAULT NULL,
   `soKheROM` int DEFAULT NULL,
   `GPU` text DEFAULT NULL,
