@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { Button, Input, Table, Dropdown, Menu, message } from 'antd';
 import { EllipsisOutlined } from '@ant-design/icons';
 import "./ProductManagement.scss"
+import { useNavigate } from 'react-router-dom';
 const ProductManagement = () => {
     const [searchTerm, setSearchTerm] = useState('');
-
+		const navigate = useNavigate();
     // Dữ liệu mẫu cho bảng
     const dataSource = [
         {
@@ -116,7 +117,7 @@ const ProductManagement = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 style={{ width: '300px', marginBottom: '20px' }}
             />
-            <Button type="primary" style={{ marginLeft: '10px' }}>
+            <Button type="primary" style={{ marginLeft: '10px' }} onClick={()=>navigate('/admin/products/add')}>
                 Thêm sản phẩm
             </Button>
             <Table

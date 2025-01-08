@@ -4,9 +4,9 @@
     position: fixed;
     background-color: var(--header);
     padding: 0 56px;
-    margin: 1vw 6vw 0;
+    margin: 1vw 4vw 0;
     height: 160px;
-    width: 82vw;
+    width: 91vw;
     z-index: 10;
     border-radius: 500px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Thêm bóng đổ cho header
@@ -26,7 +26,7 @@
 }
 
 .searchInput {
-    width: 55vw;
+    width: 60vw;
     height: 55px;
     padding: 0 25px;
     font-size: 20px;

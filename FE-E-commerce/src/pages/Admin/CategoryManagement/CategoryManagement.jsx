@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Input, Button, Select, Tree, Menu, message } from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Modal, Menu, Button, Input, Select, Tree } from 'antd';
 import './CategoryManagement.scss';
 
 const { Option } = Select;
@@ -7,281 +8,217 @@ const { Option } = Select;
 const CategoryManagement = () => {
     const initialCategories = [
         {
-            idDanhMuc: 1,
-            tenDanhMuc: "Điện thoại",
-            child: [
+            id: 1,
+            name: "Điện thoại",
+            children: [
                 {
-                    idDanhMuc: 3,
-                    tenDanhMuc: "Điện thoại 1",
-                    child: [
-                        { idDanhMuc: 8, tenDanhMuc: "Điện Thoại 11", child: [] },
-                        { idDanhMuc: 9, tenDanhMuc: "Điện Thoại 12", child: [] }
+                    id: 3,
+                    name: "Điện thoại 1",
+                    children: [
+                        { id: 8, name: "Điện Thoại 11", children: [] },
+                        { id: 9, name: "Điện Thoại 12", children: [] }
                     ]
                 }
             ]
         },
         {
-            idDanhMuc: 2,
-            tenDanhMuc: "Laptop",
-            child: [
-                { idDanhMuc: 6, tenDanhMuc: "Laptop 1", child: [] }
-            ]
+            id: 2,
+            name: "Laptop",
+            children: [{ id: 6, name: "Laptop 1", children: [] }]
         },
-        {
-            idDanhMuc: 4,
-            tenDanhMuc: "Máy tính bảng",
-            child: []
-        }
+        { id: 4, name: "Máy tính bảng", children: [] }
     ];
 
     const [categories, setCategories] = useState(initialCategories);
+    const [searchTerm, setSearchTerm] = useState('');
     const [categoryName, setCategoryName] = useState('');
     const [selectedParent, setSelectedParent] = useState(null);
-    const [selectedSecondLevel, setSelectedSecondLevel] = useState(null);
-    const [contextMenuVisible, setContextMenuVisible] = useState(false);
-    const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
-    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [selectedChild, setSelectedChild] = useState(null);
+    const [contextMenu, setContextMenu] = useState({ visible: false, position: {}, category: null });
+    const [isEditModalVisible, setEditModalVisible] = useState(false);
+    const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
+    const [newCategoryName, setNewCategoryName] = useState('');
 
     const addCategory = () => {
-        if (categoryName.trim()) {
-            const newCategory = {
-                idDanhMuc: Date.now(),
-                tenDanhMuc: categoryName,
-                child: [],
-            };
-
-            const updateCategories = (categoryList) => {
-                return categoryList.map(category => {
-                    if (selectedSecondLevel && category.idDanhMuc === selectedParent.idDanhMuc) {
-                        return {
-                            ...category,
-                            child: category.child.map(subCategory => {
-                                if (subCategory.idDanhMuc === selectedSecondLevel.idDanhMuc) {
-                                    return {
-                                        ...subCategory,
-                                        child: [...subCategory.child, newCategory],
-                                    };
-                                }
-                                return subCategory;
-                            }),
-                        };
-                    } else if (selectedParent && category.idDanhMuc === selectedParent.idDanhMuc) {
-                        return {
-                            ...category,
-                            child: [...category.child, newCategory],
-                        };
-                    }
-                    return category;
-                });
-            };
-
-            if (selectedSecondLevel) {
-                setCategories(updateCategories(categories));
-            } else if (selectedParent) {
-                setCategories(updateCategories(categories));
-            } else {
-                setCategories([...categories, newCategory]);
+        if (!categoryName.trim()) return;
+        const newCategory = { id: Date.now(), name: categoryName, children: [] };
+        const updateCategories = (list) => list.map(cat => {
+            if (cat.id === (selectedChild ? selectedParent.id : selectedParent?.id)) {
+                return {
+                    ...cat,
+                    children: selectedChild ?
+                        cat.children.map(subCat => subCat.id === selectedChild.id ? { ...subCat, children: [...subCat.children, newCategory] } : subCat)
+                        : [...cat.children, newCategory]
+                };
             }
+            return cat;
+        });
 
-            setCategoryName('');
-            setSelectedParent(null);
-            setSelectedSecondLevel(null);
+        setCategories(selectedChild || selectedParent ? updateCategories(categories) : [...categories, newCategory]);
+        resetForm();
+    };
+
+    const resetForm = () => {
+        setCategoryName('');
+        setSelectedParent(null);
+        setSelectedChild(null);
+    };
+
+    const handleSelect = (setSelected, category) => {
+        setSelected(category);
+        if (setSelected === setSelectedParent) setSelectedChild(null);
+    };
+
+    const showContextMenu = (e, category) => {
+        e.preventDefault();
+        setContextMenu({ visible: true, position: { x: e.clientX, y: e.clientY }, category });
+    };
+
+    const handleMenuClick = (action) => {
+        if (!contextMenu.category) return;
+        if (action === "edit") {
+            setNewCategoryName(contextMenu.category.name);
+            setEditModalVisible(true);
+        } else if (action === "delete") {
+            setDeleteModalVisible(true);
         }
-    };
-
-    const handleSelectParent = (category) => {
-        setSelectedParent(category);
-        setSelectedSecondLevel(null);
-    };
-
-    const handleSelectSecondLevel = (subcategory) => {
-        setSelectedSecondLevel(subcategory);
-    };
-
-    const showCategory = (
-        <div className="category-view-section">
-            <h4 className="category-view-title">Xem danh mục</h4>
-            <div className="category-levels">
-                <div className="category-level">
-                    <h5 className="category-level-title">Cấp 1</h5>
-                    <Tree
-                        treeData={categories.map(category => ({
-                            title: category.tenDanhMuc,
-                            key: category.idDanhMuc,
-                        }))}
-                        onSelect={(selectedKeys) => handleSelectParent(categories.find(cat => cat.idDanhMuc === selectedKeys[0]))}
-                        onRightClick={(info) => showContextMenu(info, null)}
-                    />
-                </div>
-
-                <div className="category-level">
-                    <h5 className="category-level-title">Cấp 2</h5>
-                    {selectedParent && (
-                        <Tree
-                            treeData={selectedParent.child.map(subcategory => ({
-                                title: subcategory.tenDanhMuc,
-                                key: subcategory.idDanhMuc,
-                            }))}
-                            onSelect={(selectedKeys) => handleSelectSecondLevel(selectedParent.child.find(cat => cat.idDanhMuc === selectedKeys[0]))}
-                            onRightClick={(info) => showContextMenu(info, selectedParent)}
-                        />
-                    )}
-                </div>
-
-                <div className="category-level">
-                    <h5 className="category-level-title">Cấp 3</h5>
-                    {selectedSecondLevel && (
-                        <Tree
-                            treeData={selectedSecondLevel.child.map(child => ({
-                                title: child.tenDanhMuc,
-                                key: child.idDanhMuc,
-                            }))}
-                            onRightClick={(info) => showContextMenu(info, selectedSecondLevel)}
-                        />
-                    )}
-                </div>
-            </div>
-            {contextMenuVisible && (
-                <Menu
-                    style={{ position: 'absolute', left: contextMenuPosition.x, top: contextMenuPosition.y }}
-                    onClick={handleMenuClick}
-                    onMouseLeave={() => setContextMenuVisible(false)}
-                >
-                    <Menu.Item key="edit">Sửa</Menu.Item>
-                    <Menu.Item key="delete">Xóa</Menu.Item>
-                </Menu>
-            )}
-        </div>
-    );
-
-    const showContextMenu = (info, category) => {
-        setSelectedCategory(category);
-        setContextMenuPosition({ x: info.event.clientX, y: info.event.clientY });
-        setContextMenuVisible(true);
-    };
-
-    const handleMenuClick = (e) => {
-        if (e.key === "edit") {
-            if (selectedCategory) {
-                const updatedName = prompt("Nhập tên danh mục mới:", selectedCategory.tenDanhMuc);
-                if (updatedName) {
-                    updateCategoryName(selectedCategory.idDanhMuc, updatedName);
-                }
-            }
-        } else if (e.key === "delete") {
-            if (selectedCategory) {
-                deleteCategory(selectedCategory.idDanhMuc);
-            }
-        }
-        setContextMenuVisible(false);
+        setContextMenu({ ...contextMenu, visible: false });
     };
 
     const updateCategoryName = (id, newName) => {
-        const updatedCategories = categories.map(category => {
-            if (category.idDanhMuc === id) {
-                return { ...category, tenDanhMuc: newName };
-            }
-            if (category.child) {
-                category.child = category.child.map(subCategory => {
-                    if (subCategory.idDanhMuc === id) {
-                        return { ...subCategory, tenDanhMuc: newName };
-                    }
-                    if (subCategory.child) {
-                        subCategory.child = subCategory.child.map(child => {
-                            if (child.idDanhMuc === id) {
-                                return { ...child, tenDanhMuc: newName };
-                            }
-                            return child;
-                        });
-                    }
-                    return subCategory;
-                });
-            }
-            return category;
+        const update = (list) => list.map(cat => {
+            if (cat.id === id) return { ...cat, name: newName };
+            if (cat.children) cat.children = update(cat.children);
+            return cat;
         });
-
-        setCategories(updatedCategories);
+        setCategories(update(categories));
+        alert('Danh mục đã được cập nhật!');
     };
 
     const deleteCategory = (id) => {
-        const updatedCategories = categories.filter(category => {
-            if (category.idDanhMuc === id) {
-                return false; // Xóa danh mục cấp 1
-            }
-            if (category.child) {
-                category.child = category.child.filter(subCategory => {
-                    if (subCategory.idDanhMuc === id) {
-                        return false; // Xóa danh mục cấp 2
-                    }
-                    if (subCategory.child) {
-                        subCategory.child = subCategory.child.filter(child => child.idDanhMuc !== id); // Xóa danh mục cấp 3
-                    }
-                    return true;
-                });
-            }
+        const update = (list) => list.filter(cat => {
+            if (cat.id === id) return false;
+            if (cat.children) cat.children = update(cat.children);
             return true;
         });
-
-        setCategories(updatedCategories);
-        message.success('Danh mục đã được xóa!');
+        setCategories(update(categories));
+        alert('Danh mục đã được xóa!');
     };
 
-    const addCategorySection = (
-        <div className="category-add-section">
-            <h4 className="category-add-title">Thêm danh mục mới</h4>
-            <Input
-                placeholder="Tên danh mục"
-                value={categoryName}
-                onChange={(e) => setCategoryName(e.target.value)}
-                className="category-input"
-            />
-            <Select
-                placeholder="Chọn danh mục cấp 1"
-                onChange={(value) => {
-                    const category = categories.find(cat => cat.idDanhMuc === value);
-                    handleSelectParent(category);
-                }}
-                className="category-select"
-            >
-                <Option value="">--- Chọn danh mục cấp 1 ---</Option>
-                {categories.map(category => (
-                    <Option key={category.idDanhMuc} value={category.idDanhMuc}>
-                        {category.tenDanhMuc}
-                    </Option>
-                ))}
-            </Select>
+    const handleEdit = () => {
+        if (contextMenu.category) {
+            updateCategoryName(contextMenu.category.id, newCategoryName);
+        }
+        setEditModalVisible(false);
+    };
 
-            <Select
-                placeholder="Chọn danh mục cấp 2"
-                onChange={(value) => {
-                    const subcategory = selectedParent.child.find(cat => cat.idDanhMuc === value);
-                    handleSelectSecondLevel(subcategory);
-                }}
-                className="category-select"
-                disabled={!selectedParent}
-            >
-                <Option value="">--- Chọn danh mục cấp 2 ---</Option>
-                {selectedParent && selectedParent.child.map(subcategory => (
-                    <Option key={subcategory.idDanhMuc} value={subcategory.idDanhMuc}>
-                        {subcategory.tenDanhMuc}
-                    </Option>
-                ))}
-            </Select>
+    const confirmDelete = () => {
+        if (contextMenu.category) {
+            deleteCategory(contextMenu.category.id);
+        }
+        setDeleteModalVisible(false);
+    };
 
-            <Button type="primary" onClick={addCategory} className="category-add-button">
-                Thêm danh mục
-            </Button>
-        </div>
+    const renderTree = (data) => {
+        return data.map(cat => ({
+            title: cat.name,
+            key: cat.id,
+            children: cat.children.length > 0 ? renderTree(cat.children) : [],
+        }));
+    };
+
+    // Filter categories based on search term
+    const filteredCategories = categories.filter(cat =>
+        cat.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        cat.children.some(subCat => subCat.name.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
     return (
-        <div className="category-management">
-            <h2 className="category-title">Danh mục</h2>
-            <hr className="category-divider" />
-            <div className="category-container">
-                {addCategorySection}
-                {showCategory}
+        <div className="category-management-container">
+            <h2 className="category-management-title">Quản lý danh mục</h2>
+            <div className="form-section">
+                <h4 className="form-title">Thêm danh mục mới</h4>
+                <Input
+                    placeholder="Tên danh mục"
+                    value={categoryName}
+                    onChange={(e) => setCategoryName(e.target.value)}
+                />
+                <Select
+                    placeholder="--- Chọn danh mục cấp 1 ---"
+                    onChange={(value) => handleSelect(setSelectedParent, categories.find(cat => cat.id === value))}
+                    style={{ width: '100%', marginTop: '10px' }}
+                >
+                    {categories.map(cat => <Option key={cat.id} value={cat.id}>{cat.name}</Option>)}
+                </Select>
+                <Select
+                    placeholder="--- Chọn danh mục cấp 2 ---"
+                    onChange={(value) => handleSelect(setSelectedChild, selectedParent?.children.find(cat => cat.id === value))}
+                    disabled={!selectedParent}
+                    style={{ width: '100%', marginTop: '10px' }}
+                >
+                    {selectedParent?.children.map(subCat => <Option key={subCat.id} value={subCat.id}>{subCat.name}</Option>)}
+                </Select>
+                <Button
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    onClick={addCategory}
+                    style={{ marginTop: '10px' }}
+                >
+                    Thêm danh mục
+                </Button>
             </div>
+
+            <div className="view-section">
+                <h4 className="view-title">Xem và quản lý danh mục</h4>
+                <Input
+                    placeholder="Tìm kiếm danh mục"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    style={{ marginBottom: '20px' }}
+                />
+                <Tree
+                    treeData={renderTree(filteredCategories)}
+                    onRightClick={(e) => showContextMenu(e.event, e.node)}
+                    onSelect={(keys) => {
+                        const selected = categories.find(cat => cat.id === Number(keys[0]));
+                        handleSelect(setSelectedParent, selected);
+                    }}
+                />
+            </div>
+
+            {contextMenu.visible && (
+                <Menu
+                    style={{ position: 'absolute', left: contextMenu.position.x, top: contextMenu.position.y }}
+                    onClick={({ key }) => handleMenuClick(key)}
+                >
+                    <Menu.Item key="edit" icon={<EditOutlined />}>Sửa</Menu.Item>
+                    <Menu.Item key="delete" icon={<DeleteOutlined />}>Xóa</Menu.Item>
+                </Menu>
+            )}
+
+            {/* Edit Modal */}
+            <Modal
+                title="Sửa tên danh mục"
+                visible={isEditModalVisible}
+                onOk={handleEdit}
+                onCancel={() => setEditModalVisible(false)}
+            >
+                <Input
+                    placeholder="Nhập tên mới"
+                    value={newCategoryName}
+                    onChange={(e) => setNewCategoryName(e.target.value)}
+                />
+            </Modal>
+
+            {/* Delete Confirmation Modal */}
+            <Modal
+                title="Xác nhận xóa"
+                visible={isDeleteModalVisible}
+                onOk={confirmDelete}
+                onCancel={() => setDeleteModalVisible(false)}
+            >
+                <p>Bạn có chắc chắn muốn xóa danh mục "{contextMenu.category?.name}" không?</p>
+            </Modal>
         </div>
     );
 };

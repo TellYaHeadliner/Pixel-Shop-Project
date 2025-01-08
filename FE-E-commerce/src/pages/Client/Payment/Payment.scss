@@ -3,7 +3,7 @@
     background-color: #f0f2f5;
 
     .checkout-content {
-        max-width: 1200px;
+        width: 60vw;
         margin: 0 auto;
         padding: 20px;
         background-color: #ffffff;
@@ -66,6 +66,8 @@
         background: #e6f7ff;
         padding: 20px;
         border-radius: 8px;
+        margin-left: 30px;
+        aspect-ratio: 1.3/1.6;
 
         h3 {
             margin-bottom: 10px;

@@ -9,6 +9,16 @@ class ChiTietHoaDon extends Model
 {
     use HasFactory;
 
+    protected $table="chitiethoadon";
+    public $timestamps=false;
+
+    public static function findByPrimaryKeys($idSanPham, $idHoaDon)
+    {
+        return self::where('idSanPham', $idSanPham)
+                    ->where('idHoaDon', $idHoaDon)
+                    ->first();
+    }
+    
     protected $fillable = [
         'idHoaDon',
         'idSanPham',
