@@ -153,7 +153,7 @@ class UserController extends Controller
                 'hoVaTen' => $data['hoVaTen'],
                 'ngaySinh' => DateTime::createFromFormat('d-m-Y', $data['ngaySinh']),
                 'gioiTinh' => $data['gioiTinh'],
-                'SĐT' => '0',
+                'sdt' => '0',
                 'vaiTro' => 3,
                 'email' => $data['email'],
                 'anhDaiDien' => 'anhDaiDienDefault.jpg',
