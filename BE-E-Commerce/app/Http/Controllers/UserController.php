@@ -210,7 +210,7 @@ class UserController extends Controller
 
 		function getById(Request $request){
 			$data = $request->all();
-			$user = NguoiDung::where('id', "=", $data["idNguoiDung"])->first();
+			$user = NguoiDung::where('idNguoiDung', "=", $data["idNguoiDung"])->first();
 			if($user){
 				return response()->json([
 					"success" => true,
@@ -227,7 +227,7 @@ class UserController extends Controller
 
 		function updateById(Request $request) {
     $data = $request->all();
-    $user = NguoiDung::where('id', "=", $data["idNguoiDung"])->first();
+    $user = NguoiDung::where('idNguoiDung', "=", $data["idNguoiDung"])->first();
     if (!$user) {
         return response()->json([
             "success" => false,
@@ -239,7 +239,7 @@ class UserController extends Controller
     try {
         $user->update([
             'hoVaTen' => $data['hoVaTen'] ?? $user->hoVaTen,
-            'ngaySinh' => $data['ngaySinh'] ?? $user->ngaySinh,
+            'ngaySinh' => DateTime::createFromFormat('d-m-Y', $data['ngaySinh']) ?? $user->ngaySinh,
             'matKhau' => $data['matKhau'] ?? $user->matKhau,
             'gioiTinh' => $data['gioiTinh'] ?? $user->gioiTinh,
             'email' => $data['email'] ?? $user->email,
