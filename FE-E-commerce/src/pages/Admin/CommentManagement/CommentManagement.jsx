@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Row, Col, Card, Input, Button, Typography } from 'antd';
 import './CommentManagement.scss';
+import DetailComment from '../../../components/Staff/Modal/DetailComment';
 
 const { Search } = Input;
 const { Title } = Typography;
@@ -27,6 +28,9 @@ const CommentManagement = () => {
             content: 'Hài lòng với sản phẩm.',
         },
     ]);
+    // Cái này dành cho bình luận 1 cái, lấy giá trị
+    const [comment, setComment] = useState(null)
+    const [isOpen, setIsOpen] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -36,6 +40,22 @@ const CommentManagement = () => {
     const handleSearch = () => {
         console.log('Tìm kiếm với:', searchParams);
     };
+
+    const handleOpen = (comment) => {
+        setComment(comment);
+        setIsOpen(true);
+    }
+
+    const handleCancel = () => {
+        setIsOpen(false);
+    }
+
+    const handleDelete = (comment) => {
+        setIsOpen(false);
+        setComment(comment)
+        const updatedComments = comments.filter((item) => item !== comment);
+        setComments(updatedComments);
+    }
 
     return (
         <div className='comment-management'>
@@ -85,6 +105,15 @@ const CommentManagement = () => {
                                 <span className='commenter'>Tên: {comment.commenterName}</span>
                                 <p>Nội dung: {comment.content}</p>
                             </div>
+                            <Button onClick={() => handleOpen(comment)}>
+                                Xem chi tiết
+                            </Button>
+                            <DetailComment
+                                comment={comment}
+                                open={isOpen}
+                                onCancel={handleCancel}
+                                onDelete={() => handleDelete(comment)}
+                            />
                         </div>
                     </Card>
                 ))}
