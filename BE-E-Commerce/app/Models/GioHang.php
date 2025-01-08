@@ -11,9 +11,13 @@ class GioHang extends Model
 
     protected $fillable = [
         'idNguoiDung',
-        'idSanPham'
+        'idSanPham',
+        'soLuong'
     ];
     protected $table="giohang";
+
+    protected $primaryKey = ['idSanPham', 'idNguoiDung'];
+
     public static function findByPrimaryKeys($idSanPham, $idNguoiDung)
     {
         return self::where('idSanPham', $idSanPham)

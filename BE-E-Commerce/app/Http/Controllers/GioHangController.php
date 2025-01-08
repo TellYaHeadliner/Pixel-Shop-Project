@@ -10,12 +10,15 @@ use App\Models\SanPham;
 
 class GioHangController extends Controller
 {
-    function getListSanPhamGioHang(){
+    function getListSanPhamGioHang()
+    {
 
         try {
-            $listSanPham = GioHang::select('giohang.idSanPham','giohang.soLuong','sanpham.tenSanPham','sanpham.gia')
-            ->join('sanpham','sanpham.idSanPham','=','giohang.idSanPham')
-            ->where('idNguoiDung','=','1')->get();
+            $listSanPham = DB::table('giohang')
+                ->select('giohang.idSanPham', 'giohang.soLuong', 'sanpham.tenSanPham', 'sanpham.gia')
+                ->join('sanpham', 'sanpham.idSanPham', '=', 'giohang.idSanPham')
+                ->where('giohang.idNguoiDung', '=', 1)
+                ->get();
             return response()->json([
                 'success' => true,
                 'message' => "Danh sách sản phẩm giỏ hàng người dùng id:",
@@ -32,35 +35,44 @@ class GioHangController extends Controller
         }
     }
 
-    function updateSoLuongSanPhamGioHang(Request $request){
-        $idSP=$request->input('idSanPham');
-        $idNguoiDung=1;
-        $soLuong=$request->input('soLuong');
+    function updateSoLuongSanPhamGioHang(Request $request)
+    {
+        $idSanPham = $request->input('idSanPham');
+        $idNguoiDung = 1;
+        $soLuong = $request->input('soLuong');
 
-        try{
-            $Item=GioHang::where('idSP','=',$idSP)
-                ->where('idNguoiDung','=',$idNguoiDung)
-                ->first();
+        if($soLuong<=0){
+            return response()->json([
+                'success' => false,
+                'message' => "Số lượng sản phẩm không nhỏ hơn 0",
+                'data' => []
+            ], 403);
+        }
 
-            $soluongSP=SanPham::select('soLuong')->where('idSanPham','=',$idSP)->first();
+        try {
 
-
-
-
-
-
+            $soLuongDB = SanPham::select('soLuong')->where('idSanPham', '=', $idSanPham)->first();
+            if ($soLuong > $soLuongDB['soLuong']) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "số lượng sản phẩm vượt quá tồn kho",
+                    'data' => []
+                ], 403);
+            }
+            DB::table('giohang')
+                ->where('idSanPham', $idSanPham)
+                ->where('idNguoiDung', $idNguoiDung)
+                ->update(['soLuong' => $soLuong]);
 
             return response()->json([
                 'success' => true,
-                'message' => "Danh sách sản phẩm mới",
-                'data' => [
-                    'listSanPham' => '',
-                ]
+                'message' => "Thành công",
+                'data' => []
             ], 200);
-        }catch(\Exception $err){
+        } catch (\Exception $err) {
             return response()->json([
                 'success' => false,
-                'message' => "lỗi server",
+                'message' => "lỗi server" . $err,
                 'data' => []
             ], 500);
         }

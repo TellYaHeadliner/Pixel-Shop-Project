@@ -29,6 +29,7 @@ Route::controller(SanPhamController::class)->group(function(){
 
 Route::controller(GioHangController::class)->group(function(){
     Route::get('/api/getListSanPhamGioHang',[GioHangController::class,'getListSanPhamGioHang']);
+    Route::put('/api/updateSoLuongSanPhamGioHang',[GioHangController::class,'updateSoLuongSanPhamGioHang']);
 });
 
 
