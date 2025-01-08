@@ -1,0 +1,108 @@
+.checkout-layout {
+    padding: 20px;
+    background-color: #f0f2f5;
+
+    .checkout-content {
+        width: 60vw;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .checkout-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #1890ff; // Màu xanh cho tiêu đề
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+
+        &::before {
+            content: "ℹ️"; // Biểu tượng thông tin
+            margin-right: 10px;
+            font-size: 18px;
+        }
+    }
+
+    .info-section {
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+
+        .info-header {
+            margin-bottom: 20px;
+            font-weight: bold;
+
+            p {
+                margin: 0;
+                color: #555;
+            }
+
+            button {
+                padding: 0;
+                border: none;
+                background: none;
+                color: #1890ff;
+                cursor: pointer;
+            }
+        }
+
+        .product-list {
+            margin-top: 10px;
+
+            .product-item {
+                display: flex;
+                justify-content: space-between;
+                padding: 10px 0;
+                border-bottom: 1px solid #ddd;
+            }
+        }
+    }
+
+    .summary-section {
+        background: #e6f7ff;
+        padding: 20px;
+        border-radius: 8px;
+        margin-left: 30px;
+        aspect-ratio: 1.3/1.6;
+
+        h3 {
+            margin-bottom: 10px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+
+            .total-price {
+                font-weight: bold;
+                color: #ff4d4f;
+            }
+        }
+
+        .payment-method {
+            margin-bottom: 20px;
+
+            input {
+                margin-bottom: 10px;
+            }
+        }
+
+        .confirm-button {
+            width: 100%;
+            background-color: #1890ff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+
+            &:hover {
+                background-color: #40a9ff;
+            }
+        }
+    }
+}

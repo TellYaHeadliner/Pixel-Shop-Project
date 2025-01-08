@@ -1,0 +1,144 @@
+.header {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    background-color: var(--header);
+    padding: 0 56px;
+    margin: 1vw 4vw 0;
+    height: 160px;
+    width: 91vw;
+    z-index: 10;
+    border-radius: 500px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Thêm bóng đổ cho header
+}
+
+.topRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+
+}
+
+.searchAndButtons {
+    display: flex;
+    align-items: center;
+}
+
+.searchInput {
+    width: 60vw;
+    height: 55px;
+    padding: 0 25px;
+    font-size: 20px;
+    outline: none;
+    border-radius: 50px;
+    margin: 15px 0 10px 0;
+    border: 1px solid var(--border-color); // Thêm viền cho input
+    transition: border-color 0.3s;
+
+    &:focus {
+        border-color: var(--focus-color); // Thay đổi viền khi focus
+    }
+}
+
+.button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    margin: 0 0px 0 25px;
+    padding: 15px 20px;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+    color: white;
+}
+
+.contactButton {
+    background-color: #FFD700; // Màu cho nút liên hệ
+}
+
+.cartButton {
+    background-color: #228B22; // Màu cho nút giỏ hàng
+    position: relative;
+
+    &_total {
+        position: absolute;
+        bottom: -100;
+        left: 25%;
+        width: 120%;
+        font-size: 14px;
+        font-weight: bolder;
+    }
+}
+
+.loginButton {
+    background-color: #FF6347; // Màu cho nút đăng nhập
+}
+
+.icon {
+    width: 30px;
+    height: 30px;
+}
+
+.CategoryButton {
+    background-color: transparent;
+    color: var(--darktext);
+    outline: none;
+    transition: color 0.3s ease;
+    border: none;
+    font-size: 17px;
+
+    &:hover {
+        color: var(--hover-color);
+    }
+}
+
+.link {
+    color: var(--darktext);
+    text-decoration: none;
+    margin: 0 55px;
+    font-size: 23px;
+    font-weight: bolder;
+    transition: color 0.3s;
+
+    &:hover {
+        text-decoration: underline;
+        color: red;
+    }
+}
+
+.logo {
+    margin-right: 17px;
+
+    &Image {
+        width: 80px;
+        height: auto;
+        border-radius: 1000px;
+    }
+}
+
+.tree {
+    position: absolute;
+    width: 23%;
+    left: -1%;
+    top: 80%;
+    font-size: 19px;
+    border-radius: 0 0 10px 10px;
+    animation: showUptoDown 0.15s ease-in;
+
+    &-hidden {
+        display: none;
+        width: 201.2px;
+    }
+}
+
+@keyframes showUptoDown {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}

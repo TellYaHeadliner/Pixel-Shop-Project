@@ -1,0 +1,22 @@
+#img {
+    image-rendering: optimizeQuality;
+}
+
+#slide-show {
+    object-fit: cover;
+    margin: 100px;
+}
+
+.user-home {
+    &-layout {
+        background-color: var(--bg);
+        margin: 10px 30px;
+    }
+
+    &-content {
+        padding: 20px 20px;
+        height: 100%;
+        margin: 0 0;
+        background-color: var(--bg);
+    }
+}

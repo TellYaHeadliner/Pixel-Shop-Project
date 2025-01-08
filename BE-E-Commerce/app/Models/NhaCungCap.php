@@ -8,9 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class NhaCungCap extends Model
 {
     use HasFactory;
+		protected $table = 'nhacungcap';
+		protected $id = 'idNhaCungCap';
+
+		public $timestamps = false;
 
     protected $fillable = [
-        'idNhaCungCap',
         'tenNhaCungCap',
         'tenLienHe',
         'diaChi',
@@ -18,7 +21,6 @@ class NhaCungCap extends Model
         'email',
     ];
 
-    public function lohang(){
-        return $this->hasMany(LoHang::class, 'idNhaCungCap', 'idNhaCungCap');
-    }
+
+
 }

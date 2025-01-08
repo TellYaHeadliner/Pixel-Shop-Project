@@ -6,3 +6,7 @@
     --accent-color: #FFD700;
     --packed-color: #AE85E4;
 }
+
+img{
+    object-fit: cover;
+}

@@ -1,0 +1,70 @@
+.sidebar {
+    width: 315px;
+    padding: 0 10px;
+    margin-right: 40px;
+    color: var(--whited);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: fixed;
+    background-color: var(--primary);
+
+    &-header {
+        padding: 16px;
+        text-align: center;
+        display: flex;
+        flex-direction: row;
+    }
+
+    &-avatar {
+        border-radius: 50%;
+        overflow: hidden;
+        width: 100px;
+        height: auto;
+        margin: 0 auto;
+
+        & img {
+            width: 100%;
+            height: auto;
+        }
+    }
+
+    &-admin-name {
+        margin: 10px 0 0;
+    }
+
+    &-menu {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+
+        &-item {
+            cursor: pointer;
+            display: flex;
+            border-radius: 10px;
+            align-content: center;
+            justify-content: center;
+
+            & a {
+                height: 40px;
+                width: 300px;
+                padding: 17px 20px 40px 17px;
+                text-decoration: none;
+                font-size: 17px;
+                font-weight: bold;
+                color: var(--whited);
+            }
+
+            svg {
+                margin-right: 8px;
+                font-size: 18px;
+                color: var(--whited);
+                /* Màu icon */
+            }
+
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.2);
+            }
+        }
+    }
+}

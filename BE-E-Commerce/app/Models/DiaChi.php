@@ -9,15 +9,21 @@ class DiaChi extends Model
 {
     use HasFactory;
 
+		protected $table = "diachi";
+
+		protected $id  = "idDiaChi";
+
     protected $fillable = [
         'idDiaChi',
         'idNguoiDung',
         'diaChi',
-        'SDT',
+        'sdt',
         'note',
         'loaiDiaChi',
-        'isMacDinh',
+        'macDinh',
     ];
+
+		public $timestamps = false;
 
     public function hoadon(){
         return $this->hasMany(HoaDon::class, 'idDiaChi', 'idDiaChi');

@@ -1,0 +1,35 @@
+.buttonBanner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: white;
+    padding: 0 15px 0 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+
+.buttonText {
+    font-size: 40px;
+    font-weight: bold;
+}
+
+.buttonIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: auto;
+    border: 3.5px solid white;
+    padding: 3px;
+    border-radius: 50%;
+    transition: 0.2s;
+
+    &:hover {
+        background-color: #fff;
+        color: var(--primary);
+    }
+}
+
+.arrow {
+    font-size: 40px;
+}
