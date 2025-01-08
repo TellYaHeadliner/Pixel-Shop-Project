@@ -17,6 +17,8 @@ export default function ChangePassword() {
         confirmPassword: false,
     });
 
+    const oldPasswordInDB = 'oldPassword123'; // Mật khẩu cũ giả định
+
     const handleSave = () => {
         if (passwordData.newPassword !== passwordData.confirmPassword) {
             notification.error({
@@ -26,11 +28,21 @@ export default function ChangePassword() {
             return;
         }
 
-        console.log('Cập nhật mật khẩu:', passwordData);
-        notification.success({
-            message: 'Thành công',
-            description: 'Mật khẩu đã được cập nhật thành công.',
-        });
+        setTimeout(() => {
+            if (passwordData.oldPassword !== oldPasswordInDB) {
+                notification.error({
+                    message: 'Lỗi',
+                    description: 'Mật khẩu cũ không chính xác.',
+                });
+                return;
+            }
+
+            console.log('Cập nhật mật khẩu:', passwordData);
+            notification.success({
+                message: 'Thành công',
+                description: 'Mật khẩu đã được cập nhật thành công.',
+            });
+        }, 1000);
     };
 
     const togglePasswordVisibility = (field) => {
@@ -48,7 +60,7 @@ export default function ChangePassword() {
     };
 
     return (
-        <div style={{marginLeft:100, width:500 }}>
+        <div style={{ marginLeft: 100, width: 500 }}>
             <h2>Thay đổi mật khẩu</h2>
             {['oldPassword', 'newPassword', 'confirmPassword'].map((field) => (
                 <div key={field} style={{ marginBottom: '20px', height: '70px' }}>
@@ -58,23 +70,21 @@ export default function ChangePassword() {
                     <Input
                         type={showPassword[field] ? 'text' : 'password'}
                         value={passwordData[field]}
-                        onChange={(e) => handleInputChange(field, e.target.value)} 
-                        style={{width: 500}}
+                        onChange={(e) => handleInputChange(field, e.target.value)}
+                        style={{ width: 500 }}
                         addonAfter={
                             <span
                                 onClick={() => togglePasswordVisibility(field)}
                                 style={{ cursor: 'pointer' }}
-                                
                             >
-                                 {showPassword[field] ? <EyeTwoTone /> : <EyeInvisibleOutlined />}
-                               
+                                {showPassword[field] ? <EyeTwoTone /> : <EyeInvisibleOutlined />}
                             </span>
                         }
                     />
                 </div>
             ))}
 
-            <ButtonProfile onClick={handleSave} >Lưu thay đổi</ButtonProfile>
+            <ButtonProfile onClick={handleSave}>Lưu thay đổi</ButtonProfile>
         </div>
     );
 }

@@ -9,11 +9,12 @@
 
 .user-home {
     &-layout {
-        background-color: r(--bgva);
+        background-color: var(--bg);
+        margin: 10px 30px;
     }
 
     &-content {
-        padding: 20px 30px;
+        padding: 20px 20px;
         height: 100%;
         margin: 0 0;
         background-color: var(--bg);

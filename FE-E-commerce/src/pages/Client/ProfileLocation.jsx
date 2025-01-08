@@ -13,13 +13,38 @@ export default function ProfileLocation() {
     const [form] = Form.useForm();
 
     useEffect(() => {
-        const savedAddresses = JSON.parse(localStorage.getItem('addresses')) || [];
-        setAddresses(savedAddresses);
+        const fetchAddressesFromAPI = () => {
+            setTimeout(() => {
+                const fetchedAddresses = [
+                    {
+                        id: 1,
+                        fullName: "Nguyễn Văn A",
+                        phoneNumber: "0912345678",
+                        city: "Hà Nội",
+                        specificAddress: "Số 10, phường 5 quận 8",
+                        isOffice: false,
+                        isDefault: true,
+                    },
+                    {
+                        id: 2,
+                        fullName: "Trần Thị B",
+                        phoneNumber: "0987654321",
+                        city: "Hồ Chí Minh",
+                        specificAddress: "Số 20, Phố Z, Quận W",
+                        isOffice: true,
+                        isDefault: false,
+                    },
+                ];
 
-        const defaultAddress = savedAddresses.find(addr => addr.isDefault);
-        if (defaultAddress) {
-            setSelectedAddressId(defaultAddress.id);
-        }
+                setAddresses(fetchedAddresses);
+                const defaultAddress = fetchedAddresses.find(addr => addr.isDefault);
+                if (defaultAddress) {
+                    setSelectedAddressId(defaultAddress.id);
+                }
+            }, 1000); 
+        };
+
+        fetchAddressesFromAPI();
     }, []);
 
     const addAddress = (values) => {
@@ -153,7 +178,7 @@ export default function ProfileLocation() {
                         name="isOffice"
                         rules={[{ required: true, message: 'Vui lòng chọn loại địa chỉ!' }]}
                     >
-                        <Select style={{ width: '120px', height: '40px' }}>
+                        <Select style={{ width: '15%', height: '15%' }}>
                             <Option value={false}>Nhà riêng</Option>
                             <Option value={true}>Văn phòng</Option>
                         </Select>
@@ -170,32 +195,38 @@ export default function ProfileLocation() {
                 ) : (
                     <ul>
                         {addresses.map((address) => (
-                            <li key={address.id}>
-                                {address.fullName}, {address.phoneNumber}, {address.city}, {address.specificAddress}
-                                {address.isOffice && <span style={{ color: 'blue', marginLeft: 10 }}>(Văn phòng)</span>}
-                                {!address.isOffice && <span style={{ color: 'brown', marginLeft: 10 }}>(Nhà riêng)</span>}
-                                {address.isDefault && <span style={{ color: 'green', marginLeft: 10 }}>(Mặc định)</span>}
-                                <Button
-                                    style={{ marginLeft: 10 }}
-                                    type="link"
-                                    onClick={() => setDefaultAddress(address.id)}
-                                >
-                                    Chọn làm mặc định
-                                </Button>
-                                <Button
-                                    style={{ marginLeft: 10 }}
-                                    type="link"
-                                    onClick={() => openEditModal(address.id)}
-                                >
-                                    Chỉnh sửa
-                                </Button>
-                                <Button
-                                    style={{ marginLeft: 10 }}
-                                    type="link"
-                                    onClick={() => deleteAddress(address.id)}
-                                >
-                                    Xóa
-                                </Button>
+                            <li key={address.id} className='d-flex' style={{fontSize:'150%'}}>
+                                {address.fullName} |{address.phoneNumber} <br />{address.city}, {address.specificAddress}
+                                <div style={{marginLeft:'30%'}}>
+                                    
+                                    <Button
+                                        style={{ }}
+                                        type="link"
+                                        onClick={() => setDefaultAddress(address.id)}
+                                    >
+                                        Chọn làm mặc định
+                                    </Button>
+                                    <Button
+                                        style={{  }}
+                                        type="link"
+                                        onClick={() => openEditModal(address.id)}
+                                    >
+                                        Chỉnh sửa
+                                    </Button>
+                                    <Button
+                                        style={{    }}
+                                        type="link"
+                                        onClick={() => deleteAddress(address.id)}
+                                    >
+                                        Xóa
+                                    </Button>   
+                                    <div style={{marginLeft:'10%', fontSize:'70%'}}>
+                                        {address.isOffice && <span style={{ color: 'blue', marginLeft: 5 }}>(Văn phòng)</span>}
+                                        {!address.isOffice && <span style={{ color: 'brown', marginLeft: 5 }}>(Nhà riêng)</span>}
+                                        {address.isDefault && <span style={{ color: 'green', marginLeft: 5 }}>(Mặc định)</span>}
+                                    </div>
+                                </div>
+                                
                             </li>
                         ))}
                     </ul>

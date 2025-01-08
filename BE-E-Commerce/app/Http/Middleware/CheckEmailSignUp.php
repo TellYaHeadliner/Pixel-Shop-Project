@@ -17,15 +17,17 @@ class CheckEmailSignUp
     {
         $captcha=$request->input('captcha');
         $email=$request->input('email');
-       
+
         if(session()->has("SignUp_VerificationEmail_{$email}")&&session("SignUp_VerificationEmail_TimeBlock_{$email}")>time())
         {
-           
+        
             if($captcha!=session("SignUp_VerificationEmail_{$email}")){
                 return response()->json([
                     'success'=>false,
                     'message'=>'Sai mã xác nhận email',
-                    'data'=>[]
+                    'data'=>[
+											'1'=>1
+										]
                 ],403);
             } 
             return $next($request);
@@ -41,7 +43,9 @@ class CheckEmailSignUp
         return response()->json([
             'success'=>false,
             'message'=>'Sai mã xác nhận email',
-            'data'=>[]
+            'data'=>[
+							'2'=>2,
+						]
         ],403);
     }
 }

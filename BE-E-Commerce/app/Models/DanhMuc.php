@@ -9,6 +9,9 @@ class DanhMuc extends Model
 {
     use HasFactory;
 
+		protected $table = 'danhmuc';
+
+		protected $primaryKey = 'idDanhMuc';
     protected $fillable = [
         'idDanhMuc',
         'tenDanhMuc',
@@ -26,4 +29,22 @@ class DanhMuc extends Model
     public function parent(){
         return $this->belongsTo(DanhMuc::class, 'idDanhMucCha', 'idDanhMuc');
     }
+
+		public function getList($list = [],$cha = null){
+				$tam = $tam = DanhMuc::where(function($query) use ($cha) {
+						if ($cha !== null) {
+								$query->where("idDanhMucCha", "like", $cha);
+						} else {
+								$query->whereNull("idDanhMucCha");
+						}
+				})->get();
+				foreach($tam as $i){
+					$obj = new \stdClass();
+					$obj->idDanhMuc = $i['idDanhMuc'];
+					$obj->tenDanhMuc = $i['tenDanhMuc'];
+					$obj->child = $this->getList([],$obj->idDanhMuc);
+					$list[] = $obj;
+				}
+				return $list;
+		}
 }
