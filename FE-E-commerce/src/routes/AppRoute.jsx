@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from "react";
+import {  lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 
 
@@ -26,7 +26,7 @@ const BusinessStatistics = lazy(() => import("../pages/Admin/BusinessStatistics/
 
 //staff management
 const StaffLayout = lazy(() => import("../components/Staff/Layouts/StafffLayout"));
-const StaffContact = lazy(() => import("../pages/Staff/Contact/Contact"));
+const StaffContact = lazy(() => import("../pages/Staff/Contact/StaffContact"));
 
 const AppRoutes = () => {
   return (
@@ -50,13 +50,17 @@ const AppRoutes = () => {
           <Route path="audience-statistics" element={<AudienceStatistics />} />
           <Route path="order-statistics" element={<OrderStatistics />} />
           <Route path="contact" element={<Contact />} />
+          <Route path="business-statistics" element={<BusinessStatistics />} />
         </Route>
         <Route path="/staff" element={<StaffLayout />}>
           <Route index element={<StaffContact />} />
           {/* <Route path="orders" element={<StaffContact />} />
           <Route path="customer_consulting" element={<StaffContact />} /> */}
-        </Route>
-      </Routes>
+      </Route>
+      <Route path="/staff" element={<StaffLayout />}>
+        <Route index element={<StaffContact />} />
+      </Route>
+    </Routes>
   );
 };
 
