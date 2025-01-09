@@ -108,7 +108,7 @@ export default function ProfileLayout() {
           items={modifiedItems}
         />
       </div>
-      <div style={{ marginLeft: 30 }}>
+      <div style={{ marginLeft: 30 }} className="w-100">
         <Outlet />
       </div>
     </div>
