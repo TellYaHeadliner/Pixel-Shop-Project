@@ -21,7 +21,7 @@ export default function ProfileLocation() {
                 "http://127.0.0.1:8000/api/getDiaChiUser",
                 {idNguoiDung},
                 {
-                    haeders:{
+                    headers:{
                         "Content-Type": "application/json",
                     },
                 },
@@ -36,19 +36,11 @@ export default function ProfileLocation() {
     }
     useEffect(()=>{
         handleGetListLocation();
+        handleEditSubmit();
     },[])
 
 
-    // const addAddress = async (value) => {
-    //     try{
-    //         const response= await axios.post(
-    //         "http://127.0.0.1:8000/api/getDiaChiUser",
-    //         )
-    //     }catch(e) {
-    //         message.error(e.response.data.message);
-    //     }
-
-    // }
+    
     const setDefaultAddress = (id) => {
         const updatedAddresses = addresses.map(addr =>
             addr.id === id ? { ...addr, isDefault: true } : { ...addr, isDefault: false }
@@ -69,18 +61,40 @@ export default function ProfileLocation() {
         setIsModalVisible(false);
     };
 
-    const handleEditSubmit = () => {
+    const handleEditSubmit = async() => {
+        const idNguoiDung=IdUser;
+        const idDiaChi = selectedAddressId;
+        const diaChi = editedAddress;
+    
         if (editedAddress === '') {
             message.error('Vui lòng nhập địa chỉ mới!');
             return;
         }
+        try{
+            const response=await axios.post(
+            "http://127.0.0.1:8000/api/updateDefaultLocation",
+            {
+                idNguoiDung,
+                idDiaChi,
+                diaChi,
+                
+            },
+            {
+                headers:{
+                    "Content-Type": "application/json",
+                },
+            }
 
-        const updatedAddresses = addresses.map(addr =>
-            addr.id === selectedAddressId ? { ...addr, specificAddress: editedAddress } : addr
-        );
-        setAddresses(updatedAddresses);
-        localStorage.setItem('addresses', JSON.stringify(updatedAddresses));
-        setIsModalVisible(false);
+            );
+            if(response.data.success) {
+                    message.success(response.data.message);
+                    setIsModalVisible(false);
+                    handleGetListLocation();
+            }
+        }catch(e){
+            const data=e.response.data;
+            message.error(data.message);
+        }
     };
 
     const deleteAddress = (id) => {
@@ -158,7 +172,9 @@ export default function ProfileLocation() {
                         </Select>
                     </Form.Item>
 
-                    <ButtonProfile htmlType="submit">Thêm địa chỉ</ButtonProfile>
+                    <ButtonProfile htmlType="submit">Thêm địa chỉ
+                       
+                    </ButtonProfile>
                 </Form>
             </Modal>
 

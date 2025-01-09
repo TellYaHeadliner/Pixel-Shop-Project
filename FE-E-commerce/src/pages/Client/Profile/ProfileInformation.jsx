@@ -90,16 +90,6 @@ export default function ProfileInformation() {
 
     const handleFileChange = (event) => {
         const selectedFile = event.target.files[0];
-        if (selectedFile) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImagePreview(reader.result);
-                localStorage.setItem('imagePreview', reader.result);
-                setFile(selectedFile.name);
-                message.success("Ảnh đại diện đã được cập nhật!");
-            };
-            reader.readAsDataURL(selectedFile);
-        }
     };
 
     const handleOk = () => {
@@ -363,28 +353,37 @@ export default function ProfileInformation() {
                     </Form>
                 </div>
 
-                <div className="col-6">
-                    {imagePreview && (
-                        <div>
+                <div className="col-6" className='d-block'
+                    style={{marginLeft:'15%'}}
+                >
+                        <div >
                             <h3>Ảnh đại diện:</h3>
                             <img
-                                src={imagePreview}
+                                src={"http://127.0.0.1:8000/imgs/"+userInfo.anhDaiDien}
                                 alt="Preview"
                                 style={{
-                                    width: '100px',
-                                    height: '100px',
-                                    marginLeft: '170px',
+                                    width:'100%',
+                                    height:'150px',
                                     borderRadius: '50%',
                                 }}
                             />
                         </div>
-                    )}
-                    <label>
+                    <label
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            backgroundColor: '#53CCED',
+                            color: '#fff',
+                            cursor: 'pointer',
+                            marginTop:'20%'
+                        }}
+                    >
+                        Chọn ảnh
                         <input
                             type="file"
                             accept="image/*"
                             onChange={handleFileChange}
-                            style={{ width: '500px', height: '40px', marginTop: 20 }}
+                            style={{ display:'none' }}
                         />
                     </label>
                 </div>
