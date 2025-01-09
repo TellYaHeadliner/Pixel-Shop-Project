@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Button, Form, Input, message, Select } from 'antd';
-import ButtonProfile from '../../components/Client/Button/ButtonProfile';
+import { Modal, Button, Form, Input, message, Select, DatePicker } from 'antd';
+import ButtonProfile from '../../../components/Client/Button/ButtonProfile';
 import './ProfileInformation.scss';
+import axios from 'axios';
+import { format, parseISO } from "date-fns";
+import moment from 'moment';
+
 
 export default function ProfileInformation() {
     const [form] = Form.useForm();
     const [file, setFile] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
-    const [userInfo, setUserInfo] = useState({});
+    const [userInfo, setUserInfo] = useState({data:[{},{}]});
     const [listLocation, setListLocation] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [editField, setEditField] = useState("");
+    const [defaultLoc, setDefaultLoc] = useState(null);
     const fieldLabels = {
         hoVaTen: "Họ và Tên",
         gioiTinh: "Giới Tính",
@@ -18,38 +23,66 @@ export default function ProfileInformation() {
         email: "Email",
         diaChi: "Địa Chỉ",
     };
+    const [isDisabled, setIsDisabled] = useState(false);
+    const [isClickM, setIsClickM] = useState(false);
+    const [countdown, setCountdown] = useState(0); 
+    const IdUser = 1;
+    let timer = null;
+
+    const handleGetProfile = async ()=>{
+        const idNguoiDung = IdUser;
+        console.log(idNguoiDung);
+        try{
+            const response = await axios.post(
+                "http://127.0.0.1:8000/api/getProfile",
+                {idNguoiDung},
+                {
+                    haeders:{
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+            if(response.data.success) {
+                response.data.data.ngaySinh = format(parseISO(response.data.data.ngaySinh), "dd/MM/yyyy");
+                setUserInfo(response.data.data);
+            }
+        }catch (e) {
+            const data = e.response.data;
+            message.error(data.message);
+        }
+    }
+    const handleGetListLocation = async() =>{
+        const idNguoiDung = IdUser;
+        try{
+            const response = await axios.post(
+                "http://127.0.0.1:8000/api/getDiaChiUser",
+                {idNguoiDung},
+                {
+                    haeders:{
+                        "Content-Type": "application/json",
+                    },
+                },
+            )
+            if(response.data.success) {
+                setListLocation(response.data.data);
+            }
+        }catch(e){
+            const data =e.response.data;
+            message.error(data.message);
+        }
+    }
 
     useEffect(() => {
-        const diaChi = [
-            {
-                idDiaChi: "1",
-                diaChi: "KG",
-                macDinh: "0"
-            },
-            {
-                idDiaChi: "2",
-                diaChi: "TN",
-                macDinh: "1"
-            },
-        ];
-        setListLocation(diaChi);
-
-        const info = {
-            hoVaTen: "TVy",
-            gioiTinh: "2",
-            ngaySinh: "15/07/2003",
-            email: "viev6004@gmail.com",
-        };
-        setUserInfo(info);
+        handleGetProfile();
+        handleGetListLocation();
     }, []);
-
-   
 
     useEffect(() => {
         const updatedInfo = { ...userInfo };
         listLocation.forEach((l) => {
-            if (l.macDinh === "1") {
+            if (l.macDinh == 1) {
                 updatedInfo.diaChi = l.diaChi;
+                setDefaultLoc(l.diaChi);
             }
         });
         form.setFieldsValue(updatedInfo);
@@ -69,24 +102,6 @@ export default function ProfileInformation() {
         }
     };
 
-    const changeDiaChi = () => {
-        const diaChi = [...listLocation];
-        diaChi[0].macDinh = "1";
-        diaChi[1].macDinh = "0";
-
-        setListLocation(diaChi);
-    };
-
-    const changeInfo = () => {
-        const info = {
-            hoVaTen: "Nguyễn Tuấn Kiệt",
-            gioiTinh: "1",
-            ngaySinh: "02/07/2004",
-            email: "tuankietnguyen113@gmail.com",
-        };
-        setUserInfo(info);
-    };
-
     const handleOk = () => {
         form.validateFields().then((values) => {
             Modal.confirm({
@@ -94,12 +109,61 @@ export default function ProfileInformation() {
                 content: "Bạn có chắc chắn muốn lưu các thay đổi không?",
                 okText: "Xác nhận",
                 cancelText: "Hủy",
-                onOk: () => {
-                    const updatedInfo = { ...userInfo, [editField]: values[editField] };
-                    setUserInfo(updatedInfo);
-                    setIsModalVisible(false);
-                    message.success("Thông tin đã được cập nhật thành công!");
-                    console.log("Thay đổi đã được lưu:", updatedInfo);
+                onOk: async () => {
+                    if(editField == "diaChi"){
+                        try{
+                            const data = {
+                                idNguoiDung: IdUser,
+                                idDiaChi: values[editField+2],
+                            };
+                            const response=await axios.post(
+                                "http://127.0.0.1:8000/api/updateDefaultLocation",
+                                data,
+                                {
+                                    headers: {'Content-Type': 'application/json'},
+                                },
+                            );
+                            if(response.data.success){
+                                handleGetListLocation();
+                                setIsModalVisible(false);
+                                message.success("Thông tin đã được cập nhật thành công!");
+                            }
+                        }catch(e){
+                            message.error(e.response.data.message);
+                        }
+                    }
+                    else{
+                        const updatedInfo = { ...userInfo, [editField]: values[editField+2] }
+                        console.log(updatedInfo);
+                        updatedInfo.captcha = values['captcha'];
+
+                        if(editField == "ngaySinh")
+                            updatedInfo.ngaySinh = updatedInfo.ngaySinh.format("DD-MM-YYYY");
+                        try{
+                            const response = await axios.post(
+                                editField == "email"?
+                                 "http://127.0.0.1:8000/api/changeEmail"
+                                :"http://127.0.0.1:8000/api/updateById",
+                                updatedInfo,
+                                {
+                                    headers: { 'Content-Type': 'application/json' },
+                                },
+                            );
+                            if(response.data.success) {
+                                handleGetProfile();
+                                setIsModalVisible(false);
+                                message.success("Thông tin đã được cập nhật thành công!");
+                                setIsClickM(false);
+                                setIsDisabled(false);
+                                clearTimeout(timer);
+                                form.setFieldsValue({captcha: ""});
+                            }
+                        }catch(e) {
+                            const data = e.response.data;
+                            message.error(data.message);
+                        }
+                    }
+                    
                 },
                 onCancel: () => {
                     console.log("Thay đổi chưa được lưu");
@@ -112,12 +176,62 @@ export default function ProfileInformation() {
         message.info("Thay đổi chưa được lưu");
         // form.setFieldsValue({ [editField]: userInfo[editField] });
         setIsModalVisible(false);
+        form.setFieldsValue({captcha: ""});
     };
 
     const showModal = (field) => {
         setEditField(field);
-        form.setFieldsValue({ [field + 2]: userInfo[field] });
+        if(field == "diaChi")
+            form.setFieldsValue({ [field + 2]: defaultLoc });
+        else if(field == "ngaySinh"){
+            form.setFieldsValue({ [field + 2]: null });
+        }
+        else
+            form.setFieldsValue({ [field + 2]: userInfo[field] });
         setIsModalVisible(true);
+    };
+
+    const handleVerificationEmail = async () => {
+            setIsClickM(true);
+            setIsDisabled(true);
+            setCountdown(180); 
+            timer = setInterval(() => {
+              setCountdown((prev) => {
+                if (prev <= 1) {
+                  clearInterval(timer); 
+                  setIsDisabled(false);
+                  setIsClickM(false);
+                  return 0;
+                }
+                return prev - 1;
+              });
+            }, 1000);
+        try {
+          const values = await form.validateFields([
+            "email2",
+          ]);
+          const email = values.email2;
+          const tenDangNhap = values.email2;
+          const name = userInfo.hoVaTen;
+    
+          const response = await axios.post(
+            "http://127.0.0.1:8000/api/VerificationEmail",
+            { email,tenDangNhap,name },
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          if (response.data.success) {
+            message.success(response.data.message + " qua email:" + email);
+          }
+        } catch (error) { 
+          message.error(error.response.data.message);
+          clearInterval(timer);
+          setIsDisabled(false);
+          setIsClickM(false);
+        }
     };
 
     return (
@@ -159,8 +273,8 @@ export default function ProfileInformation() {
                                         value={userInfo.gioiTinh}
                                         disabled
                                     >
-                                        <Select.Option value="1">Nam</Select.Option>
-                                        <Select.Option value="2">Nữ</Select.Option>
+                                        <Select.Option value= {0}>Nữ</Select.Option>
+                                        <Select.Option value= {1}>Nam</Select.Option>
                                     </Select>
                                 </Form.Item>
                             </div>
@@ -291,14 +405,17 @@ export default function ProfileInformation() {
                                 name={editField + "2"}
                             >
                                 <Select>
-                                    <Select.Option value="1">Nam</Select.Option>
-                                    <Select.Option value="2">Nữ</Select.Option>
+                                    <Select.Option value = {1} >Nam</Select.Option>
+                                    <Select.Option value = {0} >Nữ</Select.Option>
                                 </Select>
                             </Form.Item>
                         ) : editField === "diaChi" ? (
                             <Form.Item
                                 name={editField + 2}
-                                rules={[{ required: true, message: `Vui lòng chọn ${fieldLabels[editField]}!` }]}
+                                rules={[
+                                    { required: true, message: `Vui lòng chọn ${fieldLabels[editField]}!` },
+                                    {type: "Oject"}
+                                ]}
                             >
                                 <Select
                                     onChange={(value) => form.setFieldsValue({ diaChi2: value })}
@@ -316,7 +433,17 @@ export default function ProfileInformation() {
                                     name={editField+2}
                                     rules={[
                                         { required: true,  message: `Vui lòng nhập ${fieldLabels[editField]}!` },
-                                        { type : 'email', message: 'Email không đúng định dạng!'}
+                                        {
+                                            validator: (_, value) => {
+                                                if (!value || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                                                    if(!isClickM)
+                                                        setIsDisabled(false); 
+                                                    return Promise.resolve();
+                                                }
+                                                    setIsDisabled(true);
+                                                return Promise.reject(new Error('Email không đúng định dạng!'));
+                                            },
+                                        },
                                     ]}
                                 
                                 >
@@ -324,17 +451,36 @@ export default function ProfileInformation() {
                                 </Form.Item>
                                 <div className='d-flex'>
                                     <Form.Item
-                                    name='capcha'
+                                    name='captcha'
                                     label='nhập mã xác nhận email'
                                     >
                                         <Input/>
                                     </Form.Item>
                                     <div className="d-flex align-items-center justify-content-end w-50">
-                                        <Button>Lấy mã</Button>
+                                    <Button
+                                        type="primary"
+                                        onClick={handleVerificationEmail}
+                                        disabled={isDisabled}
+                                    >
+                                        {isDisabled ? `Gửi lại sau ${countdown}s` : "Gửi mã"}
+                                    </Button>
                                     </div>
                                 </div>
                             </>
-                        ) : (
+                        ) 
+                        : editField=="ngaySinh" ?(
+                            
+                                <Form.Item
+                                    name={editField+2}
+                                    rules={[
+                                        { required: true, message: `Vui lòng chọn ${fieldLabels[editField]}!` },
+                                    ]}
+                                >
+                                    <DatePicker  format="DD/MM/YYYY"/>
+                                </Form.Item>
+                          
+                        )
+                        :(
                             <Form.Item
                                 name={editField+2}
                                 rules={[{ required: true, message: `Vui lòng nhập ${fieldLabels[editField]}!` }]}

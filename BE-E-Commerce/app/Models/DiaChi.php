@@ -11,7 +11,7 @@ class DiaChi extends Model
 
 		protected $table = "diachi";
 
-		protected $id  = "idDiaChi";
+		protected $primaryKey  = "idDiaChi";
 
     protected $fillable = [
         'idDiaChi',

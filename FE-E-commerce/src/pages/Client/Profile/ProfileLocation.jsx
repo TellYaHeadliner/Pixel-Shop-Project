@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Input, message, Select, Form } from 'antd';
-import ButtonProfile from '../../components/Client/Button/ButtonProfile';
-
+import ButtonProfile from '../../../components/Client/Button/ButtonProfile';
+import axios from 'axios';
 const { Option } = Select;
 
 export default function ProfileLocation() {
@@ -11,70 +11,44 @@ export default function ProfileLocation() {
     const [selectedAddressId, setSelectedAddressId] = useState(null);
     const [editedAddress, setEditedAddress] = useState('');
     const [form] = Form.useForm();
-
-    useEffect(() => {
-        const fetchAddressesFromAPI = () => {
-            setTimeout(() => {
-                const fetchedAddresses = [
-                    {
-                        id: 1,
-                        fullName: "Nguyễn Văn A",
-                        phoneNumber: "0912345678",
-                        city: "Hà Nội",
-                        specificAddress: "Số 10, phường 5 quận 8",
-                        isOffice: false,
-                        isDefault: true,
+    const IdUser = 1;
+    
+    
+    const handleGetListLocation = async() =>{
+        const idNguoiDung = IdUser;
+        try{
+            const response = await axios.post(
+                "http://127.0.0.1:8000/api/getDiaChiUser",
+                {idNguoiDung},
+                {
+                    haeders:{
+                        "Content-Type": "application/json",
                     },
-                    {
-                        id: 2,
-                        fullName: "Trần Thị B",
-                        phoneNumber: "0987654321",
-                        city: "Hồ Chí Minh",
-                        specificAddress: "Số 20, Phố Z, Quận W",
-                        isOffice: true,
-                        isDefault: false,
-                    },
-                ];
-
-                setAddresses(fetchedAddresses);
-                const defaultAddress = fetchedAddresses.find(addr => addr.isDefault);
-                if (defaultAddress) {
-                    setSelectedAddressId(defaultAddress.id);
-                }
-            }, 1000); 
-        };
-
-        fetchAddressesFromAPI();
-    }, []);
-
-    const addAddress = (values) => {
-        const { fullName, phoneNumber, city, specificAddress, isOffice } = values;
-
-        if (addresses.length >= 10) {
-            message.error('Đã đạt giới hạn tối đa 10 địa chỉ!');
-            return;
+                },
+            )
+            if(response.data.success) {
+                setAddresses(response.data.data);
+            }
+        }catch(e){
+            const data =e.response.data;
+            message.error(data.message);
         }
+    }
+    useEffect(()=>{
+        handleGetListLocation();
+    },[])
 
-        const newAddressObj = {
-            id: Date.now(), // Tạo ID duy nhất
-            fullName,
-            phoneNumber,
-            city,
-            specificAddress,
-            isOffice,
-            isDefault: false,
-        };
 
-        const updatedAddresses = [...addresses, newAddressObj];
-        setAddresses(updatedAddresses);
-        localStorage.setItem('addresses', JSON.stringify(updatedAddresses));
+    // const addAddress = async (value) => {
+    //     try{
+    //         const response= await axios.post(
+    //         "http://127.0.0.1:8000/api/getDiaChiUser",
+    //         )
+    //     }catch(e) {
+    //         message.error(e.response.data.message);
+    //     }
 
-        form.resetFields();
-        setIsAddAddressModalVisible(false);
-
-        message.success('Địa chỉ đã được thêm thành công!');
-    };
-
+    // }
     const setDefaultAddress = (id) => {
         const updatedAddresses = addresses.map(addr =>
             addr.id === id ? { ...addr, isDefault: true } : { ...addr, isDefault: false }
@@ -137,7 +111,7 @@ export default function ProfileLocation() {
                 footer={null}
                 width={800}
             >
-                <Form form={form} layout="vertical" onFinish={addAddress}>
+                <Form form={form} layout="vertical" onFinish={{}}>
                     <div style={{ display: 'flex' }}>
                         <Form.Item
                             label="Họ và tên"
@@ -195,8 +169,9 @@ export default function ProfileLocation() {
                 ) : (
                     <ul>
                         {addresses.map((address) => (
-                            <li key={address.id} className='d-flex' style={{fontSize:'150%'}}>
-                                {address.fullName} |{address.phoneNumber} <br />{address.city}, {address.specificAddress}
+                            <>
+                            <li key={address.id} className='d-flex' style={{fontSize:'120%'}}>
+                                {address.sdt} <br />{address.diaChi}
                                 <div style={{marginLeft:'30%'}}>
                                     
                                     <Button
@@ -226,8 +201,10 @@ export default function ProfileLocation() {
                                         {address.isDefault && <span style={{ color: 'green', marginLeft: 5 }}>(Mặc định)</span>}
                                     </div>
                                 </div>
-                                
                             </li>
+                            <hr/>
+                            </>
+
                         ))}
                     </ul>
                 )}

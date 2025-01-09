@@ -3,11 +3,11 @@ import { Routes, Route } from "react-router-dom";
 
 
 import ProfileLayout from "../components/Client/layouts/ProfileLayout";
-import ProfileInformation from "../pages/Client/ProfileInformation";
-import ProfileLocation from "../pages/Client/ProfileLocation";
-import ProfileChangePassWord from "../pages/Client/ProfileChangePassWord";
-import ProfileCompanyInformation from "../pages/Client/ProfileCompanyInformation";
-import ProfileProductloved from "../pages/Client/ProfileProductloved";
+import ProfileInformation from "../pages/Client/Profile/ProfileInformation";
+import ProfileLocation from "../pages/Client/Profile/ProfileLocation";
+import ProfileChangePassWord from "../pages/Client/Profile/ProfileChangePassWord";
+import ProfileCompanyInformation from "../pages/Client/Profile/ProfileCompanyInformation";
+import ProfileProductloved from "../pages/Client/Profile/ProfileProductloved";
 import ContactInformation from "../pages/Client/ContactInformation";
 
 const ClientLayout = lazy(() => import("../components/Client/Layouts/ClientLayout"));
