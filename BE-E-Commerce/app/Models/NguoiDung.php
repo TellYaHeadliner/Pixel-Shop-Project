@@ -22,7 +22,7 @@ class NguoiDung extends Authenticatable
         'hoVaTen',
         'ngaySinh',
         'gioiTinh',
-        'SĐT',
+        'sdt',
         'vaiTro',
         'email',
         'anhDaiDien'

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './SupplierManagement.scss';
 import { Input, Table, Typography, Button,Form,Space,Tag , message} from 'antd';
-
 import axios from 'axios';
 
 const { Title } = Typography;
