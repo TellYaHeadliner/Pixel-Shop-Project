@@ -88,10 +88,46 @@ export default function ProfileInformation() {
         form.setFieldsValue(updatedInfo);
     }, [userInfo, listLocation]);
 
-    const handleFileChange = async (event) => {
+    const handleFileChange = (event) => {
         const selectedFile = event.target.files[0];
-    };
 
+if (!selectedFile) {
+return; // Nếu không có tệp nào được chọn, thoát khỏi hàm
+}
+
+Modal.confirm({
+title: "Xác nhận thay đổi ảnh đại diện",
+content: "Bạn có chắc chắn muốn thay đổi ảnh đại diện?",
+okText: "Xác nhận",
+cancelText: "Hủy",
+onOk: async () => {
+try {
+    const formData = new FormData();
+    formData.append("anhDaiDien", selectedFile);
+    formData.append("idNguoiDung", IdUser);
+
+    const response = await axios.post(
+        "http://127.0.0.1:8000/api/updateAnhDaiDien",
+        formData,
+        {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        }
+    );
+    
+                    message.success(response.data.message);
+                    handleGetProfile(); // Cập nhật lại thông tin người dùng
+                } catch (e) {
+                    message.error(e.response?.data?.message || "Đã xảy ra lỗi khi cập nhật ảnh đại diện.");
+                }
+            },
+            onCancel: () => {
+                message.info("Thay đổi chưa được lưu.");
+            },
+        });
+    };
+    
     const handleOk = () => {
         form.validateFields().then((values) => {
             Modal.confirm({
@@ -359,7 +395,7 @@ export default function ProfileInformation() {
                         <div >
                             <h3>Ảnh đại diện:</h3>
                             <img
-                                src={"http://127.0.0.1:8000/imgs/"+userInfo.anhDaiDien}
+                                src={"http://127.0.0.1:8000/imgs/"+ userInfo.anhDaiDien}
                                 alt="Preview"
                                 style={{
                                     width:'100%',
@@ -382,7 +418,7 @@ export default function ProfileInformation() {
                         <input
                             type="file"
                             accept="image/*"
-														name="anhDaiDien"
+							name="anhDaiDien"
                             onChange={handleFileChange}
                             style={{ display:'none' }}
                         />

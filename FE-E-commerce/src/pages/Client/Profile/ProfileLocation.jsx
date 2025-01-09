@@ -36,7 +36,6 @@ export default function ProfileLocation() {
     }
     useEffect(()=>{
         handleGetListLocation();
-        handleEditSubmit();
     },[])
 
 
