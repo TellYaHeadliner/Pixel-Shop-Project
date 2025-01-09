@@ -27,6 +27,7 @@ const BusinessStatistics = lazy(() => import("../pages/Admin/BusinessStatistics/
 //staff management
 const StaffLayout = lazy(() => import("../components/Staff/Layouts/StafffLayout"));
 const StaffContact = lazy(() => import("../pages/Staff/Contact/StaffContact"));
+const OrderManagement = lazy(() => import("../pages/Staff/Contact/OrderManagement"));
 
 const AppRoutes = () => {
   return (
@@ -54,6 +55,7 @@ const AppRoutes = () => {
         </Route>
         <Route path="/staff" element={<StaffLayout />}>
           <Route index element={<StaffContact />} />
+          <Route path="order-management" element={<OrderManagement />} />
           {/* <Route path="orders" element={<StaffContact />} />
           <Route path="customer_consulting" element={<StaffContact />} /> */}
       </Route>
