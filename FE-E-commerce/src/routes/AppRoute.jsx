@@ -45,7 +45,6 @@ const AppRoutes = () => {
           <Route path="locations" element={<ProfileLocation/>}/>
           <Route path="changepassword" element={<ProfileChangePassWord/>}/>
           <Route path="productloved" element={<ProfileProductloved/>}/>
-
         </Route>
         <Route path="contact" element={<ContactInformation/>}/>
         <Route path="about" element={<ProfileCompanyInformation/>}/>
