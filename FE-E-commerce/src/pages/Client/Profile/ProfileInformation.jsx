@@ -88,7 +88,7 @@ export default function ProfileInformation() {
         form.setFieldsValue(updatedInfo);
     }, [userInfo, listLocation]);
 
-    const handleFileChange = (event) => {
+    const handleFileChange = async (event) => {
         const selectedFile = event.target.files[0];
     };
 
@@ -382,6 +382,7 @@ export default function ProfileInformation() {
                         <input
                             type="file"
                             accept="image/*"
+														name="anhDaiDien"
                             onChange={handleFileChange}
                             style={{ display:'none' }}
                         />
