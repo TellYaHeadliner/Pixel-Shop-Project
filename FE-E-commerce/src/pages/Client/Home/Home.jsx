@@ -1,15 +1,65 @@
 import { Row, Col, Layout, Typography, Card, Flex } from "antd";
 import { AiOutlineCheck } from "react-icons/ai";
+import { useState, useEffect } from "react";
 
 import SanPhamNav from "../../../components/Client/Button/SanPhamNav";
 import SanPhamCard from "../../../components/Client/Cards/CardSanPham";
 import "./Home.scss"
 import SlideShowAds from "../../../components/Client/Slideshow/SlideShowAds";
+import SlideShowProducts from "../../../components/Client/Slideshow/SlideShowProducts";
+import CardSanPham from "../../../components/Client/Cards/CardSanPham";
 
 const { Content } = Layout;
 const { Paragraph, Title, Text } = Typography;
 
+import productsService from "../../../services/productsService";
+
+
+
 const Home = () => {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState([]);
+  const [error, setError] = useState([]);
+  const [listLaptop, setListLaptop] = useState([]);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const handleNextSlideShow = (current) =>{
+    setCurrentSlide(current);
+  }
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await productsService.getProducts;
+        if (response && response.data && response.data.data){
+          setProducts(response.data.data);
+        }
+        setLoading(false);
+      } catch (error) {
+        setError(error);
+        setLoading(false);
+      }
+    }
+    fetchProducts();
+  },[products]);
+
+  useEffect(() => {
+    const fetchLaptops = async () => {
+      try {
+        const response = await productsService.getListLaptop;
+        if (response && response.data && response.data.data){
+          setListLaptop(response.data.data);
+        }
+        setLoading(false)
+      } catch (error) {
+        setError(error);
+        console.error(error);
+      }
+    }
+    fetchLaptops();
+    console.log(listLaptop);
+  },[listLaptop])
+
   return (
     <Layout className="user-home-layout">
       <Content
@@ -20,44 +70,66 @@ const Home = () => {
       >
         <Row gutter={[16, 16]}>
           <Col xs={24} md={14}>
-              <SlideShowAds linkImg="/imgs/slideshow1.png" width="100%" height="300px" />
+            <SlideShowAds
+              linkImg="/imgs/slideshow1.png"
+              width="100%"
+              height="300px"
+            />
           </Col>
           <Col xs={24} md={10}>
             <Flex gap="middle" vertical>
-              <SlideShowAds linkImg="/imgs/slideshow2.png" width="100%" height="50%" />
-              <SlideShowAds linkImg="/imgs/slideshow3.png" width="100%" height="50%" />
+              <SlideShowAds
+                linkImg="/imgs/slideshow2.png"
+                width="100%"
+                height="50%"
+              />
+              <SlideShowAds
+                linkImg="/imgs/slideshow3.png"
+                width="100%"
+                height="50%"
+              />
             </Flex>
           </Col>
         </Row>
 
         <div className="mt-3">
-          <SanPhamNav title="Sản phẩm mới" />
+          <SanPhamNav
+            title="Sản phẩm mới"
+            onNext={() => handleNextSlideShow((currentSlide + 1) % 3)}
+          />
         </div>
-        <Row gutter={[16, 16]} className="my-4">
-          <Col xs={24} sm={12} lg={8}>
-            <SanPhamCard />
-          </Col>
-          <Col xs={24} sm={12} lg={8}>
-            <SanPhamCard />
-          </Col>
-          <Col xs={24} sm={12} lg={8}>
-            <SanPhamCard />
-          </Col>
+        <Row gutter={[16, 16]} className="mt-3">
+          {products.map((product, index) => (
+            <Col key={index} xs={24} sm={12} lg={8}>
+              <CardSanPham
+                tenSanPham={product?.tenSanPham}
+                hang={product?.hang}
+                gia={product?.gia}
+                img={product?.img}
+                slug={product?.slug}
+              />
+            </Col>
+          ))}
         </Row>
 
         <div className="mt-3">
-          <SanPhamNav title="Laptop" />
+          <SanPhamNav
+            title="Laptop"
+            onNext={() => handleNextSlideShow((currentSlide + 1) % 3)}
+          />
         </div>
-        <Row gutter={[16, 16]} className="my-4">
-          <Col xs={24} sm={12} lg={8}>
-            <SanPhamCard />
-          </Col>
-          <Col xs={24} sm={12} lg={8}>
-            <SanPhamCard />
-          </Col>
-          <Col xs={24} sm={12} lg={8}>
-            <SanPhamCard />
-          </Col>
+        <Row gutter={[16, 16]} className="mt-3">
+          {listLaptop.map((product, index) => (
+            <Col key={index} xs={24} sm={12} lg={8}>
+              <CardSanPham
+                tenSanPham={product?.tenSanPham}
+                hang={product?.hang}
+                gia={product?.gia}
+                img={product?.img}
+                slug={product?.slug}
+              />
+            </Col>
+          ))}
         </Row>
 
         <div className="mt-3">

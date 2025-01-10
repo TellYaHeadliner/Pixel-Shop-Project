@@ -39,6 +39,4 @@ const SlideShowAds = ({ width ,height, linkImg }) => {
   );
 }
 
-
-
 export default SlideShowAds;

@@ -189,6 +189,7 @@ const ShoppingCart = () => {
     });    
   };
 
+
   const toggleSelectItem = (id) => {
     setCartItems((prevItems) =>
       prevItems.map((item) =>
@@ -231,6 +232,9 @@ const ShoppingCart = () => {
           onClick={handleRemoveAll}
         >
           Xóa
+        </Button>
+        <Button type="danger" onClick={showRemoveAllConfirm} style={{ marginBottom: 20 }}>
+          Xóa tất cả
         </Button>
         <div className={styles.cartContent}>
           <div className={styles.cartItems}>

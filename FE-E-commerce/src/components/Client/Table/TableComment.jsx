@@ -4,8 +4,8 @@ import Star from "../Descriptions/Star";
 const columns = [
     {
         title: 'Tên người bình luận',
-        dataIndex: 'hoTen',
-        key: 'hoTen',
+        dataIndex: 'tenDangNhap',
+        key: 'tenDangNhap',
     },
     {
         title: "Số sao",
@@ -20,30 +20,9 @@ const columns = [
     }
 ];
 
-const dataSource = [
-  {
-    key: "1",
-    hoTen: "An",
-    noiDung: "Bình luận rất tốt!",
-    soSao: 5,
-  },
-  {
-    key: "2",
-    hoTen: "Bé",
-    noiDung: "Hài lòng với sản phẩm.",
-    soSao: 4,
-  },
-  {
-    key: "3",
-    hoTen: "Cô",
-    noiDung: "Sản phẩm thiết kế tuyệt vời!",
-    soSao: 3,
-  }
-];
-
-const TableComment = () => {
+const TableComment = ({ rating }) => {
     return (
-        <Table dataSource={dataSource} columns={columns} pagination={{ pageSize: 5}} />
+        <Table dataSource={rating} columns={columns} pagination={{ pageSize: 5}} />
     )
 }
 
