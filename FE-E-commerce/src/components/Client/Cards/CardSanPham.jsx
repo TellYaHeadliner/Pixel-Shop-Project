@@ -1,7 +1,7 @@
 import { Card, Flex, Button } from "antd";
 function SanPhamCard({ tenSanPham, hang, gia, img, slug }) {
   const formattedPrice = `${gia} VND`
-  const linkImg = `http://localhost:8000` + img;
+  const linkImg = `http://localhost:8000/imgs/` + img;
   const link = `http://localhost:5173/` + slug;
   return (
     <Card
