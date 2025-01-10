@@ -3,7 +3,7 @@ import { Layout, Button, Tree, Badge } from "antd";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { FaUser, FaBars } from "react-icons/fa";
 import { FiShoppingCart } from "react-icons/fi";
-import { useNavigate } from "react-router-dom"; // Thêm import này
+import { useNavigate, Link } from "react-router-dom"; // Thêm import này
 
 import ModalLoginAndRegister from "../Modals/ModalLoginAndRegister";
 import styles from "./ClientHeader.module.scss";
@@ -141,9 +141,9 @@ const ClientHeader = () => {
           </div>
         )}
         <nav className={styles.navigation}>
-          <a href="/" className={styles.link}>Trang chủ</a>
-          <a href="/about" className={styles.link}>Giới thiệu</a>
-          <a href="/news" className={styles.link}>Tin tức</a>
+          <Link to="/" className={styles.link}>Trang chủ</Link>
+          <Link to="/about" className={styles.link}>Giới thiệu</Link>
+          <Link to="/news" className={styles.link}>Tin tức</Link>
         </nav>
 
         <div className={styles.logo}>
