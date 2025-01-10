@@ -109,7 +109,7 @@ class SanPhamController extends Controller
 
 		function addSanPham(Request $request){
 			$data=$request->all();
-			if(SanPham::where("tenSanPham","=",$data['tenSanPham'])->first()){
+			if(SanPham::whereRaw("BINARY tenSanPham = ?",[$data['tenSanPham']])->first()){
 				return response()->json([
 					'success' => false,
 					'message' => "Tên sản phẩm đã tồn tại!",
@@ -192,7 +192,7 @@ class SanPhamController extends Controller
 					'manHinh'=>$data['manHinh'],
 					'kichThuoc'=>$data['kichThuoc'],
 					'trongLuong'=>$data['trongLuong'],
-					'mauSac'=>$data['mauSac'],
+					'mauSac'=>$data['mauSac'] ?? null,
 					'congKetNoi'=>$data['congKetNoi'] ?? null,
 
 				]);
