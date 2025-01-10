@@ -17,6 +17,7 @@ Route::controller(UserController::class)->group(function () {
 	Route::post('/api/getProfile', [UserController::class, 'getById']);
 	Route::post('/api/updateById', [UserController::class, 'updateById']);
 	Route::post('/api/changeEmail','updateById')->middleware(CheckEmailSignUp::class);
+	Route::post('/api/updateAnhDaiDien','updateAnhDaiDien');
 
 });
 

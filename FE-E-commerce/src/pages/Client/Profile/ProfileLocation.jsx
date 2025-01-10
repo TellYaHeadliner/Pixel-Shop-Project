@@ -21,7 +21,7 @@ export default function ProfileLocation() {
                 "http://127.0.0.1:8000/api/getDiaChiUser",
                 {idNguoiDung},
                 {
-                    haeders:{
+                    headers:{
                         "Content-Type": "application/json",
                     },
                 },
