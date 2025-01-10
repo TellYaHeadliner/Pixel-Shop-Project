@@ -113,6 +113,7 @@ const CategoryManagement = () => {
 
     const handleMenuClick = (action) => {
         if (!contextMenu.category) return;
+        console.log(contextMenu.category);
         if (action === "edit") {
             setNewCategoryName(contextMenu.category.tenDanhMuc);
             setEditModalVisible(true);
@@ -250,7 +251,7 @@ const CategoryManagement = () => {
 
             <Modal
                 title="Sửa tên danh mục"
-                visible={isEditModalVisible}
+                open={isEditModalVisible}
                 onOk={handleEdit}
                 onCancel={() => setEditModalVisible(false)}
             >

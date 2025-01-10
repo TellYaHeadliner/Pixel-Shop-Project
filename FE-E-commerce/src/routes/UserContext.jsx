@@ -11,11 +11,26 @@ const UserProvider = ({ children }) => {
   const [email, setEmail] = useState(null);
   const [hoVaTen, setHoVaTen] = useState(null);
   const [cartItemCount, setCartItemCount] = useState(0);
+  const [idNguoiDung,setIdNguoiDung] = useState(null);
+  const [login,setLogin]=useState(false);
   const [trigger, setTrigger] = useState(false);
 
 
 
   axios.defaults.withCredentials = true;
+
+  const getCookie = (name)=>{
+    const cookies = document.cookie.split('; ');
+    
+    for (let cookie of cookies){
+      const [key,value] =cookie.split("=");
+      if (key === name) {
+        return value;
+      }
+    }
+    return null;
+  }
+
   useEffect(() => {
     const fetchCartItemCount = async () => {
       try {
@@ -38,9 +53,37 @@ const UserProvider = ({ children }) => {
   }, [token]);
 
 
-  const getCookie = (name)=>{
-    
-  }
+  useEffect( ()=>{
+    const checkToken = async () => {
+			try{
+				const token = getCookie("token");
+				const response = await axios.post(
+					'http://127.0.0.1:8000/api/checkToken',{
+						token:token
+					},
+					{
+						headers:{
+							"Content-type":"application/json"
+						}
+					},
+				)
+				
+				const { idNguoiDung,hoVaTen,anhDaiDien,role } = response.data.data;
+				console.log(idNguoiDung);
+				setIdNguoiDung(idNguoiDung);
+				setHoVaTen(hoVaTen);
+				setAnhDaiDien(anhDaiDien);
+				setRole(role);
+				setLogin(true);
+			}catch(err){
+				setLogin(false);
+			}
+		}
+		checkToken();
+  },[])
+
+
+ 
 
   const fetchCartItemCount = async () => {
     try {
@@ -78,7 +121,9 @@ const UserProvider = ({ children }) => {
         setHoVaTen,
         cartItemCount,
         setCartItemCount,
-        setTrigger
+        setTrigger,
+        login,
+        setLogin
       }}
     >
       {children}

@@ -4,8 +4,7 @@ import { BsFillTelephoneFill } from "react-icons/bs";
 import { FaUser, FaBars } from "react-icons/fa";
 import { FiShoppingCart } from "react-icons/fi";
 import { useNavigate, Link } from "react-router-dom";
-import { UserContext } from '../../../routes/UserContext.jsx'; // Import UserContext
-
+import { UserContext } from '../../../routes/UserContext.jsx'; 
 import ModalLoginAndRegister from "../Modals/ModalLoginAndRegister";
 import styles from "./ClientHeader.module.scss";
 
@@ -38,13 +37,12 @@ const IconButtonNavHeader = ({ name, onClick, className }) => {
   );
 };
 
-const ClientHeader = () => {
+export const ClientHeader = () => {
   const navigate = useNavigate();
-  const { user } = useContext(UserContext); // Get user context
   const [showModalLogin, setShowModalLogin] = useState(false);
   const [titleLogin, setTitleLogin] = useState(false);
   const [showTree, setShowTree] = useState(false);
-  const { cartItemCount } = useContext(UserContext); 
+  const { cartItemCount , login } = useContext(UserContext); 
 
   const handleShowModalLogin = (isLogin = true) => {
     setTitleLogin(isLogin);
@@ -61,14 +59,19 @@ const ClientHeader = () => {
     handleCloseModalLogin();
     navigate("/profile");
   };
+   
+  const onSelect = (selectedKeys, info) => {
+    console.log('Selected:', selectedKeys, info);
+  };
 
-  const handleLoginIconClick = () => {
-    if (user) {
-      navigate("/profile"); // Navigate to profile if logged in
+  const handleLoginClick = () => {
+    if (login) {
+      navigate("/profile"); 
     } else {
-      handleShowModalLogin(true); // Show login modal if not logged in
+      handleShowModalLogin(true); 
     }
   };
+  
 
   return (
     <Header className={styles.header}>
@@ -93,13 +96,13 @@ const ClientHeader = () => {
             className={styles.cartButton}
             onClick={() => navigate("/shoppingcart")}
           />
-          <p className={styles.cartButton_total}>Tổng: 100.000.000vnđ</p>
+          <p className={styles.cartButton_total}>Tổng: 100.000vnđ</p>
         </Badge>
         <Badge>
           <IconButtonNavHeader
             name="Đăng nhập"
             className={styles.loginButton}
-            onClick={handleLoginIconClick} // Updated click handler
+            onClick={() => handleLoginClick()}
           />
         </Badge>
       </div>
@@ -132,7 +135,7 @@ const ClientHeader = () => {
           />
         </div>
       </div>
-
+     
       <ModalLoginAndRegister
         show={showModalLogin}
         onClose={handleCloseModalLogin}

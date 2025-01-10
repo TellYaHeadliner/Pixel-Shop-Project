@@ -22,6 +22,8 @@ Route::controller(UserController::class)->group(function () {
 	Route::post('/api/updateById', [UserController::class, 'updateById']);
 	Route::post('/api/changeEmail','updateById')->middleware(CheckEmailSignUp::class);
 	Route::post('/api/updateAnhDaiDien','updateAnhDaiDien');
+	Route::post('/api/checkToken','checkToken');
+
 });
 
 Route::controller(DanhMucController::class)->group(function () {
@@ -63,8 +65,8 @@ Route::controller(GioHangController::class)->group(function(){
     Route::put('/api/updateSoLuongSanPhamGioHang',[GioHangController::class,'updateSoLuongSanPhamGioHang']);
     Route::delete('/api/deleteSanPhamId',[GioHangController::class,'deleteSanPhamId']);
     Route::delete('/api/deleteSanPhamAll',[GioHangController::class,'deleteSanPhamAll']);
-    Route::post('/api/createGioHang',[GioHangController::class,'createGioHang']);
-
+    Route::post('/api/addProductInGioHang',[GioHangController::class,'createGioHang']); // done 
+	
 });
 
 
