@@ -108,6 +108,7 @@ class SanPhamController extends Controller
     }
 
 		function addSanPham(Request $request){
+			
 			$data=$request->all();
 			if(SanPham::whereRaw("BINARY tenSanPham = ?",[$data['tenSanPham']])->first()){
 				return response()->json([
