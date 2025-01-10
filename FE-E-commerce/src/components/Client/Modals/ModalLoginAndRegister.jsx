@@ -10,14 +10,14 @@ import {
   message,
 } from "antd";
 import { useState, useEffect, useCallback, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { UserContext } from '../../../routes/UserContext.jsx';
+import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { UserContext } from '../../../routes/UserContext.jsx'; // Import UserContext
 import styles from "./ModalLoginAndRegister.module.scss";
 import axios from "axios";
 
 const { TabPane } = Tabs;
 
-const ModalLoginAndRegister = ({ show, onClose, onLoginSuccess }) => {
+const ModalLoginAndRegister = ({ show, onClose }) => {
   const [formRegister] = Form.useForm();
   const [key, setKey] = useState("Đăng nhập");
   const [captcha, setCaptcha] = useState("000000");
@@ -25,7 +25,7 @@ const ModalLoginAndRegister = ({ show, onClose, onLoginSuccess }) => {
   const [isDisabled, setIsDisabled] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const navigate = useNavigate(); // Initialize useNavigate
-  const { setRole,setToken } = useContext(UserContext); // Access setRole from UserContext
+  const { setRole } = useContext(UserContext); // Access setRole from UserContext
 
   axios.defaults.withCredentials = true;
 
@@ -34,7 +34,7 @@ const ModalLoginAndRegister = ({ show, onClose, onLoginSuccess }) => {
       const response = await axios.post("http://127.0.0.1:8000/api/login", values, {
         headers: { "Content-Type": "application/json" },
       });
-  
+
       if (response.data.success) {
         setShowCaptcha(false);
 
@@ -42,19 +42,21 @@ const ModalLoginAndRegister = ({ show, onClose, onLoginSuccess }) => {
 
         setRole(role);
 
-        document.cookie = `token=${token}; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT`;
-
         message.success(response.data.message);
-        onLoginSuccess(); // Đóng modal nhưng không điều hướng
+        onClose();
+
+        // Navigate based on role
+        navigate(role === 1 ? "/admin" : role === 2 ? "/staff" : "/");
+        console.log(response.data);
       } else {
         message.error(response.data.message);
       }
     } catch (error) {
       console.error("Login error:", error);
       const data = error.response?.data;
-      message.error(data?.success ? data.message : "lỗi đăng nhập.");
+      message.error(data?.success ? data.message : "An error occurred during login.");
     }
-  }, [onLoginSuccess]);
+  }, [onClose, setRole, navigate]);
 
   const handleRegister = useCallback(async (values) => {
     if (values.matKhau !== values.repeatMatKhau) {
@@ -117,8 +119,6 @@ const ModalLoginAndRegister = ({ show, onClose, onLoginSuccess }) => {
       }
     } catch (error) {
       message.error(error.response.data.message);
-    }finally {
-      setLoading(false); 
     }
   }, [formRegister]);
 
@@ -259,7 +259,6 @@ const ModalLoginAndRegister = ({ show, onClose, onLoginSuccess }) => {
 ModalLoginAndRegister.propTypes = {
   show: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  onLoginSuccess: PropTypes.func.isRequired, // Add prop type for onLoginSuccess
 };
 
 export default ModalLoginAndRegister;

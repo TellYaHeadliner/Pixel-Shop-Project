@@ -4,7 +4,6 @@ import { BsFillTelephoneFill } from "react-icons/bs";
 import { FaUser, FaBars } from "react-icons/fa";
 import { FiShoppingCart } from "react-icons/fi";
 import { useNavigate, Link } from "react-router-dom";
-import { UserContext } from '../../../routes/UserContext.jsx'; // Import UserContext
 
 import ModalLoginAndRegister from "../Modals/ModalLoginAndRegister";
 import styles from "./ClientHeader.module.scss";
@@ -41,11 +40,10 @@ const IconButtonNavHeader = ({ name, onClick, className }) => {
 
 const ClientHeader = () => {
   const navigate = useNavigate();
-  const { user } = useContext(UserContext); // Get user context
   const [showModalLogin, setShowModalLogin] = useState(false);
   const [titleLogin, setTitleLogin] = useState(false);
   const [showTree, setShowTree] = useState(false);
-  const { cartItemCount } = useContext(UserContext); 
+  const { user, cartItemCount } = useContext(UserContext); // Get user and cart item count
 
   const handleShowModalLogin = (isLogin = true) => {
     setTitleLogin(isLogin);
@@ -94,7 +92,7 @@ const ClientHeader = () => {
             className={styles.cartButton}
             onClick={() => navigate("/shoppingcart")}
           />
-          <p className={styles.cartButton_total}>Tổng: 100.000.000vnđ</p>
+          <p className={styles.cartButton_total}>Tổng: 100.000vnđ</p>
         </Badge>
         <Badge>
           <IconButtonNavHeader
