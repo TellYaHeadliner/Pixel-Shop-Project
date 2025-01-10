@@ -4,9 +4,6 @@ import { Row, Col, Typography} from 'antd'
 
 const { Title } = Typography; 
 
-
-
-
 const StaffContact = () =>{
     const [data, setData] = useState([
   {

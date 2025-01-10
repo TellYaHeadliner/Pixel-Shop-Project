@@ -200,23 +200,22 @@ class UserController extends Controller
         }
     }
 
-    function getById(Request $request)
-    {
-        $data = $request->all();
-        $user = NguoiDung::where('idNguoiDung', "=", $data["idNguoiDung"])->first();
-        if ($user) {
-            return response()->json([
-                "success" => true,
-                "message" => "Lấy thông tin user thành công!",
-                "data" => $user
-            ], 200);
-        }
-        return response()->json([
-            "success" => true,
-            "message" => "Không tìm thấy thông tin người dùng trong hệ thống!",
-            "data" => []
-        ], 404);
-    }
+		function getById(Request $request){
+			$data = $request->all();
+			$user = NguoiDung::where('idNguoiDung', "=", $data["idNguoiDung"])->first();
+			if($user){
+				return response()->json([
+					"success" => true,
+					"message" => "Lấy thông tin user thành công!",
+					"data" => $user
+				],200);
+			}
+			return response()->json([
+				"success" => true,
+				"message" => "Không tìm thấy thông tin người dùng trong hệ thống!",
+				"data" => []
+			],404);
+		}
 
     function updateById(Request $request)
     {
@@ -253,4 +252,37 @@ class UserController extends Controller
             ], 500);
         }
     }
+
+		function updateAnhDaiDien(Request $request){
+			$data = request()->all();
+			try{
+				$user = NguoiDung::where("idNguoiDung", "=", $data["idNguoiDung"])->first();
+				if (!$user) {
+					return response()->json([
+							"success" => false,
+							"message" => "Không tìm thấy người dùng để cập nhật!",
+							"data" => []
+					], 404);
+				}
+				if ($request->hasFile('anhDaiDien')) {
+						$file = $request->file('anhDaiDien');
+						$newFileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+						$user->update([
+                'anhDaiDien' => $newFileName,
+            ]);
+						$file->move(public_path('imgs'), $newFileName);
+						return response()->json([
+							"success" => true,
+							"message" => "Cập nhật ảnh đại diện thành công!",
+							"data" =>  ["anhDaiDien" => $newFileName],
+						],200);
+				}
+			}catch (\Exception $e) {
+				return response()->json([
+                "success" => false,
+                "message" => "Đã xảy ra lỗi khi cập nhật: " . $e->getMessage(),
+                "data" => []
+				], 500);
+			}
+		}
 }

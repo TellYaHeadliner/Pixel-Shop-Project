@@ -12,16 +12,21 @@ import Review from "../../components/Client/Input/Review";
 import RatingStar from "../../components/Client/Input/RatingStar";
 import TableComment from "../../components/Client/Table/TableComment";
 import SanPhamCard from "../../components/Client/Cards/CardSanPham";
+import Price from "../../components/Client/Descriptions/Price"
 
 
 const DetailProduct = () => {
-
   return (
     <div style={{ marginTop: "16px" }}>
       <Row justify="center" align="middle" gutter={[16, 16]}>
         <Col md="16">
           <ImageProduct />
           <HeadingProduct />
+            <Price
+              price="15,500,000"
+              discount="50%"
+              priceDiscount="12,000,000"
+            />
           <Row justify="flex-start" align="middle">
             <Col>
               <StarRating rating="3.2" />
