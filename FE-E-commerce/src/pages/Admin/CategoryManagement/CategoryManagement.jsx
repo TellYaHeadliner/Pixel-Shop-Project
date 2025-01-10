@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Modal, Menu, Button, Input, Select, Tree } from 'antd';
+import { Modal, Menu, Button, Input, Select, Tree, Checkbox } from 'antd';
 import './CategoryManagement.scss';
 
 const { Option } = Select;
@@ -217,6 +217,7 @@ const CategoryManagement = () => {
     const [isEditModalVisible, setEditModalVisible] = useState(false);
     const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
     const [newCategoryName, setNewCategoryName] = useState('');
+    const [isSubCategory, setIsSubCategory] = useState(false); // State cho checkbox xác nhận
 
     const addCategory = () => {
         if (!categoryName.trim()) return;
@@ -241,6 +242,8 @@ const CategoryManagement = () => {
         setCategoryName('');
         setSelectedParent(null);
         setSelectedChild(null);
+        setIsSubCategory(false); // Reset lại checkbox
+
     };
 
     const handleSelect = (setSelected, category) => {
@@ -330,6 +333,13 @@ const CategoryManagement = () => {
                     value={categoryName}
                     onChange={(e) => setCategoryName(e.target.value)}
                 />
+                <Checkbox
+                    checked={isSubCategory}
+                    onChange={(e) => setIsSubCategory(e.target.checked)}
+                    style={{ marginTop: '10px' }}
+                >
+                    Đây là danh mục con
+                </Checkbox>
                 <Select
                     placeholder="--- Chọn danh mục cấp 1 ---"
                     onChange={(value) => handleSelect(setSelectedParent, categories.find(cat => cat.id === value))}

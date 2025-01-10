@@ -1,6 +1,8 @@
 import { Row, Col, Card } from "antd";
+import { useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
 
-import DescriptionLapTop from "../../components/Client/Descriptions/DescriptionsLapTop";
+import SpecProduct from "../../components/Client/Descriptions/SpecProduct";
 import ImageProduct from "../../components/Client/Image/ImageProduct";
 import HeadingProduct from "../../components/Client/Descriptions/HeadingProduct";
 import StarRating from "../../components/Client/Descriptions/StarRating";
@@ -11,26 +13,53 @@ import DescriptionsProduct from "../../components/Client/Descriptions/Descriptio
 import Review from "../../components/Client/Input/Review";
 import RatingStar from "../../components/Client/Input/RatingStar";
 import TableComment from "../../components/Client/Table/TableComment";
-import SanPhamCard from "../../components/Client/Cards/CardSanPham";
+import CardSanPham from "../../components/Client/Cards/CardSanPham";
+import Price from "../../components/Client/Descriptions/Price"
+import productsService from "../../services/productsService";
 
 
 const DetailProduct = () => {
+  const { slug } = useParams();
 
+  const [product, setProduct] = useState(null);
+  const [detailProduct, setDetailProduct] = useState(null);
+  const [spLienQuan, setSPLienQuan] = useState([]);
+  const [rating, setRating] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchProductDetail = async () => {
+      try {
+        const response = await productsService.getDetailProduct(slug);
+        setProduct(response.data.data.sanPham);
+        setDetailProduct(response.data.data.thongSoSanPham);
+        setRating(response.data.data.danhGia);
+        setSPLienQuan(response.data.data.sanPhamLienQuan);
+        setLoading(false);
+      } catch (error) {
+        setError(error.message);
+        setLoading(false);
+      }
+    };
+    fetchProductDetail();
+  }, [slug])
   return (
     <div style={{ marginTop: "16px" }}>
-      <Row justify="center" align="middle" gutter={[16, 16]}>
-        <Col md="16">
-          <ImageProduct />
-          <HeadingProduct />
+      <Row justify="center" align="flex-start" gutter={[16, 16]}>
+        <Col md={10}>
+          <ImageProduct img={product?.img} />
+          <HeadingProduct tenSanPham={product?.tenSanPham} />
+          <Price gia={product?.gia} />
           <Row justify="flex-start" align="middle">
             <Col>
-              <StarRating rating="3.2" />
+              <StarRating />
             </Col>
             <Col>
-              <ViewCount rating="320" />
+              <ViewCount rating={product?.soLuotXem} />
             </Col>
             <Col>
-              <HeartCount rating="430" />
+              <HeartCount />
             </Col>
           </Row>
           <div style={{ marginTop: "1rem" }}>
@@ -38,12 +67,12 @@ const DetailProduct = () => {
           </div>
         </Col>
         <Col md="16">
-          <DescriptionLapTop />
+          <SpecProduct detailProduct={detailProduct} />
         </Col>
       </Row>
       <Row justify="center" align="middle">
         <Col span={18} style={{ marginTop: "2rem" }}>
-          <DescriptionsProduct description="Laptop mang đến cho bạn một thiết kế vừa đẹp, vừa mạnh mẽ, đáp ứng tốt mọi nhu cầu từ giải trí đến công việc. Với thiết kế gọn nhẹ, hiện đại cùng các tính năng vượt trội như màn hình lớn, camera chất lượng và pin bền bỉ, sẽ là trợ thủ đắc lực, luôn đồng hành cùng bạn trong mọi hoạt động thường ngày......" />
+          <DescriptionsProduct description={product?.moTa} />
         </Col>
       </Row>
       <Row justify="center" align="middle">
@@ -57,7 +86,7 @@ const DetailProduct = () => {
       <Row justify="center" align="middle">
         <Col span={18} style={{ marginTop: "2rem" }}>
           <Card title="Danh sách đánh giá">
-            <TableComment />
+            <TableComment rating={rating} />
           </Card>
         </Col>
       </Row>
@@ -67,15 +96,17 @@ const DetailProduct = () => {
         gutter={[16, 16]}
         style={{ marginTop: "2rem" }}
       >
-        <Col lg={6}>
-          <SanPhamCard />
+      {spLienQuan.map((product, index) => (
+        <Col key={index} xs={24} sm={12} lg={8}>
+          <CardSanPham
+            tenSanPham={product?.tenSanPham}
+            hang={product?.hang}
+            gia={product?.gia}
+            img={product?.img}
+            slug={product?.slug}
+          />
         </Col>
-        <Col lg={6}>
-          <SanPhamCard />
-        </Col>
-        <Col lg={6}>
-          <SanPhamCard />
-        </Col>
+      ))}
       </Row>
     </div>
   );

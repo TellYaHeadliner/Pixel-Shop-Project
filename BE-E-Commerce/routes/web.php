@@ -10,6 +10,8 @@ use App\Http\Controllers\ThongTinController;
 use App\Http\Controllers\NhaCungCapController;
 use App\Http\Controllers\DiaChiController;
 use App\Http\Controllers\LienHeController;
+use App\Http\Controllers\GioHangController;
+use App\Http\Controllers\ImageController;
 
 use App\Http\Middleware\CheckEmailSignUp;
 Route::controller(UserController::class)->group(function () {
@@ -40,12 +42,29 @@ Route::controller(DiaChiController::class)->group(function () {
 	Route::post('/api/updateDefaultLocation', 'updateDefaultUser');
 });
 
-Route::controller(SanPhamController::class)->group(function () {
-	Route::post('/api/addSanPham','addSanPham');
-});
-
 Route::controller(LienHeController::class)->group(function () {
 	Route::post('/api/addLienHe','addLienHe');
 });
+
+Route::controller(SanPhamController::class)->group(function(){
+    Route::get('/api/getListNewProducts',[SanPhamController::class,'getListNewProducts']);
+    Route::get('/api/getListBestSellingProducts',[SanPhamController::class,'getListBestSellingProducts']);
+    Route::get('/api/getListProductsKhuyenMai',[SanPhamController::class,'getListProductsKhuyenMai']);
+ 	Route::get('/api/listSanPham', [SanPhamController::class, 'getAllProducts']);
+	Route::get('api/product/{slug}', [SanPhamController::class, 'getProduct']);
+    Route::get('/api/getChiTietSanPham', [SanPhamController::class, 'getChiTiet']);
+	Route::get('/api/listLaptop', [SanPhamController::class, 'getListProductsLaptop']);
+	Route::post('/api/addSanPham','addSanPham');
+});
+
+Route::controller(GioHangController::class)->group(function(){
+    Route::get('/api/getListSanPhamGioHang',[GioHangController::class,'getListSanPhamGioHang']);
+    Route::put('/api/updateSoLuongSanPhamGioHang',[GioHangController::class,'updateSoLuongSanPhamGioHang']);
+    Route::delete('/api/deleteSanPhamId',[GioHangController::class,'deleteSanPhamId']);
+    Route::delete('/api/deleteSanPhamAll',[GioHangController::class,'deleteSanPhamAll']);
+    Route::post('/api/createGioHang',[GioHangController::class,'createGioHang']);
+
+});
+
 
 

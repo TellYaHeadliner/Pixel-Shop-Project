@@ -19,7 +19,7 @@ const StaffSidebar = () => {
           </Link>
         </li>
         <li className="sidebar-menu-item">
-          <Link to="/staff/orders">
+          <Link to="/staff/order-management">
             <ShoppingCartOutlined /> Quản lý đơn hàng
           </Link>
         </li>

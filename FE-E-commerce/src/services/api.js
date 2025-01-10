@@ -1,9 +1,8 @@
 import axios from "axios";
-import "dotenv/config"
 
 const api = axios.create({
     // eslint-disable-next-line no-undef, no-constant-binary-expression
-    baseURL: "http://localhost:8000" || process.env.REACT_API_BASE_URL ,
+    baseURL: "http://localhost:8000",
     headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'

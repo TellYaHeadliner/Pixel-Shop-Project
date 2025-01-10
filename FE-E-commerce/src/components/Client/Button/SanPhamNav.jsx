@@ -1,21 +1,19 @@
-import { BsArrowRight } from "react-icons/bs";
+import { AiOutlineArrowRight } from "react-icons/ai";
 import PropTypes from "prop-types"; 
 
 import styles from "./SanPhamNav.module.css"
 
-const SanPham = ({ title }) => {
+const SanPham = ({ title, onNext }) => {
     return (
-        <div className={styles.buttonBanner}>
-            <span className={styles.buttonText}>
-                {title}
-            </span>
-            <div className={styles.buttonIcon}>
-                <span className="arrow">
-                    <BsArrowRight className={styles.arrow}/>
-                </span>
-            </div>
+      <div className={styles.buttonBanner}>
+        <span className={styles.buttonText}>{title}</span>
+        <div className={styles.buttonIcon}>
+          <span className="arrow" onClick={onNext}>
+            <AiOutlineArrowRight className={styles.arrow} />
+          </span>
         </div>
-    )
+      </div>
+    );
 }
 
 SanPham.propTypes = {

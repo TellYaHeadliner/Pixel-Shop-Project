@@ -3,14 +3,70 @@
 namespace App\Http\Controllers;
 
 use App\Models\ChiTietHoaDon;
+use App\Models\GioHang;
 use App\Models\SanPham;
 use App\Models\ThongSoSanPham;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Symfony\Component\VarDumper\VarDumper;
 
 class SanPhamController extends Controller
 {
+    function getAllProducts(){
+        try {
+            $listSanPham = SanPham::all()->take(3);
+            return response()->json([
+               'success' => true,
+               'message' => "Danh sách sản phẩm",
+               'data' => $listSanPham,
+            ], 200);
+        } catch (\Exception $err) {
+            return response()->json([
+               'success' => false,
+               'message' => "lỗi server",
+               'data' => []
+            ], 500);
+        }
+    }
+
+    function getProduct($slug){
+        try {
+            $sanPham = SanPham::where('slug', $slug)->first();
+            $thongSoSanPham = DB::table('thongsosanpham')->where('idSanPham', $sanPham->idSanPham)->first();
+            $danhGia = DB::table('danhgia')
+                ->join('nguoidung', 'nguoidung.idNguoiDung', '=', 'danhgia.idNguoiDung')
+                ->where('danhgia.idNguoiDung', 1)
+                ->select('danhgia.*', 'nguoidung.tenDangNhap')
+                ->get();
+            $sanPhamLienQuan = SanPham::where('idDanhMuc', $sanPham->idDanhMuc)->take(3)->get();
+            if($sanPham){
+                return response()->json([
+                   'success' => true,
+                   'message' => "Thông tin sản phẩm",
+                   'data' => [
+                    'thongSoSanPham' => $thongSoSanPham,
+                    'sanPham' => $sanPham,
+                    'danhGia' => $danhGia,
+                    'sanPhamLienQuan' => $sanPhamLienQuan,
+                   ]
+                ], 200);
+            }else{
+                return response()->json([
+                   'success' => false,
+                   'message' => "Không tìm thấy sản phẩm",
+                   'data' => null,
+                ], 404);
+            }
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+               'message' => "Lỗi server",
+               'data' => null
+            ], 500);
+        }
+    }
+    
     function getListNewProducts()
     {
         try {
@@ -34,19 +90,13 @@ class SanPhamController extends Controller
     function getListBestSellingProducts()
     {
         try {
-            $listSanPham = ChiTietHoaDon::select(
-                'chitiethoadon.idHoaDon',
-                'chitiethoadon.idSanPham',
-                DB::raw('SUM(soLuong) as totalSoLuong'),
-                'tongTien',
-                'hoadon.trangThai'
-            )
-                ->join('hoadon','hoadon.idHoaDon','=','chitiethoadon.idHoaDon')
-                ->where('hoadon.trangThai','=','1')
-                ->groupBy('chitiethoadon.idSanPham','hoadon.trangThai')
-                ->orderByDesc('totalSoLuong')
-                ->take(10)
-                ->get();
+            $tempSanPham = SanPham::getListBestSellingProducts();
+
+            $listSanPham=SanPham::select('idSanPham','tenSanPham','hang','img')
+                                ->whereIn('idSanPham',$tempSanPham)
+                                ->orderByRaw("FIELD(idSanPham, " . implode(',', $tempSanPham) . ")")
+                                ->get();
+
             return response()->json([
                 'success' => true,
                 'message' => "Danh sách sản phẩm bán chạy",
@@ -57,7 +107,7 @@ class SanPhamController extends Controller
         } catch (\Exception $err) {
             return response()->json([
                 'success' => false,
-                'message' => "lỗi server",
+                'message' => 'lỗi server '.$err,
                 'data' => []
             ], 500);
         }
@@ -90,13 +140,11 @@ class SanPhamController extends Controller
     }
     function getListProductsLaptop(){
         try {
-            $listSanPham = SanPham::where('loai','=','1')->orderBy("ngayThem", 'desc')->take(10)->get();
+            $listSanPham = SanPham::where('loai','=','1')->orderBy("ngayThem", 'desc')->take(3)->get();
             return response()->json([
                 'success' => true,
                 'message' => "Danh sách sản phẩm mới",
-                'data' => [
-                    'listSanPham' => $listSanPham
-                ]
+                'data' => $listSanPham
             ], 200);
         } catch (\Exception $err) {
             return response()->json([
