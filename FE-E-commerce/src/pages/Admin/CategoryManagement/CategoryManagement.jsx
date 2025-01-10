@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Modal, Menu, Button, Input, Select, Tree } from 'antd';
+import { Modal, Menu, Button, Input, Select, Tree, Checkbox } from 'antd';
 import './CategoryManagement.scss';
 
 const { Option } = Select;
@@ -8,25 +8,204 @@ const { Option } = Select;
 const CategoryManagement = () => {
     const initialCategories = [
         {
-            id: 1,
+            id: 2,
             name: "Điện thoại",
             children: [
                 {
                     id: 3,
-                    name: "Điện thoại 1",
+                    name: "Smartphone",
                     children: [
-                        { id: 8, name: "Điện Thoại 11", children: [] },
-                        { id: 9, name: "Điện Thoại 12", children: [] }
+                        {
+                            id: 4,
+                            name: "Android",
+                            children: [
+                                {
+                                    id: 5,
+                                    name: "Samsung",
+                                    children: [
+                                        {
+                                            id: 6,
+                                            name: "Galaxy S",
+                                            children: [
+                                                {
+                                                    id: 7,
+                                                    name: "Galaxy S21",
+                                                    children: []
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            id: 8,
+                                            name: "Xiaomi",
+                                            children: [
+                                                {
+                                                    id: 9,
+                                                    name: "Mi Series",
+                                                    children: []
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            id: 10,
+                            name: "iPhone",
+                            children: [
+                                {
+                                    id: 11,
+                                    name: "iPhone 13",
+                                    children: []
+                                },
+                                {
+                                    id: 12,
+                                    name: "iPhone 14",
+                                    children: []
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    id: 13,
+                    name: "Điện thoại cơ bản",
+                    children: [
+                        {
+                            id: 14,
+                            name: "Nokia",
+                            children: []
+                        }
                     ]
                 }
             ]
         },
         {
-            id: 2,
+            id: 15,
             name: "Laptop",
-            children: [{ id: 6, name: "Laptop 1", children: [] }]
+            children: [
+                {
+                    id: 16,
+                    name: "Laptop Gaming",
+                    children: [
+                        {
+                            id: 17,
+                            name: "ASUS",
+                            children: [
+                                {
+                                    id: 18,
+                                    name: "ROG",
+                                    children: [
+                                        {
+                                            id: 19,
+                                            name: "ROG Zephyrus",
+                                            children: []
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            id: 20,
+                            name: "MSI",
+                            children: []
+                        }
+                    ]
+                },
+                {
+                    id: 21,
+                    name: "Laptop Văn phòng",
+                    children: [
+                        {
+                            id: 22,
+                            name: "Dell",
+                            children: []
+                        },
+                        {
+                            id: 23,
+                            name: "HP",
+                            children: []
+                        }
+                    ]
+                }
+            ]
         },
-        { id: 4, name: "Máy tính bảng", children: [] }
+        {
+            id: 24,
+            name: "Máy tính để bàn",
+            children: [
+                {
+                    id: 25,
+                    name: "PC Gaming",
+                    children: [
+                        {
+                            id: 26,
+                            name: "Custom Build",
+                            children: []
+                        }
+                    ]
+                },
+                {
+                    id: 27,
+                    name: "All-in-One",
+                    children: []
+                }
+            ]
+        },
+        {
+            id: 28,
+            name: "Thiết bị đeo tay",
+            children: [
+                {
+                    id: 29,
+                    name: "Smartwatch",
+                    children: [
+                        {
+                            id: 30,
+                            name: "Apple Watch",
+                            children: []
+                        },
+                        {
+                            id: 31,
+                            name: "Samsung Galaxy Watch",
+                            children: []
+                        }
+                    ]
+                },
+                {
+                    id: 32,
+                    name: "Fitbit",
+                    children: []
+                }
+            ]
+        },
+        {
+            id: 33,
+            name: "Tai nghe",
+            children: [
+                {
+                    id: 34,
+                    name: "Tai nghe không dây",
+                    children: [
+                        {
+                            id: 35,
+                            name: "AirPods",
+                            children: []
+                        },
+                        {
+                            id: 36,
+                            name: "Sony WF",
+                            children: []
+                        }
+                    ]
+                },
+                {
+                    id: 37,
+                    name: "Tai nghe có dây",
+                    children: []
+                }
+            ]
+        }
     ];
 
     const [categories, setCategories] = useState(initialCategories);
@@ -38,6 +217,7 @@ const CategoryManagement = () => {
     const [isEditModalVisible, setEditModalVisible] = useState(false);
     const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
     const [newCategoryName, setNewCategoryName] = useState('');
+    const [isSubCategory, setIsSubCategory] = useState(false); // State cho checkbox xác nhận
 
     const addCategory = () => {
         if (!categoryName.trim()) return;
@@ -62,6 +242,8 @@ const CategoryManagement = () => {
         setCategoryName('');
         setSelectedParent(null);
         setSelectedChild(null);
+        setIsSubCategory(false); // Reset lại checkbox
+
     };
 
     const handleSelect = (setSelected, category) => {
@@ -127,11 +309,19 @@ const CategoryManagement = () => {
         }));
     };
 
-    // Filter categories based on search term
-    const filteredCategories = categories.filter(cat =>
-        cat.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        cat.children.some(subCat => subCat.name.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
+    const filterCategories = (data, term) => {
+        return data
+            .map(cat => {
+                const matchedChildren = filterCategories(cat.children, term);
+                if (cat.name.toLowerCase().includes(term.toLowerCase()) || matchedChildren.length > 0) {
+                    return { ...cat, children: matchedChildren };
+                }
+                return null;
+            })
+            .filter(Boolean);
+    };
+
+    const filteredCategories = filterCategories(categories, searchTerm);
 
     return (
         <div className="category-management-container">
@@ -143,6 +333,13 @@ const CategoryManagement = () => {
                     value={categoryName}
                     onChange={(e) => setCategoryName(e.target.value)}
                 />
+                <Checkbox
+                    checked={isSubCategory}
+                    onChange={(e) => setIsSubCategory(e.target.checked)}
+                    style={{ marginTop: '10px' }}
+                >
+                    Đây là danh mục con
+                </Checkbox>
                 <Select
                     placeholder="--- Chọn danh mục cấp 1 ---"
                     onChange={(value) => handleSelect(setSelectedParent, categories.find(cat => cat.id === value))}

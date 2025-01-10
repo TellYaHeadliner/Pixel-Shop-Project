@@ -52,6 +52,6 @@ const data = {
   ],
 };
 
-export function LineChartBusiness() {
+export default function LineChartBusiness() {
   return <Line options={options} data={data} />;
 }

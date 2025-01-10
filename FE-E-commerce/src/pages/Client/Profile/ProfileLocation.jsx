@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Input, message, Select, Form } from 'antd';
-import ButtonProfile from '../../components/Client/Button/ButtonProfile';
-
+import ButtonProfile from '../../../components/Client/Button/ButtonProfile';
+import axios from 'axios';
 const { Option } = Select;
 
 export default function ProfileLocation() {
@@ -11,45 +11,44 @@ export default function ProfileLocation() {
     const [selectedAddressId, setSelectedAddressId] = useState(null);
     const [editedAddress, setEditedAddress] = useState('');
     const [form] = Form.useForm();
-
-    useEffect(() => {
-        const savedAddresses = JSON.parse(localStorage.getItem('addresses')) || [];
-        setAddresses(savedAddresses);
-
-        const defaultAddress = savedAddresses.find(addr => addr.isDefault);
-        if (defaultAddress) {
-            setSelectedAddressId(defaultAddress.id);
+    const IdUser = 1;
+    
+    
+    const handleGetListLocation = async() =>{
+        const idNguoiDung = IdUser;
+        try{
+            const response = await axios.post(
+                "http://127.0.0.1:8000/api/getDiaChiUser",
+                {idNguoiDung},
+                {
+                    headers:{
+                        "Content-Type": "application/json",
+                    },
+                },
+            )
+            if(response.data.success) {
+                setAddresses(response.data.data);
+            }
+        }catch(e){
+            const data =e.response.data;
+            message.error(data.message);
         }
-    }, []);
+    }
+    useEffect(()=>{
+        handleGetListLocation();
+    },[])
 
-    const addAddress = (values) => {
-        const { fullName, phoneNumber, city, specificAddress, isOffice } = values;
 
-        if (addresses.length >= 10) {
-            message.error('Đã đạt giới hạn tối đa 10 địa chỉ!');
-            return;
-        }
+    // const addAddress = async (value) => {
+    //     try{
+    //         const response= await axios.post(
+    //         "http://127.0.0.1:8000/api/getDiaChiUser",
+    //         )
+    //     }catch(e) {
+    //         message.error(e.response.data.message);
+    //     }
 
-        const newAddressObj = {
-            id: Date.now(), // Tạo ID duy nhất
-            fullName,
-            phoneNumber,
-            city,
-            specificAddress,
-            isOffice,
-            isDefault: false,
-        };
-
-        const updatedAddresses = [...addresses, newAddressObj];
-        setAddresses(updatedAddresses);
-        localStorage.setItem('addresses', JSON.stringify(updatedAddresses));
-
-        form.resetFields();
-        setIsAddAddressModalVisible(false);
-
-        message.success('Địa chỉ đã được thêm thành công!');
-    };
-
+    // }
     const setDefaultAddress = (id) => {
         const updatedAddresses = addresses.map(addr =>
             addr.id === id ? { ...addr, isDefault: true } : { ...addr, isDefault: false }
@@ -112,7 +111,7 @@ export default function ProfileLocation() {
                 footer={null}
                 width={800}
             >
-                <Form form={form} layout="vertical" onFinish={addAddress}>
+                <Form form={form} layout="vertical" onFinish={{}}>
                     <div style={{ display: 'flex' }}>
                         <Form.Item
                             label="Họ và tên"
@@ -153,7 +152,7 @@ export default function ProfileLocation() {
                         name="isOffice"
                         rules={[{ required: true, message: 'Vui lòng chọn loại địa chỉ!' }]}
                     >
-                        <Select style={{ width: '120px', height: '40px' }}>
+                        <Select style={{ width: '15%', height: '15%' }}>
                             <Option value={false}>Nhà riêng</Option>
                             <Option value={true}>Văn phòng</Option>
                         </Select>
@@ -170,33 +169,42 @@ export default function ProfileLocation() {
                 ) : (
                     <ul>
                         {addresses.map((address) => (
-                            <li key={address.id}>
-                                {address.fullName}, {address.phoneNumber}, {address.city}, {address.specificAddress}
-                                {address.isOffice && <span style={{ color: 'blue', marginLeft: 10 }}>(Văn phòng)</span>}
-                                {!address.isOffice && <span style={{ color: 'brown', marginLeft: 10 }}>(Nhà riêng)</span>}
-                                {address.isDefault && <span style={{ color: 'green', marginLeft: 10 }}>(Mặc định)</span>}
-                                <Button
-                                    style={{ marginLeft: 10 }}
-                                    type="link"
-                                    onClick={() => setDefaultAddress(address.id)}
-                                >
-                                    Chọn làm mặc định
-                                </Button>
-                                <Button
-                                    style={{ marginLeft: 10 }}
-                                    type="link"
-                                    onClick={() => openEditModal(address.id)}
-                                >
-                                    Chỉnh sửa
-                                </Button>
-                                <Button
-                                    style={{ marginLeft: 10 }}
-                                    type="link"
-                                    onClick={() => deleteAddress(address.id)}
-                                >
-                                    Xóa
-                                </Button>
+                            <>
+                            <li key={address.id} className='d-flex' style={{fontSize:'120%'}}>
+                                {address.sdt} <br />{address.diaChi}
+                                <div style={{marginLeft:'30%'}}>
+                                    
+                                    <Button
+                                        style={{ }}
+                                        type="link"
+                                        onClick={() => setDefaultAddress(address.id)}
+                                    >
+                                        Chọn làm mặc định
+                                    </Button>
+                                    <Button
+                                        style={{  }}
+                                        type="link"
+                                        onClick={() => openEditModal(address.id)}
+                                    >
+                                        Chỉnh sửa
+                                    </Button>
+                                    <Button
+                                        style={{    }}
+                                        type="link"
+                                        onClick={() => deleteAddress(address.id)}
+                                    >
+                                        Xóa
+                                    </Button>   
+                                    <div style={{marginLeft:'10%', fontSize:'70%'}}>
+                                        {address.isOffice && <span style={{ color: 'blue', marginLeft: 5 }}>(Văn phòng)</span>}
+                                        {!address.isOffice && <span style={{ color: 'brown', marginLeft: 5 }}>(Nhà riêng)</span>}
+                                        {address.isDefault && <span style={{ color: 'green', marginLeft: 5 }}>(Mặc định)</span>}
+                                    </div>
+                                </div>
                             </li>
+                            <hr/>
+                            </>
+
                         ))}
                     </ul>
                 )}

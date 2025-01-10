@@ -28,8 +28,8 @@ class UserController extends Controller
             return Response()->json([
                 'success' => false,
                 'message' => "Tài khoản không tồn tại",
-                'data'=>[
-                    'solanthu'=>0,
+                'data' => [
+                    'solanthu' => 0,
                 ]
             ], 403);
         }
@@ -39,8 +39,8 @@ class UserController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Tài khoản của bạn đang bị khóa do đăng nhập sai nhiều lần',
-                'data'=>[
-                    'solanthu'=>5
+                'data' => [
+                    'solanthu' => 5
                 ]
             ], 403);
         }
@@ -79,7 +79,7 @@ class UserController extends Controller
                         'success' => false,
                         'message' => 'Tài khoản của bạn đã bị khóa do đăng nhập sai nhiều lần',
                         'data' => [
-                            'solanthu'=>$soLanThu,
+                            'solanthu' => $soLanThu,
                             'timeblock' => session("login_timeblock_{$User['idNguoiDung']}"),
                         ],
                     ], 403);
@@ -129,23 +129,14 @@ class UserController extends Controller
     {
         $data = $request->all();
 
-        if($request->input('matKhau')!=$request->input('repeatMatKhau')){
+        if ($request->input('matKhau') != $request->input('repeatMatKhau')) {
             return response()->json([
                 'success' => false,
                 'message' => 'Mật khẩu không trùng khớp!',
                 'data' => []
-            ],403);
+            ], 403);
         }
-        // if ($request->hasFile('anhDaiDien')) {
-        //     $file = $request->files('anhDaiDien');
 
-        //     if (!File::exists(public_path('imgs/') . $file->getClientOriginalName())) {
-        //         $file->move(public_path('imgs/' . $file->getClientOriginalName()));
-        //     }
-        //     $data['anhDaiDien'] = $file->getClientOriginalName();
-        // } else {
-        //     $data['anhDaiDien'] = 'anhDaiDienDefault.jpg';
-        // }
         try {
             NguoiDung::create([
                 'tenDangNhap' => $data['tenDangNhap'],
@@ -161,9 +152,10 @@ class UserController extends Controller
         } catch (\Exception $err) {
             return response()->json([
                 'success' => false,
-                'message' => 'Đăng ký không thành công, vui lòng thử lại!',
+                'message' => $err->getMessage(),
+                // 'message' => 'Đăng ký không thành công, vui lòng thử lại!',
                 'data' => []
-            ],403);
+            ], 403);
         }
         session()->forget(["SignUp_VerificationEmail_{$data['email']}", "SignUp_VerificationEmail_TimeBlock_{$data['email']}"]);
         return response()->json([
@@ -207,4 +199,90 @@ class UserController extends Controller
             ], 500);
         }
     }
+
+		function getById(Request $request){
+			$data = $request->all();
+			$user = NguoiDung::where('idNguoiDung', "=", $data["idNguoiDung"])->first();
+			if($user){
+				return response()->json([
+					"success" => true,
+					"message" => "Lấy thông tin user thành công!",
+					"data" => $user
+				],200);
+			}
+			return response()->json([
+				"success" => true,
+				"message" => "Không tìm thấy thông tin người dùng trong hệ thống!",
+				"data" => []
+			],404);
+		}
+
+    function updateById(Request $request)
+    {
+        $data = $request->all();
+        $user = NguoiDung::where('idNguoiDung', "=", $data["idNguoiDung"])->first();
+        if (!$user) {
+            return response()->json([
+                "success" => false,
+                "message" => "Không tìm thấy người dùng để cập nhật!",
+                "data" => []
+            ], 404);
+        }
+        $ngaySinh = DateTime::createFromFormat('d-m-Y', $data['ngaySinh']);
+        try {
+            $user->update([
+                'hoVaTen' => $data['hoVaTen'] ?? $user->hoVaTen,
+                'ngaySinh' => $ngaySinh == "0" ? $user->ngaySinh : $ngaySinh,
+                'matKhau' => $data['matKhau'] ?? $user->matKhau,
+                'gioiTinh' => $data['gioiTinh'] ?? $user->gioiTinh,
+                'email' => $data['email'] ?? $user->email,
+                'anhDaiDien' => $data['anhDaiDien'] ?? $user->anhDaiDien,
+            ]);
+
+            return response()->json([
+                "success" => true,
+                "message" => "Cập nhật thông tin người dùng thành công!",
+                "data" => $user
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                "success" => false,
+                "message" => "Đã xảy ra lỗi khi cập nhật: " . $e->getMessage(),
+                "data" => []
+            ], 500);
+        }
+    }
+
+		function updateAnhDaiDien(Request $request){
+			$data = request()->all();
+			try{
+				$user = NguoiDung::where("idNguoiDung", "=", $data["idNguoiDung"])->first();
+				if (!$user) {
+					return response()->json([
+							"success" => false,
+							"message" => "Không tìm thấy người dùng để cập nhật!",
+							"data" => []
+					], 404);
+				}
+				if ($request->hasFile('anhDaiDien')) {
+						$file = $request->file('anhDaiDien');
+						$newFileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+						$user->update([
+                'anhDaiDien' => $newFileName,
+            ]);
+						$file->move(public_path('imgs'), $newFileName);
+						return response()->json([
+							"success" => true,
+							"message" => "Cập nhật ảnh đại diện thành công!",
+							"data" =>  ["anhDaiDien" => $newFileName],
+						],200);
+				}
+			}catch (\Exception $e) {
+				return response()->json([
+                "success" => false,
+                "message" => "Đã xảy ra lỗi khi cập nhật: " . $e->getMessage(),
+                "data" => []
+				], 500);
+			}
+		}
 }

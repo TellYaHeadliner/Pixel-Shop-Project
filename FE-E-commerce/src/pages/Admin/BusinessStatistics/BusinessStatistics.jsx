@@ -1,7 +1,7 @@
 import { Col, Row, Flex} from "antd"
 
-import { LineChartBusiness } from "../../../components/Admin/Charts/LineChartBusiness";
-import { TableBusinessStatistic } from "../../../components/Admin/Table/TableBusinessStatistic";
+import LineChartBusiness from "../../../components/Admin/Charts/LineChartBusiness";
+import TableBusinessStatistic  from "../../../components/Admin/Table/TableBusinessStatistic";
 import BarChartBusinessByMonth from "../../../components/Admin/Charts/BarChartBusinessByMonth";
 
 const BusinessStatistics = () => {
