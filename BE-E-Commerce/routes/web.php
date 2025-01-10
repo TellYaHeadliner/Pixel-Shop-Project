@@ -9,6 +9,7 @@ use App\Http\Controllers\DanhMucController;
 use App\Http\Controllers\ThongTinController;
 use App\Http\Controllers\NhaCungCapController;
 use App\Http\Controllers\DiaChiController;
+use App\Http\Controllers\LienHeController;
 
 use App\Http\Middleware\CheckEmailSignUp;
 Route::controller(UserController::class)->group(function () {
@@ -19,7 +20,6 @@ Route::controller(UserController::class)->group(function () {
 	Route::post('/api/updateById', [UserController::class, 'updateById']);
 	Route::post('/api/changeEmail','updateById')->middleware(CheckEmailSignUp::class);
 	Route::post('/api/updateAnhDaiDien','updateAnhDaiDien');
-
 });
 
 Route::controller(DanhMucController::class)->group(function () {
@@ -44,6 +44,8 @@ Route::controller(SanPhamController::class)->group(function () {
 	Route::post('/api/addSanPham','addSanPham');
 });
 
-
+Route::controller(LienHeController::class)->group(function () {
+	Route::post('/api/addLienHe','addLienHe');
+});
 
 
