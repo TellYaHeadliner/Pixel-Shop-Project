@@ -8,201 +8,57 @@ const { Option } = Select;
 const CategoryManagement = () => {
     const initialCategories = [
         {
-            id: 2,
-            name: "Điện thoại",
-            children: [
+            idDanhMuc: 1,
+            tenDanhMuc: "Điện thoại",
+            child: [
                 {
-                    id: 3,
-                    name: "Smartphone",
-                    children: [
+                    idDanhMuc: 3,
+                    tenDanhMuc: "Điện thoại 1",
+                    child: [
                         {
-                            id: 4,
-                            name: "Android",
-                            children: [
+                            idDanhMuc: 6,
+                            tenDanhMuc: "Điện thoại 12",
+                            child: []
+                        }
+                    ]
+                },
+                {
+                    idDanhMuc: 4,
+                    tenDanhMuc: "Điện thoại 2",
+                    child: [
+                        {
+                            idDanhMuc: 7,
+                            tenDanhMuc: "Điện thoại 21",
+                            child: [
                                 {
-                                    id: 5,
-                                    name: "Samsung",
-                                    children: [
-                                        {
-                                            id: 6,
-                                            name: "Galaxy S",
-                                            children: [
-                                                {
-                                                    id: 7,
-                                                    name: "Galaxy S21",
-                                                    children: []
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            id: 8,
-                                            name: "Xiaomi",
-                                            children: [
-                                                {
-                                                    id: 9,
-                                                    name: "Mi Series",
-                                                    children: []
-                                                }
-                                            ]
-                                        }
-                                    ]
+                                    idDanhMuc: 9,
+                                    tenDanhMuc: "Điện thoại 211",
+                                    child: []
                                 }
                             ]
                         },
                         {
-                            id: 10,
-                            name: "iPhone",
-                            children: [
-                                {
-                                    id: 11,
-                                    name: "iPhone 13",
-                                    children: []
-                                },
-                                {
-                                    id: 12,
-                                    name: "iPhone 14",
-                                    children: []
-                                }
-                            ]
+                            idDanhMuc: 8,
+                            tenDanhMuc: "Điện thoại 22",
+                            child: []
                         }
                     ]
                 },
                 {
-                    id: 13,
-                    name: "Điện thoại cơ bản",
-                    children: [
-                        {
-                            id: 14,
-                            name: "Nokia",
-                            children: []
-                        }
-                    ]
+                    idDanhMuc: 5,
+                    tenDanhMuc: "Điện thoại 3",
+                    child: []
                 }
             ]
         },
         {
-            id: 15,
-            name: "Laptop",
-            children: [
+            idDanhMuc: 2,
+            tenDanhMuc: "Laptop",
+            child: [
                 {
-                    id: 16,
-                    name: "Laptop Gaming",
-                    children: [
-                        {
-                            id: 17,
-                            name: "ASUS",
-                            children: [
-                                {
-                                    id: 18,
-                                    name: "ROG",
-                                    children: [
-                                        {
-                                            id: 19,
-                                            name: "ROG Zephyrus",
-                                            children: []
-                                        }
-                                    ]
-                                }
-                            ]
-                        },
-                        {
-                            id: 20,
-                            name: "MSI",
-                            children: []
-                        }
-                    ]
-                },
-                {
-                    id: 21,
-                    name: "Laptop Văn phòng",
-                    children: [
-                        {
-                            id: 22,
-                            name: "Dell",
-                            children: []
-                        },
-                        {
-                            id: 23,
-                            name: "HP",
-                            children: []
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            id: 24,
-            name: "Máy tính để bàn",
-            children: [
-                {
-                    id: 25,
-                    name: "PC Gaming",
-                    children: [
-                        {
-                            id: 26,
-                            name: "Custom Build",
-                            children: []
-                        }
-                    ]
-                },
-                {
-                    id: 27,
-                    name: "All-in-One",
-                    children: []
-                }
-            ]
-        },
-        {
-            id: 28,
-            name: "Thiết bị đeo tay",
-            children: [
-                {
-                    id: 29,
-                    name: "Smartwatch",
-                    children: [
-                        {
-                            id: 30,
-                            name: "Apple Watch",
-                            children: []
-                        },
-                        {
-                            id: 31,
-                            name: "Samsung Galaxy Watch",
-                            children: []
-                        }
-                    ]
-                },
-                {
-                    id: 32,
-                    name: "Fitbit",
-                    children: []
-                }
-            ]
-        },
-        {
-            id: 33,
-            name: "Tai nghe",
-            children: [
-                {
-                    id: 34,
-                    name: "Tai nghe không dây",
-                    children: [
-                        {
-                            id: 35,
-                            name: "AirPods",
-                            children: []
-                        },
-                        {
-                            id: 36,
-                            name: "Sony WF",
-                            children: []
-                        }
-                    ]
-                },
-                {
-                    id: 37,
-                    name: "Tai nghe có dây",
-                    children: []
+                    idDanhMuc: 10,
+                    tenDanhMuc: "Laptop 1",
+                    child: []
                 }
             ]
         }
@@ -217,18 +73,18 @@ const CategoryManagement = () => {
     const [isEditModalVisible, setEditModalVisible] = useState(false);
     const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
     const [newCategoryName, setNewCategoryName] = useState('');
-    const [isSubCategory, setIsSubCategory] = useState(false); // State cho checkbox xác nhận
+    const [isSubCategory, setIsSubCategory] = useState(false);
 
     const addCategory = () => {
         if (!categoryName.trim()) return;
-        const newCategory = { id: Date.now(), name: categoryName, children: [] };
+        const newCategory = { idDanhMuc: Date.now(), tenDanhMuc: categoryName, child: [] };
         const updateCategories = (list) => list.map(cat => {
-            if (cat.id === (selectedChild ? selectedParent.id : selectedParent?.id)) {
+            if (cat.idDanhMuc === (selectedChild ? selectedParent.idDanhMuc : selectedParent?.idDanhMuc)) {
                 return {
                     ...cat,
-                    children: selectedChild ?
-                        cat.children.map(subCat => subCat.id === selectedChild.id ? { ...subCat, children: [...subCat.children, newCategory] } : subCat)
-                        : [...cat.children, newCategory]
+                    child: selectedChild ?
+                        cat.child.map(subCat => subCat.idDanhMuc === selectedChild.idDanhMuc ? { ...subCat, child: [...subCat.child, newCategory] } : subCat)
+                        : [...cat.child, newCategory]
                 };
             }
             return cat;
@@ -242,8 +98,7 @@ const CategoryManagement = () => {
         setCategoryName('');
         setSelectedParent(null);
         setSelectedChild(null);
-        setIsSubCategory(false); // Reset lại checkbox
-
+        setIsSubCategory(false);
     };
 
     const handleSelect = (setSelected, category) => {
@@ -258,8 +113,9 @@ const CategoryManagement = () => {
 
     const handleMenuClick = (action) => {
         if (!contextMenu.category) return;
+        console.log(contextMenu.category);
         if (action === "edit") {
-            setNewCategoryName(contextMenu.category.name);
+            setNewCategoryName(contextMenu.category.tenDanhMuc);
             setEditModalVisible(true);
         } else if (action === "delete") {
             setDeleteModalVisible(true);
@@ -269,8 +125,8 @@ const CategoryManagement = () => {
 
     const updateCategoryName = (id, newName) => {
         const update = (list) => list.map(cat => {
-            if (cat.id === id) return { ...cat, name: newName };
-            if (cat.children) cat.children = update(cat.children);
+            if (cat.idDanhMuc === id) return { ...cat, tenDanhMuc: newName };
+            if (cat.child) cat.child = update(cat.child);
             return cat;
         });
         setCategories(update(categories));
@@ -279,8 +135,8 @@ const CategoryManagement = () => {
 
     const deleteCategory = (id) => {
         const update = (list) => list.filter(cat => {
-            if (cat.id === id) return false;
-            if (cat.children) cat.children = update(cat.children);
+            if (cat.idDanhMuc === id) return false;
+            if (cat.child) cat.child = update(cat.child);
             return true;
         });
         setCategories(update(categories));
@@ -289,32 +145,32 @@ const CategoryManagement = () => {
 
     const handleEdit = () => {
         if (contextMenu.category) {
-            updateCategoryName(contextMenu.category.id, newCategoryName);
+            updateCategoryName(contextMenu.category.idDanhMuc, newCategoryName);
         }
         setEditModalVisible(false);
     };
 
     const confirmDelete = () => {
         if (contextMenu.category) {
-            deleteCategory(contextMenu.category.id);
+            deleteCategory(contextMenu.category.idDanhMuc);
         }
         setDeleteModalVisible(false);
     };
 
     const renderTree = (data) => {
         return data.map(cat => ({
-            title: cat.name,
-            key: cat.id,
-            children: cat.children.length > 0 ? renderTree(cat.children) : [],
+            title: cat.tenDanhMuc,
+            key: cat.idDanhMuc,
+            children: cat.child.length > 0 ? renderTree(cat.child) : [],
         }));
     };
 
     const filterCategories = (data, term) => {
         return data
             .map(cat => {
-                const matchedChildren = filterCategories(cat.children, term);
-                if (cat.name.toLowerCase().includes(term.toLowerCase()) || matchedChildren.length > 0) {
-                    return { ...cat, children: matchedChildren };
+                const matchedChildren = filterCategories(cat.child, term);
+                if (cat.tenDanhMuc.toLowerCase().includes(term.toLowerCase()) || matchedChildren.length > 0) {
+                    return { ...cat, child: matchedChildren };
                 }
                 return null;
             })
@@ -342,18 +198,18 @@ const CategoryManagement = () => {
                 </Checkbox>
                 <Select
                     placeholder="--- Chọn danh mục cấp 1 ---"
-                    onChange={(value) => handleSelect(setSelectedParent, categories.find(cat => cat.id === value))}
+                    onChange={(value) => handleSelect(setSelectedParent, categories.find(cat => cat.idDanhMuc === value))}
                     style={{ width: '100%', marginTop: '10px' }}
                 >
-                    {categories.map(cat => <Option key={cat.id} value={cat.id}>{cat.name}</Option>)}
+                    {categories.map(cat => <Option key={cat.idDanhMuc} value={cat.idDanhMuc}>{cat.tenDanhMuc}</Option>)}
                 </Select>
                 <Select
                     placeholder="--- Chọn danh mục cấp 2 ---"
-                    onChange={(value) => handleSelect(setSelectedChild, selectedParent?.children.find(cat => cat.id === value))}
+                    onChange={(value) => handleSelect(setSelectedChild, selectedParent?.child.find(cat => cat.idDanhMuc === value))}
                     disabled={!selectedParent}
                     style={{ width: '100%', marginTop: '10px' }}
                 >
-                    {selectedParent?.children.map(subCat => <Option key={subCat.id} value={subCat.id}>{subCat.name}</Option>)}
+                    {selectedParent?.child.map(subCat => <Option key={subCat.idDanhMuc} value={subCat.idDanhMuc}>{subCat.tenDanhMuc}</Option>)}
                 </Select>
                 <Button
                     type="primary"
@@ -377,7 +233,7 @@ const CategoryManagement = () => {
                     treeData={renderTree(filteredCategories)}
                     onRightClick={(e) => showContextMenu(e.event, e.node)}
                     onSelect={(keys) => {
-                        const selected = categories.find(cat => cat.id === Number(keys[0]));
+                        const selected = categories.find(cat => cat.idDanhMuc === Number(keys[0]));
                         handleSelect(setSelectedParent, selected);
                     }}
                 />
@@ -393,10 +249,9 @@ const CategoryManagement = () => {
                 </Menu>
             )}
 
-            {/* Edit Modal */}
             <Modal
                 title="Sửa tên danh mục"
-                visible={isEditModalVisible}
+                open={isEditModalVisible}
                 onOk={handleEdit}
                 onCancel={() => setEditModalVisible(false)}
             >
@@ -407,14 +262,13 @@ const CategoryManagement = () => {
                 />
             </Modal>
 
-            {/* Delete Confirmation Modal */}
             <Modal
                 title="Xác nhận xóa"
                 visible={isDeleteModalVisible}
                 onOk={confirmDelete}
                 onCancel={() => setDeleteModalVisible(false)}
             >
-                <p>Bạn có chắc chắn muốn xóa danh mục "{contextMenu.category?.name}" không?</p>
+                <p>Bạn có chắc chắn muốn xóa danh mục "{contextMenu.category?.tenDanhMuc}" không?</p>
             </Modal>
         </div>
     );

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Layout, Button, Input, Checkbox,Pagination, message, notification, Modal } from "antd";
+import { Layout, Button, Input, Checkbox, Pagination, message, notification, Modal } from "antd";
 import { AiFillDelete } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import styles from "./ShoppingCart.module.scss";
@@ -14,13 +14,13 @@ const ShoppingCart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const { setTrigger } = useContext(UserContext);
-  const [currentPage,setCurrentPage]=useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const itemsPerPage=5;
-  const indexOfLastItem= currentPage* itemsPerPage;
+  const itemsPerPage = 5;
+  const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
-  const currentItems = cartItems.slice(indexOfFirstItem, indexOfLastItem); 
+  const currentItems = cartItems.slice(indexOfFirstItem, indexOfLastItem);
 
   const selectedItems = cartItems.filter((item) => item.selected);
 
@@ -50,7 +50,15 @@ const ShoppingCart = () => {
 
     fetchCartItems();
   }, []);
-
+  const showRemoveAllConfirm = () => {
+    Modal.confirm({
+      title: "Xác nhận xóa tất cả sản phẩm",
+      content: "Bạn có chắc chắn muốn xóa tất cả sản phẩm trong giỏ hàng?",
+      okText: "Có",
+      cancelText: "Không",
+      onOk: handleRemoveAll,
+    });
+  };
   const callAPIUpdateSoLuong = async (idSanPham, soLuong) => {
     setLoading(true);
     try {
@@ -79,15 +87,22 @@ const ShoppingCart = () => {
 
   const handleIncrease = async (id) => {
     if (loading) return;
+  
     let index = cartItems.findIndex((item) => item.id === id);
-    console.log(cartItems[index].quantity + 1);
-    console.log(cartItems[index].id);
-
+    
+    if (cartItems[index].quantity >= 10) {
+      notification.warning({
+        message: "Giới hạn số lượng",
+        description: "Sản phẩm này đã đạt tối đa số lượng cho phép là 10.",
+      });
+      return; 
+    }
+  
     const callAPIupdate = await callAPIUpdateSoLuong(
       cartItems[index].id,
       cartItems[index].quantity + 1
     );
-
+  
     if (callAPIupdate) {
       setCartItems((prevItems) =>
         prevItems.map((item) =>
@@ -100,8 +115,9 @@ const ShoppingCart = () => {
   const handleDecrease = async (id) => {
     if (loading) return;
     let index = cartItems.findIndex((item) => item.id === id);
-    console.log(cartItems[index].quantity - 1);
-    console.log(cartItems[index].id);
+
+    // Prevent decreasing quantity below 1
+    if (cartItems[index].quantity <= 1) return;
 
     const callAPIupdate = await callAPIUpdateSoLuong(
       cartItems[index].id,
@@ -154,11 +170,11 @@ const ShoppingCart = () => {
     }
 
     Modal.confirm({
-      title:"Xác nhận xóa tất cả sản phẩm",
-      content:`Bạn có muốn bỏ ${idArray.length} sản phẩm ?`,
-      okText:"Có",
-      cancelText:"Trở lại",
-      onOk: async ()=>{
+      title: "Xác nhận xóa tất cả sản phẩm",
+      content: `Bạn có muốn bỏ ${idArray.length} sản phẩm ?`,
+      okText: "Có",
+      cancelText: "Trở lại",
+      onOk: async () => {
         try {
           const response = await axios.request({
             url: "http://127.0.0.1:8000/api/deleteSanPhamAll",
@@ -172,8 +188,11 @@ const ShoppingCart = () => {
           });
           if (response.data.success) {
             setTrigger((prev) => !prev);
-            setCartItems((prevItems) => prevItems.filter((item) => !idArray.includes(item.id)));
-            toggleSelectAll();
+            setCartItems((prevItems) => {
+              // Remove selected items without altering selection state
+              return prevItems.filter((item) => !idArray.includes(item.id));
+            });
+            // Do not call toggleSelectAll() here
           }
         } catch (err) {
           console.log(err.response.data);
@@ -183,10 +202,10 @@ const ShoppingCart = () => {
           });
         }
       },
-      onCancel:()=>{
+      onCancel: () => {
         console.log("Trở lại");
       },
-    });    
+    });
   };
 
 

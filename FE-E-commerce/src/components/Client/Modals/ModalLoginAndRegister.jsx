@@ -121,8 +121,6 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
       }
     } catch (error) {
       message.error(error.response.data.message);
-    }finally {
-      setLoading(false); 
     }
   }, [formRegister]);
 

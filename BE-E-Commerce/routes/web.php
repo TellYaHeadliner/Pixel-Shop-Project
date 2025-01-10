@@ -58,8 +58,8 @@ Route::controller(GioHangController::class)->group(function(){
     Route::put('/api/updateSoLuongSanPhamGioHang',[GioHangController::class,'updateSoLuongSanPhamGioHang']);
     Route::delete('/api/deleteSanPhamId',[GioHangController::class,'deleteSanPhamId']);
     Route::delete('/api/deleteSanPhamAll',[GioHangController::class,'deleteSanPhamAll']);
-    Route::post('/api/createGioHang',[GioHangController::class,'createGioHang']);
-
+    Route::post('/api/addProductInGioHang',[GioHangController::class,'createGioHang']); // done 
+	
 });
 
 
