@@ -10,14 +10,14 @@ import {
   message,
 } from "antd";
 import { useState, useEffect, useCallback, useContext } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
-import { UserContext } from '../../../routes/UserContext.jsx'; // Import UserContext
+import { useNavigate } from "react-router-dom";
+import { UserContext } from '../../../routes/UserContext.jsx';
 import styles from "./ModalLoginAndRegister.module.scss";
 import axios from "axios";
 
 const { TabPane } = Tabs;
 
-const ModalLoginAndRegister = ({ show, onClose }) => {
+const ModalLoginAndRegister = ({ show, onClose, onLoginSuccess }) => {
   const [formRegister] = Form.useForm();
   const [key, setKey] = useState("Đăng nhập");
   const [captcha, setCaptcha] = useState("000000");
@@ -34,7 +34,7 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
       const response = await axios.post("http://127.0.0.1:8000/api/login", values, {
         headers: { "Content-Type": "application/json" },
       });
-
+  
       if (response.data.success) {
         setShowCaptcha(false);
 
@@ -45,11 +45,7 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
         document.cookie = `token=${token}; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT`;
 
         message.success(response.data.message);
-        onClose();
-
-        // Navigate based on role
-        navigate(role === 1 ? "/admin" : role === 2 ? "/staff" : "/");
-        console.log(response.data);
+        onLoginSuccess(); // Đóng modal nhưng không điều hướng
       } else {
         message.error(response.data.message);
       }
@@ -58,7 +54,7 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
       const data = error.response?.data;
       message.error(data?.success ? data.message : "lỗi đăng nhập.");
     }
-  }, [onClose, setRole, navigate]);
+  }, [onLoginSuccess]);
 
   const handleRegister = useCallback(async (values) => {
     if (values.matKhau !== values.repeatMatKhau) {
@@ -263,6 +259,7 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
 ModalLoginAndRegister.propTypes = {
   show: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
+  onLoginSuccess: PropTypes.func.isRequired, // Add prop type for onLoginSuccess
 };
 
 export default ModalLoginAndRegister;
