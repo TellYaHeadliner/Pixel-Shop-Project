@@ -1,19 +1,84 @@
-import React, { useState } from 'react';
-import { Upload, Button, Input, Table, Form, Dropdown, Menu, message, Select, } from 'antd';
+import React, { useEffect, useState, useRef } from 'react';
+import { Upload, Button, Input,  Form,  Select, Tree, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { EllipsisOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import './ProductManagementAdd.scss'
 import CkeditorInsert from "../../../components/Admin/CKeditor/CkeditorInsert"
+import axios from 'axios';
 const ProductManagement = () => {
-    const [searchTerm, setSearchTerm] = useState('');
 		const navigate = useNavigate();
-    
-		const [choseDanhMuc,setChoseDanhMuc] = useState("");
+    const [form] = Form.useForm();
 		const [loaiSanPham,setLoaiSanPham] = useState(0);
 		const [file, setFile] = useState(null);
 		const [previewUrl, setPreviewUrl] = useState(null);
 		const [ckeData, setCkeData] = useState("");
+		const [treeVisible, setTreeVisible] = useState(true);
+		const [selectedDanhMuc, setSelectedDanhMuc] = useState(null);
+		const treeRef = useRef(null);
+
+		///AN
+		const [categories, setCategories] = useState([]);
+		const [searchTerm, setSearchTerm] = useState('');
+		const renderTree = (data) => {
+        return data.map(cat => ({
+            title: cat.tenDanhMuc,
+            key: cat.idDanhMuc,
+            children: cat.child.length > 0 ? renderTree(cat.child) : [],
+        }));
+    };
+		const filterCategories = (data, term) => {
+        return data.map(cat => {
+                const matchedChildren = filterCategories(cat.child, term);
+                if (cat.tenDanhMuc.toLowerCase().includes(term.toLowerCase()) || matchedChildren.length > 0) {
+                    return { ...cat, child: matchedChildren };
+                }
+                return null;
+            })
+            .filter(Boolean);
+    };
+		const filteredCategories = filterCategories(categories, searchTerm);
+		////
+		useEffect(() => {
+			form.setFieldsValue({ idDanhMuc: selectedDanhMuc ? selectedDanhMuc.tenDanhMuc : "" });
+		}, [selectedDanhMuc]);
+
+		const selectDanhMuc = (listDanhMuc,id)=>{
+			for(let dm of listDanhMuc){
+				if(dm.idDanhMuc == id)
+					return {idDanhMuc:dm.idDanhMuc, tenDanhMuc:dm.tenDanhMuc};
+				if(dm.child.length > 0){
+					const result = selectDanhMuc(dm.child, id);
+					if(result)
+						return result;
+				}
+			}
+			return null;
+		}
+
+		const handleClickOutside = (event) => {
+			if (treeRef.current && !treeRef.current.contains(event.target)) {
+				setTreeVisible(true);
+			}
+		};
+
+		const getListDanhMuc = async () => {
+			try {
+				const response = await axios.get('http://127.0.0.1:8000/api/listDanhMuc');
+				setCategories(response.data.data);
+			} catch (e) {
+				message.error("Lấy danh mục không thành công");
+			}
+		};
+
+		useEffect(() => {
+			document.addEventListener('mousedown', handleClickOutside);
+			getListDanhMuc();
+			return () => {
+				document.removeEventListener('mousedown', handleClickOutside);
+			};
+		}, []);
+
 		const changeFile = ({ fileList: newFileList }) => {
 			setFile(newFileList[0]);
 			if (previewUrl) {
@@ -31,6 +96,9 @@ const ProductManagement = () => {
 						label="Hệ điều hành:"
 						labelCol={{span: 10}}
 						wrapperCol={{span: 14}}
+						rules={[
+							{ required: true, message: 'Nhập hệ điều hành!' },
+						]}
 					>
 						<Input className='input-gray'/>
 					</Form.Item>
@@ -39,6 +107,9 @@ const ProductManagement = () => {
 						label="CPU:"
 						labelCol={{span: 10}}
 						wrapperCol={{span: 14}}
+						rules={[
+							{ required: true, message: 'Nhập thông số CPU!' },
+						]}
 					>
 						<Input className='input-gray'/>
 					</Form.Item>
@@ -47,16 +118,43 @@ const ProductManagement = () => {
 						label="RAM:"
 						labelCol={{span: 10}}
 						wrapperCol={{span: 14}}
+						rules={[
+							{ required: true, message: 'Nhập dung lượng RAM!' },
+						]}
 					>
-						<Input className='input-gray'/>
+						<Input className='input-gray' placeholder='GB' type='number'
+							onChange={(e)=>{
+								if(e.target.value <= 0)
+									form.setFieldsValue({RAM: ""})
+								let newValue = "";
+								for(let i of e.target.value){
+									if(i==".")
+										form.setFieldsValue({RAM: newValue})
+									newValue = newValue + i;
+								}
+							}}
+						/>
 					</Form.Item>
 					<Form.Item
-						name="dungluongROM"
+						name="dungLuongROM"
 						label="Bộ nhớ trong:"
 						labelCol={{span: 10}}
 						wrapperCol={{span: 14}}
+						rules={[
+							{ required: true, message: 'Nhập dung lượng ROM!' },
+						]}
 					>
-						<Input className='input-gray'/>
+						<Input className='input-gray' placeholder='GB' type='number'
+							onChange={(e)=>{
+								if(e.target.value <= 0)
+									form.setFieldsValue({dungLuongROM: ""})
+								let newValue = "";
+								for(let i of e.target.value){
+									if(i==".")
+										form.setFieldsValue({dungLuongROM: newValue})
+									newValue = newValue + i;
+								}
+							}}/>
 					</Form.Item>
 				</div>
 				<div className='col-3 d-flex flex-column justify-content-between'>
@@ -65,6 +163,9 @@ const ProductManagement = () => {
 						label="Màn hình:"
 						labelCol={{span: 10}}
 						wrapperCol={{span: 14}}
+						rules={
+							[{ required: true, message: 'Nhập thông số màn hình!' }]
+						}
 					>
 						<Input className='input-gray'/>
 					</Form.Item>
@@ -73,6 +174,9 @@ const ProductManagement = () => {
 						label="Camera trước:"
 						labelCol={{span: 10}}
 						wrapperCol={{span: 14}}
+						rules={
+							[{ required: true, message: 'Nhập thông số camera trước!' }]
+						}
 					>
 						<Input className='input-gray'/>
 					</Form.Item>
@@ -81,6 +185,9 @@ const ProductManagement = () => {
 						label="Camera sau:"
 						labelCol={{span: 10}}
 						wrapperCol={{span: 14}}
+						rules={
+							[{ required: true, message: 'Nhập thông số camera sau!' }]
+						}
 					>
 						<Input className='input-gray'/>
 					</Form.Item>
@@ -89,6 +196,9 @@ const ProductManagement = () => {
 						label="Pin:"
 						labelCol={{span: 10}}
 						wrapperCol={{span: 14}}
+						rules={
+							[{ required: true, message: 'Nhập thông số pin!' }]
+						}
 					>
 						<Input className='input-gray'/>
 					</Form.Item>
@@ -99,6 +209,9 @@ const ProductManagement = () => {
 						label="Sạc:"
 						labelCol={{span: 10}}
 						wrapperCol={{span: 14}}
+						rules={
+							[{ required: true, message: 'Nhập thông số sạc!' }]
+						}
 					>
 						<Input className='input-gray'/>
 					</Form.Item>
@@ -107,6 +220,9 @@ const ProductManagement = () => {
 						label="Sim:"
 						labelCol={{span: 10}}
 						wrapperCol={{span: 14}}
+						rules={
+							[{ required: true, message: 'Nhập thông số SIM!' }]
+						}
 					>
 						<Input className='input-gray'/>
 					</Form.Item>
@@ -115,6 +231,9 @@ const ProductManagement = () => {
 						label="Loa:"
 						labelCol={{span: 10}}
 						wrapperCol={{span: 14}}
+						rules={
+							[{ required: true, message: 'Nhập thông số loa!' }]
+						}
 					>
 						<Input className='input-gray'/>
 					</Form.Item>
@@ -125,6 +244,9 @@ const ProductManagement = () => {
 						label="Màu sắc:"
 						labelCol={{span: 10}}
 						wrapperCol={{span: 13}}
+						rules={
+							[{ required: true, message: 'Nhập mô tả màu sắc!' }]
+						}
 					>
 						<Input className='input-gray'/>
 					</Form.Item>
@@ -133,8 +255,16 @@ const ProductManagement = () => {
 						label="Trọng lượng:"
 						labelCol={{span: 10}}
 						wrapperCol={{span: 13}}
+						rules={[
+							{ required: true, message: 'Nhập trọng lượng!' },
+						]}
 					>
-						<Input className='input-gray'/>
+						<Input className='input-gray' type='number' placeholder='Kg'
+							onChange={(e)=>{
+								if(e.target.value < 0)
+									form.setFieldsValue({trongLuong: ""})
+							}}
+						/>
 					</Form.Item>
 
 					<Form.Item
@@ -142,6 +272,9 @@ const ProductManagement = () => {
 						label="Kích thước:"
 						labelCol={{span: 10}}
 						wrapperCol={{span: 13}}
+						rules={[
+							{ required: true, message: 'Nhập thông số kích thước!' },
+						]}
 					>
 						<Input className='input-gray'/>
 					</Form.Item>
@@ -156,6 +289,9 @@ const ProductManagement = () => {
 						label="Hệ điều hành:"
 						labelCol={{span: 7}}
 						wrapperCol={{span: 13}}
+						rules={
+							[{ required: true, message: 'Nhập hệ điều hành!' }]
+						}
 					>
 						<Input className='input-gray'/>
 					</Form.Item>
@@ -164,6 +300,9 @@ const ProductManagement = () => {
 						label="CPU:"
 						labelCol={{span: 7}}
 						wrapperCol={{span: 13}}
+						rules={
+							[{ required: true, message: 'Nhập thông số CPU!' }]
+						}
 					>
 						<Input className='input-gray'/>
 					</Form.Item>
@@ -172,6 +311,9 @@ const ProductManagement = () => {
 						label="Kích thước:"
 						labelCol={{span: 7}}
 						wrapperCol={{span: 13}}
+						rules={
+							[{ required: true, message: 'Nhập thông kích thước!' }]
+						}
 					>
 						<Input className='input-gray'/>
 					</Form.Item>
@@ -180,6 +322,9 @@ const ProductManagement = () => {
 						label="Màn hình:"
 						labelCol={{span: 7}}
 						wrapperCol={{span: 13}}
+						rules={
+							[{ required: true, message: 'Nhập thông màn hình!' }]
+						}
 					>
 						<Input className='input-gray'/>
 					</Form.Item>
@@ -188,6 +333,9 @@ const ProductManagement = () => {
 						label="GPU:"
 						labelCol={{span: 7}}
 						wrapperCol={{span: 13}}
+						rules={
+							[{ required: true, message: 'Nhập thông số GPU!' }]
+						}
 					>
 						<Input className='input-gray'/>
 					</Form.Item>
@@ -196,6 +344,9 @@ const ProductManagement = () => {
 						label="Sound card:"
 						labelCol={{span: 7}}
 						wrapperCol={{span: 13}}
+						rules={
+							[{ required: true, message: 'Nhập thông số sound card!' }]
+						}
 					>
 						<Input className='input-gray'/>
 					</Form.Item>
@@ -204,6 +355,9 @@ const ProductManagement = () => {
 						label="Cổng kết nối:"
 						labelCol={{span: 7}}
 						wrapperCol={{span: 13}}
+						rules={
+							[{ required: true, message: 'Nhập cổng kết nối!' }]
+						}
 					>
 						<Input className='input-gray'/>
 					</Form.Item>
@@ -216,17 +370,34 @@ const ProductManagement = () => {
 						labelCol={{span: 8}}
 						wrapperCol={{span: 15}}
 						className='mt-4'
+						rules={
+							[{ required: true, message: 'Nhập loại ROM!' }]
+						}
 					>
 						<Input/>
 					</Form.Item>
 
 					<Form.Item
-						name="dungluongROM"
+						name="dungLuongROM"
 						label="Dung lượng ROM:"
 						labelCol={{span: 8}}
 						wrapperCol={{span: 15}}
+						rules={
+							[{ required: true, message: 'Nhập dung lượng ROM!' }]
+						}
 					>
-						<Input/>
+						<Input type='number' placeholder='GB'
+							onChange={(e)=>{
+								if(e.target.value <= 0)
+									form.setFieldsValue({dungLuongROM: ""})
+								let newValue = "";
+								for(let i of e.target.value){
+									if(i==".")
+										form.setFieldsValue({dungLuongROM: newValue})
+									newValue = newValue + i;
+								}
+							}}
+						/>
 					</Form.Item>
 
 					<Form.Item
@@ -234,8 +405,22 @@ const ProductManagement = () => {
 						label="Số khe ROM:"
 						labelCol={{span: 8}}
 						wrapperCol={{span: 15}}
+						rules={
+							[{ required: true, message: 'Nhập số khe ROM!' }]
+						}
 					>
-						<Input/>
+						<Input type='number'
+							onChange={(e)=>{
+								if(e.target.value <= 0)
+									form.setFieldsValue({soKheROM: ""})
+								let newValue = "";
+								for(let i of e.target.value){
+									if(i==".")
+										form.setFieldsValue({soKheROM: newValue})
+									newValue = newValue + i;
+								}
+							}}
+						/>
 					</Form.Item>
 					</div>
 					<Form.Item
@@ -244,14 +429,25 @@ const ProductManagement = () => {
 						labelCol={{span: 7}}
 						wrapperCol={{span: 13}}
 						className='mt-4p5'
+						rules={
+							[{ required: true, message: 'Nhập trọng lượng!' }]
+						}
 					>
-						<Input className='input-gray'/>
+						<Input className='input-gray' type='number' placeholder='Kg'
+							onChange={(e)=>{
+								if(e.target.value < 0)
+									form.setFieldsValue({trongLuong: ""})
+							}}
+						/>
 					</Form.Item>
 					<Form.Item
 						name="cameraTruoc"
 						label="Webcam:"
 						labelCol={{span: 7}}
 						wrapperCol={{span: 13}}
+						rules={
+							[{ required: true, message: 'Nhập thông số webcam!' }]
+						}
 					>
 						<Input className='input-gray'/>
 					</Form.Item>
@@ -260,6 +456,9 @@ const ProductManagement = () => {
 						label="Pin:"
 						labelCol={{span: 7}}
 						wrapperCol={{span: 13}}
+						rules={
+							[{ required: true, message: 'Nhập thông số pin!' }]
+						}
 					>
 						<Input className='input-gray'/>
 					</Form.Item>
@@ -272,8 +471,22 @@ const ProductManagement = () => {
 						labelCol={{span: 8}}
 						wrapperCol={{span: 15}}
 						className='mt-4'
+						rules={
+							[{ required: true, message: 'Nhập dung lượng RAM!' }]
+						}
 					>
-						<Input/>
+						<Input type='number' placeholder='GB'
+							onChange={(e)=>{
+								if(e.target.value <= 0)
+									form.setFieldsValue({RAM: ""})
+								let newValue = "";
+								for(let i of e.target.value){
+									if(i==".")
+										form.setFieldsValue({RAM: newValue})
+									newValue = newValue + i;
+								}
+							}}
+						/>
 					</Form.Item>
 
 					<Form.Item
@@ -281,8 +494,22 @@ const ProductManagement = () => {
 						label="RAM tối đa:"
 						labelCol={{span: 8}}
 						wrapperCol={{span: 15}}
+						rules={
+							[{ required: true, message: 'Nhập RAM tối đa!' }]
+						}
 					>
-						<Input/>
+						<Input type='number' placeholder='GB'
+							onChange={(e)=>{
+								if(e.target.value <= 0)
+									form.setFieldsValue({RAMToiDa: ""})
+								let newValue = "";
+								for(let i of e.target.value){
+									if(i==".")
+										form.setFieldsValue({RAMToiDa: newValue})
+									newValue = newValue + i;
+								}
+							}}
+						/>
 					</Form.Item>
 
 					<Form.Item
@@ -290,6 +517,9 @@ const ProductManagement = () => {
 						label="Loại RAM:"
 						labelCol={{span: 8}}
 						wrapperCol={{span: 15}}
+						rules={
+							[{ required: true, message: 'Nhập loại RAM!' }]
+						}
 					>
 						<Input/>
 					</Form.Item>
@@ -299,16 +529,44 @@ const ProductManagement = () => {
 						label="Buss RAM:"
 						labelCol={{span: 8}}
 						wrapperCol={{span: 15}}
+						rules={
+							[{ required: true, message: 'Nhập buss RAM!' }]
+						}
 					>
-						<Input/>
+						<Input type='number' placeholder='MHz'
+							onChange={(e)=>{
+								if(e.target.value <= 0)
+									form.setFieldsValue({busRAM: ""})
+								let newValue = "";
+								for(let i of e.target.value){
+									if(i==".")
+										form.setFieldsValue({busRAM: newValue})
+									newValue = newValue + i;
+								}
+							}}
+						/>
 					</Form.Item>
 					<Form.Item
-						name="soluongkheRAM"
+						name="soLuongKheRAM"
 						label="Số lượng khe RAM:"
 						labelCol={{span: 8}}
 						wrapperCol={{span: 15}}
+						rules={
+							[{ required: true, message: 'Nhập số lượng khe RAM!' }]
+						}
 					>
-						<Input/>
+						<Input type='number'
+							onChange={(e)=>{
+								if(e.target.value <= 0)
+									form.setFieldsValue({soLuongKheRAM: ""})
+								let newValue = "";
+								for(let i of e.target.value){
+									if(i==".")
+										form.setFieldsValue({soLuongKheRAM: newValue})
+									newValue = newValue + i;
+								}
+							}}
+						/>
 					</Form.Item>
 					</div>
 					<Form.Item
@@ -317,12 +575,36 @@ const ProductManagement = () => {
 						labelCol={{span: 7}}
 						wrapperCol={{span: 13}}
 						className='mt-4p5'
+						rules={
+							[{ required: true, message: 'Nhập thông số sạc!' }]
+						}
 					>
 						<Input className='input-gray'/>
 					</Form.Item>
 				</div>
 			</>
 		);
+
+		const addProduct = async (values) => {
+			let data = {...values};
+			data.moTa = ckeData;
+			data.img = file? file.originFileObj: null;
+			data.idDanhMuc = selectedDanhMuc.idDanhMuc;
+			console.log(data);
+			try {
+				const response = await axios.post(
+					'http://127.0.0.1:8000/api/addSanPham',
+					data,
+					{
+						headers: { 'Content-Type': 'multipart/form-data'},
+					}
+				)
+				message.success(response.data.message);
+			} catch (e) {
+				message.error(e.response.data.message);
+			}
+		}
+
     return (
         <div style={{ padding: '20px' }}>
             <h2>Thêm sản phẩm mới</h2>
@@ -332,6 +614,8 @@ const ProductManagement = () => {
 
 							<div className="body-form pt-5">
 								<Form
+									form = {form}
+									onFinish={addProduct}
 									layout="Horizontal"
 									initialValues={{
 										loai: "0",
@@ -344,6 +628,10 @@ const ProductManagement = () => {
 												label="Tên sản phẩm:"
 												labelCol={{span: 5}}
 												wrapperCol={{span: 7}}
+												rules={
+														[{ required: true, message: 'Tên sản phẩm không được để trống!' }]
+													}
+
 											>
 												<Input/>
 											</Form.Item>
@@ -352,8 +640,22 @@ const ProductManagement = () => {
 												label="Giá bán:"
 												labelCol={{span: 5}}
 												wrapperCol={{span: 7}}
+												rules={
+														[{ required: true, message: 'Nhập giá sản phẩm!' }]
+													}
 											>
-												<Input/>
+												<Input type='number' placeholder='VNĐ'
+													onChange={(e)=>{
+														if(e.target.value <= 0)
+															form.setFieldsValue({gia: ""})
+														let newValue = "";
+														for(let i of e.target.value){
+															if(i==".")
+																form.setFieldsValue({gia: newValue})
+															newValue = newValue + i;
+														}
+													}
+												}/>
 											</Form.Item>
 											<Form.Item 
 												name="hang"
@@ -361,20 +663,47 @@ const ProductManagement = () => {
 												labelCol={{span: 10}}
 												wrapperCol={{span:14}}
 												className='col-6'
+												rules={
+														[{ required: true, message: 'Hãng không được để trống!' }]
+													}
 												>
 												<Input/>
 											</Form.Item>
 											<div className='d-flex'>
-											<Form.Item 
-												name="idDanhMuc"
-												label="Danh mục:"
-												labelCol={{span: 10}}
-												wrapperCol={{span:14}}
-												className='col-6'
-												>
-												<Input readOnly value={choseDanhMuc}/>
-											</Form.Item>
-											<Button>...</Button>
+												<Form.Item 
+													name="idDanhMuc"
+													label="Danh mục:"
+													labelCol={{span: 10}}
+													wrapperCol={{span:14}}
+													className='col-6'
+													rules={
+														[{ required: true, message: 'Chưa chọn danh mục!' }]
+													}
+													>
+													<Input readOnly/>
+												</Form.Item>
+												<div className='btnDanhMuc'>
+													<Button onClick={()=>(
+														setTreeVisible(!treeVisible)
+													)}><EllipsisOutlined/></Button>
+													<div className='treeDanhMuc' style={{ display: treeVisible ? 'none' : 'block'}} ref={treeRef}>
+														<div className="view-section">
+															<Input
+																	placeholder="Tìm kiếm danh mục"
+																	value={searchTerm}
+																	onChange={(e) => setSearchTerm(e.target.value)}
+																	style={{ marginBottom: '20px' }}
+															/>
+															<Tree
+																	treeData={renderTree(filteredCategories)}
+																	onSelect={(keys) => {
+																			const selected = selectDanhMuc(categories,Number(keys[0]));
+																			setSelectedDanhMuc(selected);
+																	}}
+															/>
+														</div>
+													</div>
+												</div>
 											</div>
 											<Form.Item
 												name="loai"
@@ -384,9 +713,6 @@ const ProductManagement = () => {
 											>
 												<Select
 													showSearch
-													style={{
-														width: 200,
-													}}
 													optionFilterProp="label"
 													filterSort={(optionA, optionB) =>
 														(optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
@@ -398,7 +724,7 @@ const ProductManagement = () => {
 															label: 'Điện thoại',
 														},
 														{
-															value: '2',
+															value: '1',
 															label: 'Laptop',
 														}
 													]}
@@ -448,13 +774,22 @@ const ProductManagement = () => {
 												wrapperCol={{span: 24}}
 												style={{marginLeft: "0.7%"}}
 										>
-																							
 												<CkeditorInsert
 													setData={setCkeData}
 												/>
 
 										</Form.Item>
 												</div>
+										</div>
+									</div>
+									<div className='w-100 d-flex justify-content-center'>
+										<div className='col-11 d-flex justify-content-end mb-3'>
+											<Button
+												htmlType='submit'
+												type='primary'
+											>
+												thêm
+											</Button>
 										</div>
 									</div>
 								</Form>

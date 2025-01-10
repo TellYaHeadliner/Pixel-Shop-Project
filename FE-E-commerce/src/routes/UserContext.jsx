@@ -52,32 +52,34 @@ const UserProvider = ({ children }) => {
     };
   }, [token]);
 
-  useEffect( async()=>{
-    try{
-    const token = getCookie("token");
-    const response = await axios.post(
-      'http://127.0.0.1:8000/api/checkToken',{
-        token:token
-      },
-      {
-        headers:{
-          "Content-type":"application/json"
-        }
-      },
-     
-    )
-    
-    const { idNguoiDung,hoVaTen,anhDaiDien,role } = response.data.data;
-    console.log(idNguoiDung);
-    setIdNguoiDung(idNguoiDung);
-    setHoVaTen(hoVaTen);
-    setAnhDaiDien(anhDaiDien);
-    setRole(role);
-    setLogin(true);
-  }catch(err){
-    setLogin(false);
-  }
 
+  useEffect( ()=>{
+    const checkToken = async () => {
+			try{
+				const token = getCookie("token");
+				const response = await axios.post(
+					'http://127.0.0.1:8000/api/checkToken',{
+						token:token
+					},
+					{
+						headers:{
+							"Content-type":"application/json"
+						}
+					},
+				)
+				
+				const { idNguoiDung,hoVaTen,anhDaiDien,role } = response.data.data;
+				console.log(idNguoiDung);
+				setIdNguoiDung(idNguoiDung);
+				setHoVaTen(hoVaTen);
+				setAnhDaiDien(anhDaiDien);
+				setRole(role);
+				setLogin(true);
+			}catch(err){
+				setLogin(false);
+			}
+		}
+		checkToken();
   },[])
 
 
