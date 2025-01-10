@@ -9,6 +9,12 @@ class DanhMucController extends Controller
 	//Lấy danh sách danh mục
   function getList(){
 		$dm = new DanhMuc();
-		return response()->json($dm->getList());
+		$data = $dm->getList();
+		return response()->json([
+			'success'=> true,
+			'message'=> 'Lấy danh mục thành công!',
+			'data'=> $data,
+
+		],200);
 	}
 }

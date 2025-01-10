@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SanPhamController;
 use App\Http\Middleware\Jwt;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BlogController;
@@ -39,6 +40,9 @@ Route::controller(DiaChiController::class)->group(function () {
 	Route::post('/api/updateDefaultLocation', 'updateDefaultUser');
 });
 
+Route::controller(SanPhamController::class)->group(function () {
+	Route::post('/api/addSanPham','addSanPham');
+});
 
 
 
