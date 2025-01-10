@@ -106,7 +106,8 @@ export default function ProfileLocation() {
     return (
         <div style={{ marginLeft: 10 }}>
             <div>
-                <h2>Địa chỉ</h2>
+                <h1>Địa chỉ</h1>
+                <hr />
                 <ButtonProfile
                     type="primary"
                     onClick={() => setIsAddAddressModalVisible(true)}

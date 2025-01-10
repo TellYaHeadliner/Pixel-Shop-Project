@@ -1,0 +1,12 @@
+.ant-list *{
+   color: black !important;
+}  
+
+.onclick{
+   
+   margin-bottom: 1%;
+   &:hover{
+      cursor: pointer;
+      background-color: rgb(190, 197, 197) !important;
+   }
+}

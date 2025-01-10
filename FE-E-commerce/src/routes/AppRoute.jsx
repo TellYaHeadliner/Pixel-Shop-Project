@@ -2,13 +2,19 @@ import {  lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 
 
-import ProfileLayout from "../components/Client/layouts/ProfileLayout";
-import ProfileInformation from "../pages/Client/Profile/ProfileInformation";
-import ProfileLocation from "../pages/Client/Profile/ProfileLocation";
-import ProfileChangePassWord from "../pages/Client/Profile/ProfileChangePassWord";
-import ProfileCompanyInformation from "../pages/Client/Profile/ProfileCompanyInformation";
-import ProfileProductloved from "../pages/Client/Profile/ProfileProductloved";
-import ContactInformation from "../pages/Client/ContactInformation";
+
+
+const ProfileLayout = lazy(()=>import ("../components/Client/layouts/ProfileLayout"));
+const ProfileInformation = lazy(()=>import ("../pages/Client/Profile/ProfileInformation"));
+const ProfileLocation = lazy(()=>import ("../pages/Client/Profile/ProfileLocation"));
+const ProfileChangePassWord = lazy(()=>import ("../pages/Client/Profile/ProfileChangePassWord"));
+const ProfileProductloved = lazy(()=>import ("../pages/Client/Profile/ProfileProductloved"));
+const ContactInformation = lazy(()=>import ("../pages/Client/ContactInformation"));
+const ListBlog = lazy(()=>import ("../pages/Client/Blog/ListBlog"));
+const ProfileRatedProducts = lazy(()=>import ("../pages/Client/Profile/ProfileRatedProduct"));
+const ProfileCompanyInformation = lazy(()=>import ("../pages/Client/Profile/ProfileCompanyInformation"));
+
+
 
 const ClientLayout = lazy(() => import("../components/Client/Layouts/ClientLayout"));
 const Home = lazy(() => import("../pages/Client/Home/Home"));
@@ -44,8 +50,11 @@ const AppRoutes = () => {
           <Route path="locations" element={<ProfileLocation/>}/>
           <Route path="changepassword" element={<ProfileChangePassWord/>}/>
           <Route path="productloved" element={<ProfileProductloved/>}/>
+          <Route path="productrated" element={<ProfileRatedProducts/>}/>
+
 
         </Route>
+        <Route path="news" element={<ListBlog/>}/>
         <Route path="contact" element={<ContactInformation/>}/>
         <Route path="about" element={<ProfileCompanyInformation/>}/>
         <Route path="product" element={<DetailProduct />} />

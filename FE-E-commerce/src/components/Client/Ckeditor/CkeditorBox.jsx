@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 // import ClassicEditor from "@ckeditor/ckeditor5-build-classic"
 
-export default function CkeditorBox({content}) {
-    return(
-        <div
-            style={{ border: "1px solid #ccc", padding: "10px" }}
-            dangerouslySetInnerHTML={{ __html: content }}
-        />
-    )
+// Hàm loại bỏ thẻ HTML
+
+export default function CkeditorBox({ content }) {
+  return (
+    <div style={{ marginLeft: "2%" }}>
+      {/* Chỉ hiển thị nội dung đã loại bỏ thẻ HTML */}
+      <div dangerouslySetInnerHTML={{ __html: content }} />
+    </div>
+  );
 }

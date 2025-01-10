@@ -79,29 +79,34 @@ export default function ProfileProductloved() {
   ];
 
   return (
-    <div style={{ margin: 20, width: "1000px" }}>
-      {dataSource.length===0 ? (
-        <p>không có sản phẩm nào</p>
-      ) : (
-          <Table 
-          columns={columns} 
-          dataSource={dataSource} 
-          pagination={false} 
-          style={{ width: 950 }} 
-          />
-      )}
-      
-      
-      <Modal
-        title="Confirm Deletion"
-        visible={isModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        okText="OK"
-        cancelText="Cancel"
-      >
-        <p>Bạn chắc chắn muốn xóa sản phẩm này?</p>
-      </Modal>
+    <div>
+      <h1>Sản phẩm yêu thích</h1>
+      <hr />
+      <div style={{ margin: 20, width: "1000px" }}>
+            {dataSource.length===0 ? (
+              <p>không có sản phẩm nào</p>
+            ) : (
+                <Table 
+                columns={columns} 
+                dataSource={dataSource} 
+                pagination={false} 
+                style={{ width: 950 }} 
+                />
+            )}
+            
+            
+            <Modal
+              title="Confirm Deletion"
+              visible={isModalVisible}
+              onOk={handleOk}
+              onCancel={handleCancel}
+              okText="OK"
+              cancelText="Cancel"
+            >
+              <p>Bạn chắc chắn muốn xóa sản phẩm này?</p>
+            </Modal>
+          </div>
     </div>
+   
   );
 }
