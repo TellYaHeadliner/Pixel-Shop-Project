@@ -22,6 +22,7 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
   const [showCaptcha, setShowCaptcha] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false); 
   const [countdown, setCountdown] = useState(0); 
+  const [loading,setLoading] = useState(false);
 
   axios.defaults.withCredentials = true;
 
@@ -106,6 +107,8 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
   };
 
   const handleVerificationEmail = async () => {
+    if(loading) return;
+    setLoading(true);
     try {
       const values = await formRegister.validateFields([
         "tenDangNhap",
@@ -146,6 +149,8 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
       }
     } catch (error) { 
       message.error(error.response.data.message);
+    }finally {
+      setLoading(false); 
     }
   };
 

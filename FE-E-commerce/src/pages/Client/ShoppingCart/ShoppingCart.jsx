@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Button, Input, Checkbox, message } from "antd";
+import { Layout, Button, Input, Checkbox, message , notification } from "antd";
 import { AiFillDelete } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import styles from "./ShoppingCart.module.scss"; 
@@ -11,6 +11,8 @@ const ShoppingCart = () => {
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const selectedItems = cartItems.filter((item) => item.selected);
 
   axios.defaults.withCredentials = true;
 
@@ -106,8 +108,61 @@ const ShoppingCart = () => {
     }
   };
 
-  const handleRemove = (id) => {
-    setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
+
+
+  const handleRemove = async (id) => {
+    let index = cartItems.findIndex((item) => item.id === id);
+    try{
+      const response = axios.delete(
+        'http://127.0.0.1:8000/api/deleteSanPhamId',
+        {
+          idSanPham: cartItems[index].id
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      if (response.data.success) {
+        setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
+      }
+    }catch(err){
+      console.log(err.response.data);
+    }   
+  };
+  const handleRemoveAll = async () => {
+    const idArray = selectedItems.map(product => product.id);
+    console.log(idArray);
+
+    if(idArray.length<1){   
+     return notification.open({
+        message: 'Thông báo lỗi',
+        description: 'Chọn sản phẩm cần xóa !',
+        onClick: () => {
+          console.log('Thông báo được click!');
+        },
+      });
+    }
+
+    try{
+      const response = axios.delete(
+        'http://127.0.0.1:8000/api/deleteSanPhamId',
+        {
+          listIdSanPham: idArray
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      if (response.data.success) {
+        setCartItems((prevItems) => prevItems.filter((item) => !idArray.includes(item.id)));
+      }
+    }catch(err){
+      console.log(err.response.data);
+    }   
   };
 
   const toggleSelectItem = (id) => {
@@ -125,7 +180,6 @@ const ShoppingCart = () => {
     );
   };
 
-  const selectedItems = cartItems.filter((item) => item.selected);
   const totalAmount = selectedItems.reduce(
     (total, item) => total + item.price * item.quantity,
     0
@@ -143,6 +197,18 @@ const ShoppingCart = () => {
           {cartItems.every((item) => item.selected)
             ? "Bỏ chọn tất cả"
             : "Chọn tất cả"}
+        </Button>
+        <Button  
+         type="primary"
+        style={{ marginBottom: 20,
+            marginLeft:20
+         }}
+         icon={<AiFillDelete />}
+         danger
+         className={styles.deleteButton}
+         onClick={handleRemoveAll}
+         >
+          Xóa 
         </Button>
         <div className={styles.cartContent}>
           <div className={styles.cartItems}>

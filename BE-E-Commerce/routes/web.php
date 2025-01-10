@@ -30,6 +30,10 @@ Route::controller(SanPhamController::class)->group(function(){
 Route::controller(GioHangController::class)->group(function(){
     Route::get('/api/getListSanPhamGioHang',[GioHangController::class,'getListSanPhamGioHang']);
     Route::put('/api/updateSoLuongSanPhamGioHang',[GioHangController::class,'updateSoLuongSanPhamGioHang']);
+    Route::delete('/api/deleteSanPhamId',[GioHangController::class,'deleteSanPhamId']);
+    Route::delete('/api/deleteSanPhamAll',[GioHangController::class,'deleteSanPhamAll']);
+    Route::post('/api/createGioHang',[GioHangController::class,'createGioHang']);
+
 });
 
 
