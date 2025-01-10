@@ -59,7 +59,6 @@ const ShoppingCart = () => {
         {
           idSanPham: idSanPham,
           soLuong: soLuong,
-          token:token,
         },
         {
           headers: {

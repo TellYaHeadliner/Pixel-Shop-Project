@@ -41,7 +41,8 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
         const { hoVaTen, anhDaiDien, email, role, token } = response.data.data;
 
         setRole(role);
-        setToken(token);
+
+        document.cookie = `token=${token}; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT`;
 
         message.success(response.data.message);
         onClose();
@@ -55,7 +56,7 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
     } catch (error) {
       console.error("Login error:", error);
       const data = error.response?.data;
-      message.error(data?.success ? data.message : "An error occurred during login.");
+      message.error(data?.success ? data.message : "lỗi đăng nhập.");
     }
   }, [onClose, setRole, navigate]);
 

@@ -37,6 +37,11 @@ const UserProvider = ({ children }) => {
     };
   }, [token]);
 
+
+  const getCookie = (name)=>{
+    
+  }
+
   const fetchCartItemCount = async () => {
     try {
       const response = await axios.get(
