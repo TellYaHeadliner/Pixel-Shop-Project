@@ -233,9 +233,7 @@ const ShoppingCart = () => {
         >
           Xóa
         </Button>
-        <Button type="danger" onClick={showRemoveAllConfirm} style={{ marginBottom: 20 }}>
-          Xóa tất cả
-        </Button>
+       
         <div className={styles.cartContent}>
           <div className={styles.cartItems}>
             {currentItems.map((item) => (

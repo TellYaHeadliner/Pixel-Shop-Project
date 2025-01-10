@@ -45,8 +45,7 @@ const ClientHeader = () => {
   const [showModalLogin, setShowModalLogin] = useState(false);
   const [titleLogin, setTitleLogin] = useState(false);
   const [showTree, setShowTree] = useState(false);
-  const { cartItemCount } = useContext(UserContext); 
-
+  const { cartItemCount , login } = useContext(UserContext); 
 
   const handleShowModalLogin = (isLogin = true) => {
     setTitleLogin(isLogin);
@@ -89,10 +88,19 @@ const ClientHeader = () => {
   const handleCartClick = () => {
     navigate("/shoppingcart");
   };
-
+   
   const onSelect = (selectedKeys, info) => {
     console.log('Selected:', selectedKeys, info);
   };
+
+  const handleLoginClick = () => {
+    if (login) {
+      navigate("/profile"); 
+    } else {
+      handleShowModalLogin(true); 
+    }
+  };
+  
 
   return (
     <Header className={styles.header}>
@@ -123,7 +131,7 @@ const ClientHeader = () => {
           <IconButtonNavHeader
             name="Đăng nhập"
             className={styles.loginButton}
-            onClick={() => handleShowModalLogin(true)}
+            onClick={() => handleLoginClick()}
           />
         </Badge>
       </div>
@@ -156,7 +164,7 @@ const ClientHeader = () => {
           />
         </div>
       </div>
-
+     
       <ModalLoginAndRegister
         show={showModalLogin}
         onClose={handleCloseModalLogin}
