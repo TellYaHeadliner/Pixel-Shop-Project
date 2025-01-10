@@ -48,7 +48,6 @@ const ClientHeader = () => {
   const { cartItemCount } = useContext(UserContext); 
 
 
-
   const handleShowModalLogin = (isLogin = true) => {
     setTitleLogin(isLogin);
     setShowModalLogin(true);
@@ -118,6 +117,7 @@ const ClientHeader = () => {
             className={styles.cartButton}
             onClick={handleCartClick} // Thêm hàm click vào giỏ hàng
           />
+          <p className={styles.cartButton_total}>Tổng: 100.000.000vnđ</p>
         </Badge>
         <Badge>
           <IconButtonNavHeader

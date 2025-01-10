@@ -7,11 +7,13 @@ const UserContext = createContext();
 const UserProvider = ({ children }) => {
   const [role, setRole] = useState(null);
   const [token, setToken] = useState(null);
-  const [anhDaiDien, setAnhDaiDien] = useState(null); // Initialize role state
+  const [anhDaiDien, setAnhDaiDien] = useState(null);
   const [email, setEmail] = useState(null);
   const [hoVaTen, setHoVaTen] = useState(null);
   const [cartItemCount, setCartItemCount] = useState(0);
   const [trigger, setTrigger] = useState(false);
+
+
 
   axios.defaults.withCredentials = true;
   useEffect(() => {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Layout, Button, Input, Checkbox, message, notification, Modal } from "antd";
+import { Layout, Button, Input, Checkbox,Pagination, message, notification, Modal } from "antd";
 import { AiFillDelete } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import styles from "./ShoppingCart.module.scss";
@@ -14,6 +14,13 @@ const ShoppingCart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const { setTrigger } = useContext(UserContext);
+  const [currentPage,setCurrentPage]=useState(1);
+
+  const itemsPerPage=5;
+  const indexOfLastItem= currentPage* itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
+  const currentItems = cartItems.slice(indexOfFirstItem, indexOfLastItem); 
 
   const selectedItems = cartItems.filter((item) => item.selected);
 
@@ -52,6 +59,7 @@ const ShoppingCart = () => {
         {
           idSanPham: idSanPham,
           soLuong: soLuong,
+          token:token,
         },
         {
           headers: {
@@ -227,7 +235,7 @@ const ShoppingCart = () => {
         </Button>
         <div className={styles.cartContent}>
           <div className={styles.cartItems}>
-            {cartItems.map((item) => (
+            {currentItems.map((item) => (
               <div key={item.id} className={styles.cartItem}>
                 <Checkbox
                   checked={item.selected}
@@ -267,6 +275,13 @@ const ShoppingCart = () => {
             </Button>
           </div>
         </div>
+        <Pagination
+          current={currentPage}
+          pageSize={itemsPerPage}
+          total={cartItems.length}
+          onChange={(page) => setCurrentPage(page)}
+          style={{ marginTop: 20, textAlign: 'center' }}
+        />
       </Content>
     </Layout>
   );
