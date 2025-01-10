@@ -1,29 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Layout, Button, Tree, Badge } from "antd";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { FaUser, FaBars } from "react-icons/fa";
 import { FiShoppingCart } from "react-icons/fi";
-import { useNavigate, Link } from "react-router-dom"; // Thêm import này
+import { useNavigate, Link } from "react-router-dom";
+import { UserContext } from '../../../routes/UserContext.jsx'; // Import UserContext
 
 import ModalLoginAndRegister from "../Modals/ModalLoginAndRegister";
 import styles from "./ClientHeader.module.scss";
 
 const { Header } = Layout;
 
-// Mapping icon names to their respective components
 const iconMap = {
   "Liên hệ": BsFillTelephoneFill,
   "Giỏ hàng": FiShoppingCart,
   "Đăng nhập": FaUser,
 };
 
-// IconButtonNavHeader component
 const IconButtonNavHeader = ({ name, onClick, className }) => {
   const IconComponent = iconMap[name];
 
   return (
     <div
-      className={`${styles.button} ${className}`} // Thêm className cho nút
+      className={`${styles.button} ${className}`}
       onClick={onClick}
       role="button"
       tabIndex={0}
@@ -40,11 +39,12 @@ const IconButtonNavHeader = ({ name, onClick, className }) => {
 };
 
 const ClientHeader = () => {
-  const navigate = useNavigate(); // Khởi tạo hook navigate
+  const navigate = useNavigate();
+  const { user } = useContext(UserContext); // Get user context
   const [showModalLogin, setShowModalLogin] = useState(false);
   const [titleLogin, setTitleLogin] = useState(false);
   const [showTree, setShowTree] = useState(false);
-  const [cartItemCount, setCartItemCount] = useState(0); // Số lượng giỏ hàng
+  const [cartItemCount, setCartItemCount] = useState(0);
 
   const handleShowModalLogin = (isLogin = true) => {
     setTitleLogin(isLogin);
@@ -57,39 +57,17 @@ const ClientHeader = () => {
     setShowTree((prev) => !prev);
   };
 
-  const treeData = [
-    {
-      title: 'Sản phẩm 1',
-      key: '0-0',
-      children: [
-        { title: 'Danh mục 1-1', key: '0-0-0' },
-        { title: 'Danh mục 1-2', key: '0-0-1' },
-      ],
-    },
-    {
-      title: 'Sản phẩm 2',
-      key: '0-1',
-      children: [
-        { title: 'Danh mục 2-1', key: '0-1-0' },
-        { title: 'Danh mục 2-2', key: '0-1-1' },
-        {
-          title: 'Danh mục 2-3',
-          key: '0-1-2',
-          children: [
-            { title: 'Danh mục 2-3-1', key: '0-1-2-0' },
-            { title: 'Danh mục 2-3-2', key: '0-1-2-1' },
-          ],
-        },
-      ],
-    },
-  ];
-
-  const handleCartClick = () => {
-    navigate("/shoppingcart");
+  const handleLoginSuccess = () => {
+    handleCloseModalLogin();
+    navigate("/profile");
   };
 
-  const onSelect = (selectedKeys, info) => {
-    console.log('Selected:', selectedKeys, info);
+  const handleLoginIconClick = () => {
+    if (user) {
+      navigate("/profile"); // Navigate to profile if logged in
+    } else {
+      handleShowModalLogin(true); // Show login modal if not logged in
+    }
   };
 
   return (
@@ -106,14 +84,14 @@ const ClientHeader = () => {
           <IconButtonNavHeader
             name="Liên hệ"
             className={styles.contactButton}
-            onClick={()=>(navigate("/contact"))}
+            onClick={() => (navigate("/contact"))}
           />
         </Badge>
         <Badge count={cartItemCount} overflowCount={99}>
           <IconButtonNavHeader
             name="Giỏ hàng"
             className={styles.cartButton}
-            onClick={handleCartClick} // Thêm hàm click vào giỏ hàng
+            onClick={() => navigate("/shoppingcart")}
           />
           <p className={styles.cartButton_total}>Tổng: 200k</p>
         </Badge>
@@ -121,7 +99,7 @@ const ClientHeader = () => {
           <IconButtonNavHeader
             name="Đăng nhập"
             className={styles.loginButton}
-            onClick={() => handleShowModalLogin(true)}
+            onClick={handleLoginIconClick} // Updated click handler
           />
         </Badge>
       </div>
@@ -135,7 +113,7 @@ const ClientHeader = () => {
             <Tree
               showLine
               treeData={treeData}
-              onSelect={onSelect} // Đảm bảo onSelect được gọi
+              onSelect={onSelect}
               style={{ flex: 1 }}
             />
           </div>
@@ -148,7 +126,7 @@ const ClientHeader = () => {
 
         <div className={styles.logo}>
           <img
-            src="https://via.placeholder.com/80x50" // Link logo placeholder
+            src="https://via.placeholder.com/80x50"
             alt="Logo"
             className={styles.logoImage}
           />
@@ -158,6 +136,7 @@ const ClientHeader = () => {
       <ModalLoginAndRegister
         show={showModalLogin}
         onClose={handleCloseModalLogin}
+        onLoginSuccess={handleLoginSuccess}
         titleLogin={titleLogin}
       />
     </Header>
