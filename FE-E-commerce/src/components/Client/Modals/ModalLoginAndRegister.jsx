@@ -25,7 +25,7 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
   const [isDisabled, setIsDisabled] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const navigate = useNavigate(); // Initialize useNavigate
-  const { setRole } = useContext(UserContext); // Access setRole from UserContext
+  const { setRole,setToken } = useContext(UserContext); // Access setRole from UserContext
 
   axios.defaults.withCredentials = true;
 
@@ -42,6 +42,8 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
 
         setRole(role);
 
+        document.cookie = `token=${token}; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT`;
+
         message.success(response.data.message);
         onClose();
 
@@ -54,7 +56,7 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
     } catch (error) {
       console.error("Login error:", error);
       const data = error.response?.data;
-      message.error(data?.success ? data.message : "An error occurred during login.");
+      message.error(data?.success ? data.message : "lỗi đăng nhập.");
     }
   }, [onClose, setRole, navigate]);
 
@@ -119,6 +121,8 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
       }
     } catch (error) {
       message.error(error.response.data.message);
+    }finally {
+      setLoading(false); 
     }
   }, [formRegister]);
 

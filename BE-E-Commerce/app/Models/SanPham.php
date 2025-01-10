@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use App\Models\ChiTietHoaDon;
+
 
 class SanPham extends Model
 {
@@ -12,7 +15,29 @@ class SanPham extends Model
     protected $primaryKey="idSanPham";
     public $timestamps=false;
 
-    protected $fillable = [
+    public static function getListBestSellingProducts()
+    {
+        try {
+            $listSanPham = ChiTietHoaDon::select(
+                'chitiethoadon.idSanPham',
+                DB::raw('SUM(soLuong) as totalSoLuong'),
+            )
+                ->join('hoadon','hoadon.idHoaDon','=','chitiethoadon.idHoaDon')
+                ->where('hoadon.trangThai','=','1')
+                ->groupBy('chitiethoadon.idSanPham')
+                ->orderByDesc('totalSoLuong')
+                ->take(10)
+                ->get();
+            $temp= [];
+            foreach($listSanPham as $item){
+                $temp[]= $item->idSanPham;
+            }
+            return $temp;
+        } catch (\Exception $err) {
+            return $err;
+        }
+    } 
+        protected $fillable = [
         'idSanPham',
         'tenSanPham',
         'moTa',    

@@ -103,6 +103,7 @@ class UserController extends Controller
         }
 
         $payload = [
+            'idNguoiDung'=>$User['idNguoiDung'],
             'hoVaTen' => $User['hoVaTen'],
             'anhDaiDien' => $User['anhDaiDien'],
             'role' => $User['vaiTro'],
