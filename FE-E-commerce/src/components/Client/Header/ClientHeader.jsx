@@ -8,6 +8,7 @@ import { UserContext } from '../../../routes/UserContext.jsx'; // Import UserCon
 
 import ModalLoginAndRegister from "../Modals/ModalLoginAndRegister";
 import styles from "./ClientHeader.module.scss";
+import { UserContext } from '../../../routes/UserContext.jsx'; // Import UserContext
 
 const { Header } = Layout;
 
@@ -44,7 +45,7 @@ const ClientHeader = () => {
   const [showModalLogin, setShowModalLogin] = useState(false);
   const [titleLogin, setTitleLogin] = useState(false);
   const [showTree, setShowTree] = useState(false);
-  const [cartItemCount, setCartItemCount] = useState(0);
+  const { cartItemCount } = useContext(UserContext); 
 
   const handleShowModalLogin = (isLogin = true) => {
     setTitleLogin(isLogin);
@@ -93,7 +94,7 @@ const ClientHeader = () => {
             className={styles.cartButton}
             onClick={() => navigate("/shoppingcart")}
           />
-          <p className={styles.cartButton_total}>Tổng: 200k</p>
+          <p className={styles.cartButton_total}>Tổng: 100.000.000vnđ</p>
         </Badge>
         <Badge>
           <IconButtonNavHeader

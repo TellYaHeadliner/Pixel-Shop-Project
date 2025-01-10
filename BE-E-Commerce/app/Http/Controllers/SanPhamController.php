@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\ChiTietHoaDon;
+use App\Models\GioHang;
 use App\Models\SanPham;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\VarDumper\VarDumper;
 
 class SanPhamController extends Controller
 {
@@ -86,19 +88,13 @@ class SanPhamController extends Controller
     function getListBestSellingProducts()
     {
         try {
-            $listSanPham = ChiTietHoaDon::select(
-                'chitiethoadon.idHoaDon',
-                'chitiethoadon.idSanPham',
-                DB::raw('SUM(soLuong) as totalSoLuong'),
-                'tongTien',
-                'hoadon.trangThai'
-            )
-                ->join('hoadon','hoadon.idHoaDon','=','chitiethoadon.idHoaDon')
-                ->where('hoadon.trangThai','=','1')
-                ->groupBy('chitiethoadon.idSanPham','hoadon.trangThai')
-                ->orderByDesc('totalSoLuong')
-                ->take(10)
-                ->get();
+            $tempSanPham = SanPham::getListBestSellingProducts();
+
+            $listSanPham=SanPham::select('idSanPham','tenSanPham','hang','img')
+                                ->whereIn('idSanPham',$tempSanPham)
+                                ->orderByRaw("FIELD(idSanPham, " . implode(',', $tempSanPham) . ")")
+                                ->get();
+
             return response()->json([
                 'success' => true,
                 'message' => "Danh sách sản phẩm bán chạy",
@@ -109,7 +105,7 @@ class SanPhamController extends Controller
         } catch (\Exception $err) {
             return response()->json([
                 'success' => false,
-                'message' => "lỗi server",
+                'message' => 'lỗi server '.$err,
                 'data' => []
             ], 500);
         }
@@ -156,8 +152,6 @@ class SanPhamController extends Controller
             ], 500);
         }
     }
-
     
-
 
 }
