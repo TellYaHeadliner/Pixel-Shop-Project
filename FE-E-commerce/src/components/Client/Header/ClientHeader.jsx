@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState ,  useContext} from "react";
 import { Layout, Button, Tree, Badge } from "antd";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { FaUser, FaBars } from "react-icons/fa";
@@ -7,6 +7,7 @@ import { useNavigate, Link } from "react-router-dom"; // Thêm import này
 
 import ModalLoginAndRegister from "../Modals/ModalLoginAndRegister";
 import styles from "./ClientHeader.module.scss";
+import { UserContext } from '../../../routes/UserContext.jsx'; // Import UserContext
 
 const { Header } = Layout;
 
@@ -44,7 +45,9 @@ const ClientHeader = () => {
   const [showModalLogin, setShowModalLogin] = useState(false);
   const [titleLogin, setTitleLogin] = useState(false);
   const [showTree, setShowTree] = useState(false);
-  const [cartItemCount, setCartItemCount] = useState(3); // Số lượng giỏ hàng
+  const { cartItemCount } = useContext(UserContext); 
+
+
 
   const handleShowModalLogin = (isLogin = true) => {
     setTitleLogin(isLogin);
@@ -115,7 +118,6 @@ const ClientHeader = () => {
             className={styles.cartButton}
             onClick={handleCartClick} // Thêm hàm click vào giỏ hàng
           />
-          <p className={styles.cartButton_total}>Tổng: 200k</p>
         </Badge>
         <Badge>
           <IconButtonNavHeader

@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { Layout, Button, Input, Checkbox, message , notification } from "antd";
+import React, { useEffect, useState, useContext } from "react";
+import { Layout, Button, Input, Checkbox, message, notification, Modal } from "antd";
 import { AiFillDelete } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
-import styles from "./ShoppingCart.module.scss"; 
+import styles from "./ShoppingCart.module.scss";
+import { UserContext } from "../../../routes/UserContext.jsx";
+
 import axios from "axios";
 
 const { Content } = Layout;
@@ -11,6 +13,7 @@ const ShoppingCart = () => {
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { setTrigger } = useContext(UserContext);
 
   const selectedItems = cartItems.filter((item) => item.selected);
 
@@ -22,7 +25,6 @@ const ShoppingCart = () => {
         const response = await axios.get(
           "http://127.0.0.1:8000/api/getListSanPhamGioHang"
         );
-        console.log(response.data.data.listSanPham);
         const listSanPham = response.data.data.listSanPham;
 
         const mappedItems = listSanPham.map((item) => ({
@@ -43,7 +45,7 @@ const ShoppingCart = () => {
   }, []);
 
   const callAPIUpdateSoLuong = async (idSanPham, soLuong) => {
-    setLoading(true);   
+    setLoading(true);
     try {
       const response = await axios.put(
         "http://127.0.0.1:8000/api/updateSoLuongSanPhamGioHang",
@@ -63,8 +65,8 @@ const ShoppingCart = () => {
       }
     } catch (err) {
       return false;
-    }finally {
-      setLoading(false); 
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -108,61 +110,76 @@ const ShoppingCart = () => {
     }
   };
 
-
-
   const handleRemove = async (id) => {
     let index = cartItems.findIndex((item) => item.id === id);
-    try{
-      const response = axios.delete(
-        'http://127.0.0.1:8000/api/deleteSanPhamId',
-        {
-          idSanPham: cartItems[index].id
+    try {
+      const response = await axios.request({
+        url: "http://127.0.0.1:8000/api/deleteSanPhamId",
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
         },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
+        data: {
+          idSanPham: cartItems[index].id,
+        },
+      });
+      console.log(response.data);
       if (response.data.success) {
+        setTrigger((prev) => !prev);
         setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
       }
-    }catch(err){
-      console.log(err.response.data);
-    }   
+    } catch (err) {
+      console.log(err);
+    }
   };
   const handleRemoveAll = async () => {
-    const idArray = selectedItems.map(product => product.id);
+    const idArray = selectedItems.map((product) => product.id);
     console.log(idArray);
 
-    if(idArray.length<1){   
-     return notification.open({
-        message: 'Thông báo lỗi',
-        description: 'Chọn sản phẩm cần xóa !',
+    if (idArray.length < 1) {
+      return notification.open({
+        message: "Thông báo lỗi",
+        description: "Chọn sản phẩm cần xóa !",
         onClick: () => {
-          console.log('Thông báo được click!');
+          console.log("Thông báo được click!");
         },
       });
     }
 
-    try{
-      const response = axios.delete(
-        'http://127.0.0.1:8000/api/deleteSanPhamId',
-        {
-          listIdSanPham: idArray
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
+    Modal.confirm({
+      title:"Xác nhận xóa tất cả sản phẩm",
+      content:`Bạn có muốn bỏ ${idArray.length} sản phẩm ?`,
+      okText:"Có",
+      cancelText:"Trở lại",
+      onOk: async ()=>{
+        try {
+          const response = await axios.request({
+            url: "http://127.0.0.1:8000/api/deleteSanPhamAll",
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            data: {
+              listIdSanPham: idArray,
+            },
+          });
+          if (response.data.success) {
+            setTrigger((prev) => !prev);
+            setCartItems((prevItems) => prevItems.filter((item) => !idArray.includes(item.id)));
+            toggleSelectAll();
+          }
+        } catch (err) {
+          console.log(err.response.data);
+          notification.error({
+            message: "Lỗi",
+            description: "Có lỗi xảy ra khi xóa sản phẩm!",
+          });
         }
-      )
-      if (response.data.success) {
-        setCartItems((prevItems) => prevItems.filter((item) => !idArray.includes(item.id)));
-      }
-    }catch(err){
-      console.log(err.response.data);
-    }   
+      },
+      onCancel:()=>{
+        console.log("Trở lại");
+      },
+    });    
   };
 
   const toggleSelectItem = (id) => {
@@ -198,17 +215,15 @@ const ShoppingCart = () => {
             ? "Bỏ chọn tất cả"
             : "Chọn tất cả"}
         </Button>
-        <Button  
-         type="primary"
-        style={{ marginBottom: 20,
-            marginLeft:20
-         }}
-         icon={<AiFillDelete />}
-         danger
-         className={styles.deleteButton}
-         onClick={handleRemoveAll}
-         >
-          Xóa 
+        <Button
+          type="primary"
+          style={{ marginBottom: 20, marginLeft: 20 }}
+          icon={<AiFillDelete />}
+          danger
+          className={styles.deleteButton}
+          onClick={handleRemoveAll}
+        >
+          Xóa
         </Button>
         <div className={styles.cartContent}>
           <div className={styles.cartItems}>

@@ -25,7 +25,7 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
   const [isDisabled, setIsDisabled] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const navigate = useNavigate(); // Initialize useNavigate
-  const { setRole } = useContext(UserContext); // Access setRole from UserContext
+  const { setRole,setToken } = useContext(UserContext); // Access setRole from UserContext
 
   axios.defaults.withCredentials = true;
 
@@ -41,6 +41,7 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
         const { hoVaTen, anhDaiDien, email, role, token } = response.data.data;
 
         setRole(role);
+        setToken(token);
 
         message.success(response.data.message);
         onClose();
