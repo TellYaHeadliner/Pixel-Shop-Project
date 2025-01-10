@@ -252,6 +252,7 @@ const ShoppingCart = () => {
         >
           Xóa
         </Button>
+       
         <div className={styles.cartContent}>
           <div className={styles.cartItems}>
             {currentItems.map((item) => (
