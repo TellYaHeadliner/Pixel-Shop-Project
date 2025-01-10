@@ -33,7 +33,7 @@ const BusinessStatistics = lazy(() => import("../pages/Admin/BusinessStatistics/
 
 // Staff components
 const StaffLayout = lazy(() => import("../components/Staff/Layouts/StafffLayout.jsx"));
-const StaffContact = lazy(() => import("../pages/Staff/Contact/StaffContact")); // Import StaffContact
+const StaffContact = lazy(() => import("../pages/Staff/Contact/StaffContact")); 
 
 const AppRoutes = () => {
   return (
