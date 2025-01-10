@@ -26,6 +26,7 @@ Route::controller(UserController::class)->group(function () {
 
 Route::controller(DanhMucController::class)->group(function () {
 	Route::get('/api/listDanhMuc', [DanhMucController::class, 'getList']);
+	Route::post('/api/addDanhMuc','add');
 });
 
 Route::controller(ThongTinController::class)->group(function () {

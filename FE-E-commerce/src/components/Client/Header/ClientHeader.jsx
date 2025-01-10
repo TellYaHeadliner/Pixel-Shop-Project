@@ -8,7 +8,6 @@ import { UserContext } from '../../../routes/UserContext.jsx'; // Import UserCon
 
 import ModalLoginAndRegister from "../Modals/ModalLoginAndRegister";
 import styles from "./ClientHeader.module.scss";
-import { UserContext } from '../../../routes/UserContext.jsx'; // Import UserContext
 
 const { Header } = Layout;
 
