@@ -1,8 +1,10 @@
 import { Image } from 'antd';
 
-const ImageProduct  = () => {
+const ImageProduct  = ({ img }) => {
+    const linkImg = `http://localhost:8000` + img;
+
     return (
-        <Image width={700} src="/imgs/product_2.png" />
+        <Image width={700} src={linkImg} />
     )
 }
 
