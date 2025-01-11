@@ -36,7 +36,7 @@ class SanPhamController extends Controller
             $thongSoSanPham = DB::table('thongsosanpham')->where('idSanPham', $sanPham->idSanPham)->first();
             $danhGia = DB::table('danhgia')
                 ->join('nguoidung', 'nguoidung.idNguoiDung', '=', 'danhgia.idNguoiDung')
-                ->where('danhgia.idNguoiDung', 1)
+                ->where('danhgia.idSanPham', $sanPham->idSanPham)
                 ->select('danhgia.*', 'nguoidung.tenDangNhap')
                 ->get();
             $sanPhamLienQuan = SanPham::where('idDanhMuc', $sanPham->idDanhMuc)->take(3)->get();
