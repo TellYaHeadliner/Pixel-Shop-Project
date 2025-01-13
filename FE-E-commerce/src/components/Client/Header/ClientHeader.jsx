@@ -42,7 +42,7 @@ export const ClientHeader = () => {
   const [showModalLogin, setShowModalLogin] = useState(false);
   const [titleLogin, setTitleLogin] = useState(false);
   const [showTree, setShowTree] = useState(false);
-  const { cartItemCount , login } = useContext(UserContext); 
+  const { cartItemCount , login ,role } = useContext(UserContext); 
 
   const handleShowModalLogin = (isLogin = true) => {
     setTitleLogin(isLogin);
@@ -65,7 +65,7 @@ export const ClientHeader = () => {
   };
 
   const handleLoginClick = () => {
-    if (login) {
+    if (login && role ===3) {
       navigate("/profile"); 
     } else {
       handleShowModalLogin(true); 
