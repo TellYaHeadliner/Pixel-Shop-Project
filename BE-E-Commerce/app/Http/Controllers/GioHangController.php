@@ -130,55 +130,65 @@ class GioHangController extends Controller
         }
     }
 
-    function createGioHang(Request $request)
+    function addProductInGioHang(Request $request)
     {
         try {
-            $idSanPham=SanPham::select('idSanPham')->where('slug', $request['slug'])->first();
+            $idSanPham = SanPham::select('idSanPham', 'soLuong')->where('slug', $request['slug'])->first();
             $data = [
-                'idSanPham' => $idSanPham['idSanPham'],
+                'idSanPham' => $idSanPham->idSanPham,
                 'idNguoiDung' => 1,
                 'soLuong' => $request['soLuong']
             ];
-
-            // $temp = GioHang::select('soLuong')->where('idSanPham', $data['idSanPham'])
-            //                 ->where('idNguoiDung', $data['idNguoiDung'])
-            //                 ->first();
-
             $temp = DB::table('giohang')
-            ->select( 'giohang.soLuong')
-            ->join('sanpham', 'sanpham.idSanPham', '=', 'giohang.idSanPham')
-            ->where('giohang.idSanPham',$data['idSanPham'] )
-            ->where('giohang.idNguoiDung', $data['idNguoiDung'])
-            ->first();
-            
-            var_dump($temp->soLuong);
-            
-            // if ($temp) {
-            //     DB::table('giohang')
-            //     ->where('idSanPham', $data['idSanPham'])
-            //     ->where('idNguoiDung', $data['idNguoiDung'])
-            //     ->update(['soLuong' => $data['soLuong']]);
-            //     return response()->json([
-            //         'success' => true,
-            //         'message' => '',
-            //         'data' => []
-            //     ], 200);
-            // } else {
-            //     GioHang::created([
-            //         'idSanPham' => $data['idSanPham'],
-            //         'idNguoiDung' => $data['idNguoiDung'],
-            //         'soLuong' => $data['soLuong']
-            //     ]);
-            //     return response()->json([
-            //         'success' => true,
-            //         'message' => '',
-            //         'data' => []
-            //     ], 200);
-            // }
+                ->select('giohang.soLuong')
+                ->join('sanpham', 'sanpham.idSanPham', '=', 'giohang.idSanPham')
+                ->where('giohang.idSanPham', $data['idSanPham'])
+                ->where('giohang.idNguoiDung', $data['idNguoiDung'])
+                ->first();
+            if ($temp) {
+
+                if ($temp->soLuong + $data['soLuong'] > $idSanPham->soLuong) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "số lượng sản phẩm vượt quá tồn kho",
+                        'data' => []
+                    ], 403);
+                }
+                DB::table('giohang')
+                    ->where('idSanPham', $data['idSanPham'])
+                    ->where('idNguoiDung', $data['idNguoiDung'])
+                    ->update(['soLuong' => $data['soLuong'] + $temp->soLuong]);
+                return response()->json([
+                    'success' => true,
+                    'message' => 'cập nhập số lượng sản phẩm trong giỏ hàng thành công',
+                    'data' => 1
+                ], 200);
+            } else {
+                if ($data['soLuong'] > $idSanPham->soLuong) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "số lượng sản phẩm vượt quá tồn kho",
+                        'data' => []
+                    ], 403);
+                }
+                DB::table('giohang')
+                    ->where('idSanPham', $data['idSanPham'])
+                    ->where('idNguoiDung', $data['idNguoiDung'])
+                    ->insert([
+                        'idSanPham' => $data['idSanPham'],
+                        'idNguoiDung' => $data['idNguoiDung'],
+                        'soLuong' => $data['soLuong']
+                    ]);
+                return response()->json([
+                    'success' => true,
+                    'message' => 'thêm mới sản phẩm trong giỏ hàng',
+                    'data' => 2
+                ], 200);
+            }
         } catch (\Exception $err) {
             return response()->json([
                 'success' => false,
-                'message' => 'Lỗi server: '.$err,
+                'message' => 'Lỗi server: ' . $err,
                 'data' => []
             ], 500);
         }
