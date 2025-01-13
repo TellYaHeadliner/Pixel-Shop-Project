@@ -28,7 +28,7 @@ class CheckEmailSignUp
                     'data'=>[
 											'1'=>1
 										]
-                ],403);
+                ],401);
             } 
             return $next($request);
         }
@@ -38,7 +38,7 @@ class CheckEmailSignUp
                 'success'=>false,
                 'message'=>'Mã xác nhận đã bị vô hiệu hóa vui lòng nhấn nút gửi mã để nhận mã mới.',
                 'data'=>[]
-            ],403);
+            ],401);
         }
         return response()->json([
             'success'=>false,
@@ -46,6 +46,6 @@ class CheckEmailSignUp
             'data'=>[
 							'2'=>2,
 						]
-        ],403);
+        ],401);
     }
 }

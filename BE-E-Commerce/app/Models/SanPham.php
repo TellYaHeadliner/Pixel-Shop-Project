@@ -44,24 +44,17 @@ class SanPham extends Model
         'gia',
         'soLuong',   
         'ngayThem',
-        'hinhAnh',
+        'img',
         'idDanhMuc',
         'soLuotXem',
         'loai',
-        'brand',
-        'isNoiBat',
+        'hang',
+        'noiBat',
         'idKhuyenMai',
         'trangThai',
         'slug'
     ];
 
-    public function thongsodienthoai(){
-        return $this->hasOne(ThongSoDienThoai::class, 'idSanPham');
-    }
-
-    public function thongsolaptop(){
-        return $this->hasOne(ThongSoLapTop::class, 'idSanPham');
-    }
 
     public function chitietlohang(){
         return $this->hasMany(ChiTietLoHang::class, 'idSanPham');

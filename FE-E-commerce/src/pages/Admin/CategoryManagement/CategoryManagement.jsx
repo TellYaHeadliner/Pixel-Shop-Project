@@ -214,7 +214,7 @@ const CategoryManagement = () => {
                 </Button>
             </div>
 
-            <div className="view-section">
+            <div className="view-section" style={{width:'auto'}}>
                 <h4 className="view-title">Xem và quản lý danh mục</h4>
                 <Input
                     placeholder="Tìm kiếm danh mục"

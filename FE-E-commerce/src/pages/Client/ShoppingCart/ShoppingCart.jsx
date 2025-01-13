@@ -81,8 +81,12 @@ const ShoppingCart = () => {
     if (loading) return;
   
     let index = cartItems.findIndex((item) => item.id === id);
+<<<<<<< HEAD
     
   
+=======
+     
+>>>>>>> 5b2ff5ff5ec9bb0092ff754ae4b1d8b12b73e3a0
     const callAPIupdate = await callAPIUpdateSoLuong(
       cartItems[index].id,
       cartItems[index].quantity + 1
@@ -234,6 +238,7 @@ const ShoppingCart = () => {
         >
           Xóa
         </Button>
+       
         <div className={styles.cartContent}>
           <div className={styles.cartItems}>
             {currentItems.map((item) => (

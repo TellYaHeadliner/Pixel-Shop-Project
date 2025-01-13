@@ -37,7 +37,7 @@ const IconButtonNavHeader = ({ name, onClick, className }) => {
   );
 };
 
-const ClientHeader = () => {
+export const ClientHeader = () => {
   const navigate = useNavigate();
   const [showModalLogin, setShowModalLogin] = useState(false);
   const [titleLogin, setTitleLogin] = useState(false);
@@ -62,14 +62,19 @@ const ClientHeader = () => {
     handleCloseModalLogin();
     navigate("/profile");
   };
+   
+  const onSelect = (selectedKeys, info) => {
+    console.log('Selected:', selectedKeys, info);
+  };
 
-  const handleLoginIconClick = () => {
-    if (user) {
-      navigate("/profile"); // Navigate to profile if logged in
+  const handleLoginClick = () => {
+    if (login) {
+      navigate("/profile"); 
     } else {
-      handleShowModalLogin(true); // Show login modal if not logged in
+      handleShowModalLogin(true); 
     }
   };
+  
 
   return (
     <Header className={styles.header}>
@@ -100,7 +105,7 @@ const ClientHeader = () => {
           <IconButtonNavHeader
             name="Đăng nhập"
             className={styles.loginButton}
-            onClick={handleLoginIconClick} // Updated click handler
+            onClick={() => handleLoginClick()}
           />
         </Badge>
       </div>
@@ -133,7 +138,7 @@ const ClientHeader = () => {
           />
         </div>
       </div>
-
+     
       <ModalLoginAndRegister
         show={showModalLogin}
         onClose={handleCloseModalLogin}

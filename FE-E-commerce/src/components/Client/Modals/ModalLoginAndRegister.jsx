@@ -38,12 +38,16 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
         const { hoVaTen, anhDaiDien, email, role, token } = response.data.data;
 
         // Store user information in cookies
-        Cookies.set('token', token, { expires: 1 }); // Expires in 1 day
+        Cookies.set('token', token, {
+          httpOnly: true,
+          secure: true,
+          sameSite: 'Lax',
+          expires: 1 // Expires in 1 day
+        });
         Cookies.set('user', JSON.stringify({ hoVaTen, email, role, anhDaiDien }), { expires: 1 });
-        
+
         message.success(response.data.message);
         onClose();
-
         // Navigate based on role
         navigate(role === 1 ? "/admin" : role === 2 ? "/staff" : "/");
       } else {
@@ -51,8 +55,8 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
       }
     } catch (error) {
       console.error("Login error:", error);
-      const data = error.response?.data;
-      message.error(data?.success ? data.message : "An error occurred during login.");
+      const data = error.response.data;
+      message.error(data.success ? "lỗi đăng nhập." : data.message);
     }
   }, [onClose, navigate]);
 
@@ -121,6 +125,7 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
   }, [formRegister]);
 
   useEffect(() => {
+
     return () => {
       clearInterval();
     };

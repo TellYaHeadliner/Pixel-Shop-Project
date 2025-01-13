@@ -1,41 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Button, Input, Table, Dropdown, Menu, message } from 'antd';
 import { EllipsisOutlined } from '@ant-design/icons';
 import "./ProductManagement.scss"
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 const ProductManagement = () => {
     const [searchTerm, setSearchTerm] = useState('');
 		const navigate = useNavigate();
     // Dữ liệu mẫu cho bảng
-    const dataSource = [
-        {
-            key: '1',
-            stt: 1,
-            tenSanPham: 'Sản phẩm 1',
-            gia: 100000,
-            soLuong: 50,
-            danhMuc: 'Danh mục 1',
-            soLuotXem: 200,
-            trangThai: 'Còn hàng',
-        },
-        {
-            key: '2',
-            stt: 2,
-            tenSanPham: 'Sản phẩm 2',
-            gia: 150000,
-            soLuong: 30,
-            danhMuc: 'Danh mục 2',
-            soLuotXem: 150,
-            trangThai: 'Hết hàng',
-        },
-        // Thêm dữ liệu mẫu khác nếu cần
-    ];
+    const [listPrd, setListPrd] = useState([]);
 
     const columns = [
         {
-            title: 'STT',
-            dataIndex: 'stt',
-            key: 'stt',
+            title: 'ID',
+            dataIndex: 'idSanPham',
+            key: 'idSanPham',
         },
         {
             title: 'Tên sản phẩm',
@@ -51,11 +30,6 @@ const ProductManagement = () => {
             title: 'Số lượng',
             dataIndex: 'soLuong',
             key: 'soLuong',
-        },
-        {
-            title: 'Danh mục',
-            dataIndex: 'danhMuc',
-            key: 'danhMuc',
         },
         {
             title: 'Số lượt xem',
@@ -78,22 +52,50 @@ const ProductManagement = () => {
         },
     ];
 
+		const handleGetListPrd = async ()=>{
+			try {
+				const response = await axios.post(
+					'http://127.0.0.1:8000/api/getListSanPham',
+					{text:searchTerm},
+					{
+						headers: {'Content-Type': 'application/json'}
+					}
+				)
+				const list = response.data.data.map(prd=>{
+					if(prd.trangThai == 0)
+						return {...prd, trangThai:"Chưa bán"};
+					if(prd.trangThai == 1)
+						return {...prd, trangThai: "Đang bán"};
+					if(prd.trangThai == 2)
+						return {...prd, trangThai: "Ngừng bán"};
+				})
+				setListPrd(list);
+			} catch (e){
+				message.error(e.response.data.message);
+			}
+		}
+
+		useEffect(() =>{
+			handleGetListPrd()
+		},[]);
+
     const actionMenu = (record) => (
         <Menu>
-            <Menu.Item onClick={() => handleUpdate(record)}>
+            <Menu.Item onClick={() => handleUpdate(record.idSanPham)}>
                 Cập nhật
             </Menu.Item>
-            <Menu.Item onClick={() => handleDelete(record.key)}>
+            <Menu.Item onClick={() => handleDelete(record.idSanPham)}>
                 Xóa
             </Menu.Item>
-            <Menu.Item onClick={() => handleHighlight(record.key)}>
-                Nổi bật
+						
+            <Menu.Item onClick={() => handleHighlight(record.idSanPham)}>
+                {record.noiBat == 0? "Nổi bật":"Hủy nổi bật"}
             </Menu.Item>
         </Menu>
     );
 
-    const handleUpdate = (record) => {
-        message.info(`Cập nhật sản phẩm: ${record.tenSanPham}`);
+    const handleUpdate = (key) => {
+        message.info(`Cập nhật sản phẩm: ${key}`);
         // Logic cập nhật sản phẩm sẽ ở đây
     };
 
@@ -117,11 +119,14 @@ const ProductManagement = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 style={{ width: '300px', marginBottom: '20px' }}
             />
+						<Button type="primary" style={{ marginLeft: '10px' }} onClick={()=>handleGetListPrd()}>
+                Tìm kiếm sản phẩm
+            </Button>
             <Button type="primary" style={{ marginLeft: '10px' }} onClick={()=>navigate('/admin/products/add')}>
                 Thêm sản phẩm
             </Button>
             <Table
-                dataSource={dataSource.filter(item => item.tenSanPham.toLowerCase().includes(searchTerm.toLowerCase()))}
+                dataSource={listPrd}
                 columns={columns}
                 style={{ marginTop: '20px' }}
                 pagination={false}
