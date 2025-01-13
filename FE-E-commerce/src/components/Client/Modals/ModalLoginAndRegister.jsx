@@ -37,14 +37,10 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
 
       if (response.data.success) {
         setShowCaptcha(false);
-
         const { hoVaTen, anhDaiDien, email, role, token } = response.data.data;
-
         setRole(role);
         setLogin(true);
-    
         document.cookie = `token=${token}; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT`;
-
         message.success(response.data.message);
         onClose();
         // Navigate based on role
@@ -54,8 +50,10 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
         message.error(response.data.message);
       }
     } catch (error) {
-      console.error("Login error:", error);
+      console.log(error.response.data);
       const data = error.response.data;
+      setCaptcha(data.data.captcha)
+      setShowCaptcha(true);
       message.error(data.success ? "lỗi đăng nhập.":data.message );
     }
   }, [onClose, setRole, navigate]);
