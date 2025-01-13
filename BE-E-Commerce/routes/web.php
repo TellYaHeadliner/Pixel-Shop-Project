@@ -12,8 +12,11 @@ use App\Http\Controllers\DiaChiController;
 use App\Http\Controllers\LienHeController;
 use App\Http\Controllers\GioHangController;
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\BaiVietController;
 
 use App\Http\Middleware\CheckEmailSignUp;
+
+
 Route::controller(UserController::class)->group(function () {
 	Route::post('/api/login', [UserController::class, 'login']);
 	Route::post('/api/VerificationEmail', [UserController::class, 'sendVerificationEmail']);
@@ -33,6 +36,7 @@ Route::controller(DanhMucController::class)->group(function () {
 
 Route::controller(ThongTinController::class)->group(function () {
 	Route::get('/api/getThongTin', [ThongTinController::class, 'get']);
+	Route::get('/api/updateThongTin', [ThongTinController::class, 'update']);
 });
 
 Route::controller(NhaCungCapController::class)->group(function () {
@@ -43,6 +47,8 @@ Route::controller(NhaCungCapController::class)->group(function () {
 Route::controller(DiaChiController::class)->group(function () {
 	Route::post('/api/getDiaChiUser', 'getListByUser');
 	Route::post('/api/updateDefaultLocation', 'updateDefaultUser');
+	Route::post('/api/deleteLocation','delete');
+	Route::post('/api/updateLocation','update');
 });
 
 Route::controller(LienHeController::class)->group(function () {
@@ -53,11 +59,12 @@ Route::controller(SanPhamController::class)->group(function(){
     Route::get('/api/getListNewProducts',[SanPhamController::class,'getListNewProducts']);
     Route::get('/api/getListBestSellingProducts',[SanPhamController::class,'getListBestSellingProducts']);
     Route::get('/api/getListProductsKhuyenMai',[SanPhamController::class,'getListProductsKhuyenMai']);
- 	Route::get('/api/listSanPham', [SanPhamController::class, 'getAllProducts']);
 	Route::get('api/product/{slug}', [SanPhamController::class, 'getProduct']);
     Route::get('/api/getChiTietSanPham', [SanPhamController::class, 'getChiTiet']);
 	Route::get('/api/listLaptop', [SanPhamController::class, 'getListProductsLaptop']);
+	Route::get('/api/getListSanPhamNoiBat', [SanPhamController::class, 'getListProductNoiBat']);
 	Route::post('/api/addSanPham','addSanPham');
+	Route::post('/api/getListSanPham','search');
 });
 
 Route::controller(GioHangController::class)->group(function(){
@@ -65,9 +72,18 @@ Route::controller(GioHangController::class)->group(function(){
     Route::put('/api/updateSoLuongSanPhamGioHang',[GioHangController::class,'updateSoLuongSanPhamGioHang']);
     Route::delete('/api/deleteSanPhamId',[GioHangController::class,'deleteSanPhamId']);
     Route::delete('/api/deleteSanPhamAll',[GioHangController::class,'deleteSanPhamAll']);
+    Route::post('/api/addProductInGioHang',[GioHangController::class,'createGioHang']); // done 
     Route::post('/api/addProductInGioHang',[GioHangController::class,'addProductInGioHang']); // done 
-	
 });
+
+Route::controller(BaiVietController::class)->group(function(){
+    Route::get('/api/listBaiViet',[BaiVietController::class,'getList']);
+    Route::get('/api/getDetailBaiViet/{id}',[BaiVietController::class,'get']);
+	Route::get('/api/getListBaiVietKhuyenMai', [BaiVietController::class, 'getListKhuyenMai']);
+	Route::get('/api/getListQuangCao', [BaiVietController::class, 'getListQuangCao']);
+});
+
+
 
 
 

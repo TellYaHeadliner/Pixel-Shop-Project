@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\DiaChi;
+use PhpParser\Node\Stmt\TryCatch;
 use PHPUnit\TextUI\XmlConfiguration\UpdateSchemaLocation;
 
 class DiaChiController extends Controller
@@ -66,6 +67,90 @@ class DiaChiController extends Controller
 							"message" => "Đã xảy ra lỗi: " . $e->getMessage(),
 							"data" => []
 					], 500);
+			}
+		}
+		function add(Request $request){
+			$data = $request->all();
+			try{
+				$count = DiaChi::where('idNguoiDung','=',$data['idNguoiDung'])->count();
+				DiaChi::create([
+					'idNguoiDung'=> $data['idNguoiDung'],
+					'hoVaTen'=> $data['hoVaTen'],
+					'diaChi'=> $data['diaChi'],
+					'sdt'=> $data['sdt'],
+					'note'=> $data['note'],
+					'loaiDiaChi'=> $data['loaiDiaChi'],
+					'macDinh'=> $count==0?1:0,
+				]);
+				return response()->json([
+					'success' => true,
+					'message' => 'Thêm địa chỉ thành công',
+					'data' => []
+				],200);
+			}catch(\Exception $e){
+				return response()->json([
+					'success' => true,
+					'message' => 'Thêm địa chỉ thất bại! ' . $e->getMessage(),
+					'data' => []
+				],500);
+			};
+		}
+		function delete(Request $request){
+			$data = $request->all();
+			try{
+				$diachi=DiaChi::where('idDiaChi','=',$data['idDiaChi'])
+											->where('idNguoiDung','=',$data['idNguoiDung'])
+											->first();
+				if($diachi['macDinh']==1)
+					return response()->json([
+						'success' => false,
+						'message' => 'Không thẻ xóa địa chỉ mặc định!',
+						'data' => []
+					],500);
+				$diachi->delete();
+				return response()->json([
+					'success' => true,
+					'message' => 'Xóa địa chỉ thành công',
+					'data' => []
+				],200);
+			}catch(\Exception $e){
+				return response()->json([
+					'success' => true,
+					'message' => 'Có lỗi xảy ra! ' . $e->getMessage(),
+					'data' => []
+				],500);
+			}
+		}
+		function update(Request $request){
+			$data = $request->all();
+			try {
+				$diaChi = $diachi=DiaChi::where('idDiaChi','=',$data['idDiaChi'])
+											->where('idNguoiDung','=',$data['idNguoiDung'])
+											->first();
+				if($diachi)
+					return response()->json([
+					'success' => false,
+					'message' => 'Không tìm được địa chỉ cần cập nhật',
+					'data' => []
+					],404);
+				$diachi->update([
+					'diaChi'=>$data['diaChi'],
+					'hoVaTen'=> $data['hoVaTen'],
+					'sdt'=>$data['sdt'],
+					'note'=>$data['note'],
+					'loaiDiaChi'=>$data['loaiDiaChi'],
+				]);
+				return response()->json([
+					'success' => true,
+					'message' => 'Cập nhật địa chỉ thành công!',
+					'data' => []
+				],200);
+			} catch (\Exception $e) {
+				return response()->json([
+					'success' => true,
+					'message' => 'Có lỗi xảy ra! ' . $e->getMessage(),
+					'data' => []
+				],500);
 			}
 		}
 }

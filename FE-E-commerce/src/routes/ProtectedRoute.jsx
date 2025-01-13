@@ -1,9 +1,7 @@
-// src/ProtectedRoute.jsx
-import React, { useContext } from 'react';
+import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { UserContext } from './UserContext'; 
 import { Spin } from 'antd';
-
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
     const { role , loading } = useContext(UserContext); 

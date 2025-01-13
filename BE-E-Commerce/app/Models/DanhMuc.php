@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Faker\Core\Number;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,6 +18,7 @@ class DanhMuc extends Model
         'tenDanhMuc',
         'idDanhMucCha'
     ];
+		public $timestamps = false;
 
     public function sanpham(){
         return $this->hasMany(SanPham::class, 'idDanhMuc', 'idDanhMuc');
@@ -46,5 +48,14 @@ class DanhMuc extends Model
 					$list[] = $obj;
 				}
 				return $list;
+		}
+
+		public function getChildrenList($id,$list=[]){
+			$list[] = (int) $id;
+			$Children = DanhMuc::where("idDanhMucCha","=",$id)->get();
+			foreach($Children as $i){
+				$list = $this->getChildrenList($i['idDanhMuc'],$list);
+			}
+			return $list;
 		}
 }

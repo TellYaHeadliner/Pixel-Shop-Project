@@ -1,10 +1,10 @@
-import React, { useEffect,useContext } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { UserContext } from "../../../routes/UserContext.jsx";
 
 const UpdateTriggerOnRouteChange = () => {
   const location = useLocation(); 
-  const { setTrigger } = useContext(UserContext); 
+  const [trigger, setTrigger] = useState(false); // Local state for trigger
+
   useEffect(() => {
     setTrigger((prev) => !prev); 
   }, [location]); 
