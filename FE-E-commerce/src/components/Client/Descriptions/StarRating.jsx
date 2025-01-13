@@ -14,7 +14,7 @@ const StarDetail = ({ rating }) => {
       }}
     >
       <Title level={2} style={{ margin: 0, marginRight: "8px" }}>
-        {rating}
+        {rating ? rating : 0}
       </Title>
       <AiOutlineStar style={{ fontSize: "30px"}}/>
     </div>

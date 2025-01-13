@@ -10,12 +10,14 @@ use Firebase\JWT\JWT as FirebaseJWT;
 use Symfony\Component\VarDumper\VarDumper;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\File;
+use Firebase\JWT\Key;
 use DateTime;
 
 class UserController extends Controller
 {
     function login(Request $request)
     {
+
         $data = $request->all();
         $soLanThuToiDa = 5;
         $timeBlock = time() + 10; // giây
@@ -23,7 +25,7 @@ class UserController extends Controller
         $User = NguoiDung::where('tenDangNhap', '=', $data['tenDangNhap'])
             ->orWhere('email', '=', $data['tenDangNhap'])
             ->first();
-
+        
         if (!$User) {
             return Response()->json([
                 'success' => false,
@@ -33,6 +35,7 @@ class UserController extends Controller
                 ]
             ], 403);
         }
+
         $soLanThu = session()->get("login_solanthu_{$User['idNguoiDung']}", 0);
         $thoiGianMoKhoa = session()->get("login_timeblock_{$User['idNguoiDung']}", null);
         if ($thoiGianMoKhoa && time() <= $thoiGianMoKhoa) {
@@ -101,8 +104,8 @@ class UserController extends Controller
                 ],
             ], 403);
         }
-
         $payload = [
+            'idNguoiDung'=>$User['idNguoiDung'],
             'hoVaTen' => $User['hoVaTen'],
             'anhDaiDien' => $User['anhDaiDien'],
             'role' => $User['vaiTro'],
@@ -163,6 +166,25 @@ class UserController extends Controller
             'message' => 'Đăng ký thành công',
             'data' => []
         ], 200);
+    }
+    function checkToken(Request $request){
+        $token = $request['token'];
+        if(!$token){
+            return response()->json(['err'=>'Token chua duoc cung cap'],401);
+        }
+        try{       
+            $decode=FirebaseJWT::decode($token,new Key(env('JWT_SECRET'),'HS256'));
+        } catch(\Firebase\JWT\ExpiredException $err){
+            return response()->json(['error' => 'Token het han' . $err->getMessage()], 401);
+        }
+        catch(\Exception $err){
+            return response()->json(['error' => 'Token không hợp lệ: ' . $err->getMessage()], 401);
+        }
+        return response()->json([
+            'success'=>true,
+            'message'=>" ",
+            'data'=>$decode
+        ],200);
     }
     function sendVerificationEmail(Request $request)
     {

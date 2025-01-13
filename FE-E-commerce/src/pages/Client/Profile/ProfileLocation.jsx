@@ -12,34 +12,32 @@ export default function ProfileLocation() {
     const [editedAddress, setEditedAddress] = useState('');
     const [form] = Form.useForm();
     const IdUser = 1;
-    
-    
-    const handleGetListLocation = async() =>{
+
+    const handleGetListLocation = async () => {
         const idNguoiDung = IdUser;
-        try{
+        try {
             const response = await axios.post(
                 "http://127.0.0.1:8000/api/getDiaChiUser",
-                {idNguoiDung},
+                { idNguoiDung },
                 {
-                    headers:{
+                    headers: {
                         "Content-Type": "application/json",
                     },
-                },
-            )
-            if(response.data.success) {
+                }
+            );
+            if (response.data.success) {
                 setAddresses(response.data.data);
             }
-        }catch(e){
-            const data =e.response.data;
+        } catch (e) {
+            const data = e.response.data;
             message.error(data.message);
         }
-    }
-    useEffect(()=>{
+    };
+
+    useEffect(() => {
         handleGetListLocation();
-    },[])
+    }, []);
 
-
-    
     const setDefaultAddress = (id) => {
         const updatedAddresses = addresses.map(addr =>
             addr.id === id ? { ...addr, isDefault: true } : { ...addr, isDefault: false }
@@ -52,7 +50,13 @@ export default function ProfileLocation() {
     const openEditModal = (id) => {
         const addressToEdit = addresses.find(addr => addr.id === id);
         setSelectedAddressId(id);
-        setEditedAddress(addressToEdit.specificAddress);
+        form.setFieldsValue({
+            fullName: addressToEdit.fullName,
+            phoneNumber: addressToEdit.phoneNumber,
+            city: addressToEdit.city,
+            specificAddress: addressToEdit.specificAddress,
+            isOffice: addressToEdit.isOffice
+        });
         setIsModalVisible(true);
     };
 
@@ -60,38 +64,42 @@ export default function ProfileLocation() {
         setIsModalVisible(false);
     };
 
-    const handleEditSubmit = async() => {
-        const idNguoiDung=IdUser;
+    const handleEditSubmit = async () => {
+        const idNguoiDung = IdUser;
         const idDiaChi = selectedAddressId;
-        const diaChi = editedAddress;
-    
-        if (editedAddress === '') {
-            message.error('Vui lòng nhập địa chỉ mới!');
+        const { fullName, phoneNumber, city, specificAddress, isOffice } = form.getFieldsValue();
+
+        if (!fullName || !phoneNumber || !city || !specificAddress) {
+            message.error('Vui lòng điền đầy đủ thông tin!');
             return;
         }
-        try{
-            const response=await axios.post(
-            "http://127.0.0.1:8000/api/updateDefaultLocation",
-            {
-                idNguoiDung,
-                idDiaChi,
-                diaChi,
-                
-            },
-            {
-                headers:{
-                    "Content-Type": "application/json",
-                },
-            }
 
+        try {
+            const response = await axios.post(
+                "http://127.0.0.1:8000/api/updateDefaultLocation",
+                {
+                    idNguoiDung,
+                    idDiaChi,
+                    fullName,
+                    phoneNumber,
+                    city,
+                    specificAddress,
+                    isOffice,
+                },
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
             );
-            if(response.data.success) {
-                    message.success(response.data.message);
-                    setIsModalVisible(false);
-                    handleGetListLocation();
+
+            if (response.data.success) {
+                message.success(response.data.message);
+                setIsModalVisible(false);
+                handleGetListLocation();
             }
-        }catch(e){
-            const data=e.response.data;
+        } catch (e) {
+            const data = e.response.data;
             message.error(data.message);
         }
     };
@@ -172,9 +180,7 @@ export default function ProfileLocation() {
                         </Select>
                     </Form.Item>
 
-                    <ButtonProfile htmlType="submit">Thêm địa chỉ
-                       
-                    </ButtonProfile>
+                    <ButtonProfile htmlType="submit">Thêm địa chỉ</ButtonProfile>
                 </Form>
             </Modal>
 
@@ -185,11 +191,9 @@ export default function ProfileLocation() {
                 ) : (
                     <ul>
                         {addresses.map((address) => (
-                            <>
-                            <li key={address.id} className='d-flex' style={{fontSize:'120%'}}>
+                            <li key={address.id} className='d-flex' style={{ fontSize: '120%' }}>
                                 {address.sdt} <br />{address.diaChi}
-                                <div style={{marginLeft:'30%'}}>
-                                    
+                                <div style={{ marginLeft: '30%' }}>
                                     <Button
                                         style={{ }}
                                         type="link"
@@ -210,17 +214,14 @@ export default function ProfileLocation() {
                                         onClick={() => deleteAddress(address.id)}
                                     >
                                         Xóa
-                                    </Button>   
-                                    <div style={{marginLeft:'10%', fontSize:'70%'}}>
+                                    </Button>
+                                    <div style={{ marginLeft: '10%', fontSize: '70%' }}>
                                         {address.isOffice && <span style={{ color: 'blue', marginLeft: 5 }}>(Văn phòng)</span>}
                                         {!address.isOffice && <span style={{ color: 'brown', marginLeft: 5 }}>(Nhà riêng)</span>}
                                         {address.isDefault && <span style={{ color: 'green', marginLeft: 5 }}>(Mặc định)</span>}
                                     </div>
                                 </div>
                             </li>
-                            <hr/>
-                            </>
-
                         ))}
                     </ul>
                 )}
@@ -232,17 +233,32 @@ export default function ProfileLocation() {
                 onCancel={handleCancel}
                 footer={null}
             >
-                <div>
-                    <label>Địa chỉ mới:</label>
-                    <Input
-                        type="text"
-                        value={editedAddress}
-                        onChange={(e) => setEditedAddress(e.target.value)}
-                    />
-                    <ButtonProfile type="primary" onClick={handleEditSubmit}>
-                        Lưu thay đổi
-                    </ButtonProfile>
-                </div>
+                <Form form={form} layout="vertical" onFinish={handleEditSubmit}>
+                    <Form.Item label="Họ và tên" name="fullName">
+                        <Input type="text" />
+                    </Form.Item>
+
+                    <Form.Item label="Số điện thoại" name="phoneNumber">
+                        <Input type="text" />
+                    </Form.Item>
+
+                    <Form.Item label="Tỉnh/Thành phố" name="city">
+                        <Input type="text" />
+                    </Form.Item>
+
+                    <Form.Item label="Địa chỉ cụ thể" name="specificAddress">
+                        <Input type="text" />
+                    </Form.Item>
+
+                    <Form.Item label="Loại địa chỉ" name="isOffice">
+                        <Select>
+                            <Option value={false}>Nhà riêng</Option>
+                            <Option value={true}>Văn phòng</Option>
+                        </Select>
+                    </Form.Item>
+
+                    <ButtonProfile htmlType="submit">Lưu thay đổi</ButtonProfile>
+                </Form>
             </Modal>
         </div>
     );

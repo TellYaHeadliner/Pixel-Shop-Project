@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
+import React, { useState } from "react";
 // import ClassicEditor from "@ckeditor/ckeditor5-build-classic"
 
 // Hàm loại bỏ thẻ HTML

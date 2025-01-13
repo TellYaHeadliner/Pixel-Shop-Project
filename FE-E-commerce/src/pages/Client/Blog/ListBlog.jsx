@@ -1,32 +1,29 @@
-import React, { useState } from 'react';
-import { List, Typography } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { List, Typography, message } from 'antd';
 import { CalendarOutlined } from '@ant-design/icons';
 import ListItem from '../../../components/Client/List/NewItem.jsx';
+import axios from "axios"
 
 const { Title, Text } = Typography;
 
 export default function ListBlog() {
-  const [newsData] = useState([
-    {
-      idBaiViet: 1,
-      tieuDe: "Chủ tịch xã cầm đầu đường dây buôn ma túy xuyên quốc gia",
-      noiDung: "Lãnh đạo xã Na Ngoi cho biết, đang làm tờ trình xin ý kiến của UBND huyện Kỳ Sơn để cử người điều hành công việc thay chủ tịch xã vừa bị bắt. Theo vị này, quá trình công tác ông Vừ thường thể hiện là một cán bộ có năng lực, bản lĩnh, trách nhiệm, luôn hoàn thành tốt mọi nhiệm vụ, không để lộ các dấu hiệu bất minh.",
-      author: "Author 1",
-      ngayDang: "2025-01-01",
-      hinhAnh: "https://via.placeholder.com/150",
-      slug: "contact"
-    },
-    {
-      idBaiViet: 2,
-      tieuDe: "News Title 2",
-      noiDung: "<h1>This is the content of the second news.</h1>",
-      author: "Author 2",
-      ngayDang: "2025-01-02",
-      hinhAnh: "https://via.placeholder.com/150",
-      link: "https://example.com/news/2"
-    },
-  ]);
+  const [newsData,setNewsData] = useState([]);
 
+  const getListNews = async () => {
+    try{
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/getListBaiViet",
+        {},
+        {
+          headers: {'Content-type': 'application/json'}
+        }
+      )
+      setNewsData(response.data.data);
+    }catch(e){
+      message.error(e.response.data.message);
+    }
+  };
+  useEffect(()=>{getListNews()},[]);
   return (
     <div >
       <h2>Tin Tức</h2>

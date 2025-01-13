@@ -29,7 +29,7 @@ export default function NewsItem({ data }) {
               width='13%'
               alt="logo"
               height='13%'
-              src={item.hinhAnh}
+              src={"http://127.0.0.1:8000/imgs/"+item.hinhAnh}
               style={{minWidth:'96px', minHeight:'96px',objectFit: 'cover'}}
              
             />
