@@ -42,7 +42,7 @@ const AppRoutes = () => {
         <Route index element={<Home />} />
           <Route path="profile" element={
             <ProtectedRoute allowedRoles={[3]}>
-              <ProfileInformation/>
+              <ProfileLayout/>
             </ProtectedRoute>
           }>    
           <Route index element={<ProfileInformation />} />
