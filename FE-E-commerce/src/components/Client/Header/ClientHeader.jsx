@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Layout, Button, Tree, Badge } from "antd";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { FaUser, FaBars } from "react-icons/fa";
 import { FiShoppingCart } from "react-icons/fi";
 import { useNavigate, Link } from "react-router-dom";
+import { UserContext } from '../../../routes/UserContext.jsx'; 
 import ModalLoginAndRegister from "../Modals/ModalLoginAndRegister";
 import styles from "./ClientHeader.module.scss";
-import Cookies from "js-cookie"; // Import js-cookie
 
 const { Header } = Layout;
 
@@ -43,7 +43,6 @@ export const ClientHeader = () => {
   const [titleLogin, setTitleLogin] = useState(false);
   const [showTree, setShowTree] = useState(false);
   const { cartItemCount , login ,role } = useContext(UserContext); 
-
 
   const handleShowModalLogin = (isLogin = true) => {
     setTitleLogin(isLogin);

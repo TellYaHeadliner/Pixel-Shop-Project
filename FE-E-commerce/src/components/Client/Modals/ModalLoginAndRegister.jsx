@@ -9,10 +9,10 @@ import {
   Radio,
   message,
 } from "antd";
-import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect, useCallback, useContext } from "react";
+import { useNavigate } from "react-router-dom"; 
+import { UserContext } from '../../../routes/UserContext.jsx'; 
 import styles from "./ModalLoginAndRegister.module.scss";
-import Cookies from "js-cookie"; // Import js-cookie
 import axios from "axios";
 
 const { TabPane } = Tabs;
@@ -25,6 +25,7 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
   const [isDisabled, setIsDisabled] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const navigate = useNavigate();
+  const { setRole,setToken,setLogin } = useContext(UserContext); 
 
   axios.defaults.withCredentials = true;
 
@@ -35,30 +36,29 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
       });
 
       if (response.data.success) {
+        setShowCaptcha(false);
+
         const { hoVaTen, anhDaiDien, email, role, token } = response.data.data;
 
-        // Store user information in cookies
-        Cookies.set('token', token, {
-          httpOnly: true,
-          secure: true,
-          sameSite: 'Lax',
-          expires: 1 // Expires in 1 day
-        });
-        Cookies.set('user', JSON.stringify({ hoVaTen, email, role, anhDaiDien }), { expires: 1 });
+        setRole(role);
+        setLogin(true);
+    
+        document.cookie = `token=${token}; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT`;
 
         message.success(response.data.message);
         onClose();
         // Navigate based on role
         navigate(role === 1 ? "/admin" : role === 2 ? "/staff" : "/");
+        console.log(response.data);
       } else {
         message.error(response.data.message);
       }
     } catch (error) {
       console.error("Login error:", error);
       const data = error.response.data;
-      message.error(data.success ? "lỗi đăng nhập." : data.message);
+      message.error(data.success ? "lỗi đăng nhập.":data.message );
     }
-  }, [onClose, navigate]);
+  }, [onClose, setRole, navigate]);
 
   const handleRegister = useCallback(async (values) => {
     if (values.matKhau !== values.repeatMatKhau) {
@@ -125,9 +125,9 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
   }, [formRegister]);
 
   useEffect(() => {
-
+    
     return () => {
-      clearInterval();
+      clearInterval(); // Clear interval on component unmount
     };
   }, []);
 
