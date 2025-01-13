@@ -53,5 +53,4 @@ class DanhMucController extends Controller
 		],500);
 		}
 	}
-	
 }

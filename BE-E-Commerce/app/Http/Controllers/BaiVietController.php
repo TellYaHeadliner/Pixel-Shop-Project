@@ -9,10 +9,8 @@ class BaiVietController extends Controller
 {
     function getList(Request $request){
 			$data =  $request->all();
-			if(!$data['search'])
-				$data['search']="";
-			if(!$data['page'])
-				$data['page'] = 1;
+				$data['search']=$data['search']??"";
+				$data['page'] =$data['page']?? 1;
 			try{
 				$list = BaiViet::where(function ($query) use ($data) {
 						$query->where("tieuDe", "like", "%" . $data['search'] . "%")

@@ -14,6 +14,8 @@ use App\Http\Controllers\GioHangController;
 use App\Http\Controllers\ImageController;
 
 use App\Http\Middleware\CheckEmailSignUp;
+
+
 Route::controller(UserController::class)->group(function () {
 	Route::post('/api/login', [UserController::class, 'login']);
 	Route::post('/api/VerificationEmail', [UserController::class, 'sendVerificationEmail']);
@@ -58,6 +60,7 @@ Route::controller(SanPhamController::class)->group(function(){
     Route::get('/api/getChiTietSanPham', [SanPhamController::class, 'getChiTiet']);
 	Route::get('/api/listLaptop', [SanPhamController::class, 'getListProductsLaptop']);
 	Route::post('/api/addSanPham','addSanPham');
+	Route::post('/api/getListSanPham','search');
 });
 
 Route::controller(GioHangController::class)->group(function(){
