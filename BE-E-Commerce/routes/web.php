@@ -36,6 +36,7 @@ Route::controller(DanhMucController::class)->group(function () {
 
 Route::controller(ThongTinController::class)->group(function () {
 	Route::get('/api/getThongTin', [ThongTinController::class, 'get']);
+	Route::get('/api/updateThongTin', [ThongTinController::class, 'update']);
 });
 
 Route::controller(NhaCungCapController::class)->group(function () {
@@ -46,6 +47,8 @@ Route::controller(NhaCungCapController::class)->group(function () {
 Route::controller(DiaChiController::class)->group(function () {
 	Route::post('/api/getDiaChiUser', 'getListByUser');
 	Route::post('/api/updateDefaultLocation', 'updateDefaultUser');
+	Route::post('/api/deleteLocation','delete');
+	Route::post('/api/updateLocation','update');
 });
 
 Route::controller(LienHeController::class)->group(function () {
