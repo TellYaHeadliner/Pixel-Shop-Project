@@ -38,10 +38,16 @@ class SanPhamController extends Controller
             $thongSoSanPham = DB::table('thongsosanpham')->where('idSanPham', $sanPham->idSanPham)->first();
             $danhGia = DB::table('danhgia')
                 ->join('nguoidung', 'nguoidung.idNguoiDung', '=', 'danhgia.idNguoiDung')
-                ->where('danhgia.idNguoiDung', 1)
+                ->where('danhgia.idSanPham', $sanPham->idSanPham)
                 ->select('danhgia.*', 'nguoidung.tenDangNhap')
                 ->get();
             $sanPhamLienQuan = SanPham::where('idDanhMuc', $sanPham->idDanhMuc)->take(3)->get();
+            $khuyenmai=SanPham::select('khuyenmai.phanTram','khuyenmai.ngayBatDau','khuyenmai.ngayKetThuc')
+                ->join('khuyenmai','khuyenmai.idKhuyenMai','=','sanpham.idKhuyenMai')
+                ->where('slug',$slug)
+                ->where('khuyenmai.ngayBatDau','<=',now())
+                ->where('khuyenmai.ngayKetThuc','>=',now())
+                ->first();
             if($sanPham){
                 return response()->json([
                    'success' => true,
@@ -51,6 +57,7 @@ class SanPhamController extends Controller
                     'sanPham' => $sanPham,
                     'danhGia' => $danhGia,
                     'sanPhamLienQuan' => $sanPhamLienQuan,
+                    'khuyenmai'=> (!$khuyenmai) ? 0 : $khuyenmai->phanTram,
                    ]
                 ], 200);
             }else{
@@ -63,7 +70,7 @@ class SanPhamController extends Controller
         } catch (\Throwable $th) {
             return response()->json([
                 'success' => false,
-               'message' => "Lỗi server",
+               'message' => "Lỗi server" .$th,
                'data' => null
             ], 500);
         }

@@ -20,7 +20,7 @@ class UserController extends Controller
 
         $data = $request->all();
         $soLanThuToiDa = 5;
-        $timeBlock = time() + 10; // giây
+        $timeBlock = time() + 300; // giây
 
         $User = NguoiDung::where('tenDangNhap', '=', $data['tenDangNhap'])
             ->orWhere('email', '=', $data['tenDangNhap'])
@@ -33,7 +33,7 @@ class UserController extends Controller
                 'data' => [
                     'solanthu' => 0,
                 ]
-            ], 403);
+            ], 401);
         }
 
         $soLanThu = session()->get("login_solanthu_{$User['idNguoiDung']}", 0);
@@ -57,7 +57,7 @@ class UserController extends Controller
                         'captcha' => session()->get("login_captcha_{$User['idNguoiDung']}"),
                         'solanthu' => $soLanThu,
                     ]
-                ], 403);
+                ], 401);
             } else if ($data['captcha'] != session("login_captcha_{$User['idNguoiDung']}")) {
                 return response()->json([
                     'success' => false,
@@ -66,7 +66,7 @@ class UserController extends Controller
                         'captcha' => session()->get("login_captcha_{$User['idNguoiDung']}"),
                         'solanthu' => $soLanThu,
                     ]
-                ], 403);
+                ], 401);
             }
         }
 
@@ -94,7 +94,7 @@ class UserController extends Controller
                         'solanthu' => $soLanThu,
                         'captcha' => session()->get("login_captcha_{$User['idNguoiDung']}"),
                     ]
-                ], 403);
+                ], 401);
             }
             return Response()->json([
                 'success' => false,
@@ -102,7 +102,7 @@ class UserController extends Controller
                 'data' => [
                     'solanthu' => $soLanThu,
                 ],
-            ], 403);
+            ], 401);
         }
         $payload = [
             'idNguoiDung'=>$User['idNguoiDung'],
@@ -137,7 +137,7 @@ class UserController extends Controller
                 'success' => false,
                 'message' => 'Mật khẩu không trùng khớp!',
                 'data' => []
-            ], 403);
+            ], 401);
         }
 
         try {
@@ -158,7 +158,7 @@ class UserController extends Controller
                 'message' => $err->getMessage(),
                 // 'message' => 'Đăng ký không thành công, vui lòng thử lại!',
                 'data' => []
-            ], 403);
+            ], 500);
         }
         session()->forget(["SignUp_VerificationEmail_{$data['email']}", "SignUp_VerificationEmail_TimeBlock_{$data['email']}"]);
         return response()->json([

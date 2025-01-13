@@ -89,15 +89,7 @@ const ShoppingCart = () => {
     if (loading) return;
   
     let index = cartItems.findIndex((item) => item.id === id);
-    
-    if (cartItems[index].quantity >= 10) {
-      notification.warning({
-        message: "Giới hạn số lượng",
-        description: "Sản phẩm này đã đạt tối đa số lượng cho phép là 10.",
-      });
-      return; 
-    }
-  
+     
     const callAPIupdate = await callAPIUpdateSoLuong(
       cartItems[index].id,
       cartItems[index].quantity + 1
