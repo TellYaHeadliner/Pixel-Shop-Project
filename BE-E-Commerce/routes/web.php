@@ -45,6 +45,8 @@ Route::controller(NhaCungCapController::class)->group(function () {
 Route::controller(DiaChiController::class)->group(function () {
 	Route::post('/api/getDiaChiUser', 'getListByUser');
 	Route::post('/api/updateDefaultLocation', 'updateDefaultUser');
+	Route::post('/api/deleteLocation','delete');
+	Route::post('/api/updateLocation','update');
 });
 
 Route::controller(LienHeController::class)->group(function () {
@@ -69,7 +71,6 @@ Route::controller(GioHangController::class)->group(function(){
     Route::delete('/api/deleteSanPhamId',[GioHangController::class,'deleteSanPhamId']);
     Route::delete('/api/deleteSanPhamAll',[GioHangController::class,'deleteSanPhamAll']);
     Route::post('/api/addProductInGioHang',[GioHangController::class,'addProductInGioHang']); // done 
-	
 });
 
 
