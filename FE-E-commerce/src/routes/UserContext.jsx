@@ -67,11 +67,10 @@ const UserProvider = ({ children }) => {
           }
         );
         const { idNguoiDung, hoVaTen, anhDaiDien, role } = response.data.data;
-        console.log(idNguoiDung);
+        setRole(role);
         setIdNguoiDung(idNguoiDung);
         setHoVaTen(hoVaTen);
         setAnhDaiDien(anhDaiDien);
-        setRole(role);
         setLogin(true);
         setToken(token);
         setLoading(false);
@@ -82,7 +81,7 @@ const UserProvider = ({ children }) => {
     checkToken();
   }, []);
 
-  
+  console.log(role);
 
   useEffect(() => {
     const fetchCartItemCount = async () => {

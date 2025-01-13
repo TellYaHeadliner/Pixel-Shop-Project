@@ -1,7 +1,7 @@
 // src/ProtectedRoute.jsx
 import React, { useContext } from 'react';
 import { Navigate } from 'react-router-dom';
-import { UserContext } from './UserContext'; // Adjust the path as necessary
+import { UserContext } from './UserContext'; 
 import { Spin } from 'antd';
 
 
