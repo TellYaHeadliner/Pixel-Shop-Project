@@ -1,10 +1,12 @@
-// src/ProtectedRoute.jsx
-import React, { useContext } from 'react';
+import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { UserContext } from './UserContext'; // Adjust the path as necessary
+import Cookies from 'js-cookie';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
-    const { role } = useContext(UserContext); // Get the user role from context
+    const userCookie = Cookies.get("user");
+    const user = userCookie ? JSON.parse(userCookie) : null;
+console.log(user);
+    const role = user ? user.role : null; // Access the role property safely
 
     if (allowedRoles.includes(role)) {
         return children; // Render the child components if role is allowed
