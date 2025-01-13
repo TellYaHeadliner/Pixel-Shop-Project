@@ -1,16 +1,27 @@
 // src/ProtectedRoute.jsx
 import React, { useContext } from 'react';
 import { Navigate } from 'react-router-dom';
-import { UserContext } from './UserContext'; // Adjust the path as necessary
+import { UserContext } from './UserContext';
+import { Spin } from 'antd'; 
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
-    const { role } = useContext(UserContext); // Get the user role from context
-
+    const { role , loading } = useContext(UserContext); 
+    console.log(role);
+    console.log(loading);
+    console.log(allowedRoles);
+    console.log(allowedRoles.includes(role));
+    if (loading) {
+        return (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <Spin size="large" />
+            </div>
+        );
+    }
     if (allowedRoles.includes(role)) {
-        return children; // Render the child components if role is allowed
+        return children; 
     }
 
-    return <Navigate to="/" replace />; // Redirect to home if access is denied
+    return <Navigate to="/" replace />; 
 };
 
 export default ProtectedRoute;
