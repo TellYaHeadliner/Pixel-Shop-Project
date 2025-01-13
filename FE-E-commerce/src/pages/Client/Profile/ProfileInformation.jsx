@@ -5,6 +5,8 @@ import './ProfileInformation.scss';
 import axios from 'axios';
 import { format, parseISO } from "date-fns";
 import moment from 'moment';
+import { UserContext } from '../../../routes/UserContext'; // Adjust the path as necessary
+
 
 
 export default function ProfileInformation() {
@@ -26,7 +28,9 @@ export default function ProfileInformation() {
     const [isDisabled, setIsDisabled] = useState(false);
     const [isClickM, setIsClickM] = useState(false);
     const [countdown, setCountdown] = useState(0); 
-    const IdUser = 1;
+    const {  idNguoiDung } = useContext(UserContext); 
+
+    const IdUser = idNguoiDung;
     let timer = null;
 
     const handleGetProfile = async ()=>{

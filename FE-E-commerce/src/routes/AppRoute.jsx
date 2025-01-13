@@ -40,7 +40,11 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<ClientLayout />}>
         <Route index element={<Home />} />
-        <Route path="profile" element={<ProfileLayout />}>
+          <Route path="profile" element={
+            <ProtectedRoute allowedRoles={[3]}>
+              <ProfileInformation/>
+            </ProtectedRoute>
+          }>    
           <Route index element={<ProfileInformation />} />
           <Route path="locations" element={<ProfileLocation />} />
           <Route path="changepassword" element={<ProfileChangePassWord />} />
@@ -56,11 +60,12 @@ const AppRoutes = () => {
         <Route path="shoppingcart" element={<ShoppingCart />} />
       </Route>
 
-      <Route path="/admin" element={
-        <ProtectedRoute allowedRoles={[1]}> {/* Only Admin */}
-          <AdminLayout />
-        </ProtectedRoute>
-      }>
+        <Route path="/admin" element={
+          <ProtectedRoute allowedRoles={[1]}> {/* Only Admin */}
+            <AdminLayout />
+          </ProtectedRoute>
+        }>
+
         <Route index element={<WebsiteInfo />} />
         <Route path="suppliers" element={<SupplierManagement />} />
         <Route path="categories" element={<CategoryManagement />} />
