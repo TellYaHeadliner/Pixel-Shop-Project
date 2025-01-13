@@ -68,12 +68,12 @@ const UserProvider = ({ children }) => {
         );
         const { idNguoiDung, hoVaTen, anhDaiDien, role } = response.data.data;
         setRole(role);
+        setLoading(false);
         setIdNguoiDung(idNguoiDung);
         setHoVaTen(hoVaTen);
         setAnhDaiDien(anhDaiDien);
         setLogin(true);
         setToken(token);
-        setLoading(false);
       } catch (err) {
         setLogin(false);
       }
