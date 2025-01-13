@@ -75,6 +75,7 @@ class DiaChiController extends Controller
 				$count = DiaChi::where('idNguoiDung','=',$data['idNguoiDung'])->count();
 				DiaChi::create([
 					'idNguoiDung'=> $data['idNguoiDung'],
+					'hoVaTen'=> $data['hoVaTen'],
 					'diaChi'=> $data['diaChi'],
 					'sdt'=> $data['sdt'],
 					'note'=> $data['note'],
@@ -134,6 +135,7 @@ class DiaChiController extends Controller
 					],404);
 				$diachi->update([
 					'diaChi'=>$data['diaChi'],
+					'hoVaTen'=> $data['hoVaTen'],
 					'sdt'=>$data['sdt'],
 					'note'=>$data['note'],
 					'loaiDiaChi'=>$data['loaiDiaChi'],
