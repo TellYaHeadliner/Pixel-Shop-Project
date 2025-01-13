@@ -15,7 +15,7 @@ class SanPham extends Model
     protected $primaryKey="idSanPham";
     public $timestamps=false;
 
-    public static function getListBestSellingProducts()
+ public static function getListBestSellingProducts()
     {
         try {
             $listSanPham = ChiTietHoaDon::select(
@@ -54,14 +54,6 @@ class SanPham extends Model
         'trangThai',
         'slug'
     ];
-
-    public function thongsodienthoai(){
-        return $this->hasOne(ThongSoDienThoai::class, 'idSanPham');
-    }
-
-    public function thongsolaptop(){
-        return $this->hasOne(ThongSoLapTop::class, 'idSanPham');
-    }
 
     public function chitietlohang(){
         return $this->hasMany(ChiTietLoHang::class, 'idSanPham');

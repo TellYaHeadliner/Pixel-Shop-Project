@@ -92,17 +92,15 @@ class SanPhamController extends Controller
         try {
             $tempSanPham = SanPham::getListBestSellingProducts();
 
-            $listSanPham=SanPham::select('idSanPham','tenSanPham','hang','img')
-                                ->whereIn('idSanPham',$tempSanPham)
+            $listSanPham=SanPham::
+                                whereIn('idSanPham',$tempSanPham)
                                 ->orderByRaw("FIELD(idSanPham, " . implode(',', $tempSanPham) . ")")
                                 ->get();
 
             return response()->json([
                 'success' => true,
                 'message' => "Danh sách sản phẩm bán chạy",
-                'data' => [
-                    'listSanPham' => $listSanPham
-                ]
+                'data' => $listSanPham
             ], 200);
         } catch (\Exception $err) {
             return response()->json([

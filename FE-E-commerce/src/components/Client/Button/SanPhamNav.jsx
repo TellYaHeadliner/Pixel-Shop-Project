@@ -8,7 +8,7 @@ const SanPham = ({ title, onNext }) => {
       <div className={styles.buttonBanner}>
         <span className={styles.buttonText}>{title}</span>
         <div className={styles.buttonIcon}>
-          <span className="arrow" onClick={onNext}>
+          <span className="arrow" onClick={onNext} role="button" tabIndex={0}>
             <AiOutlineArrowRight className={styles.arrow} />
           </span>
         </div>
