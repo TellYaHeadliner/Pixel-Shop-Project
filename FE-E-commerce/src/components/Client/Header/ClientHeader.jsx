@@ -4,10 +4,9 @@ import { BsFillTelephoneFill } from "react-icons/bs";
 import { FaUser, FaBars } from "react-icons/fa";
 import { FiShoppingCart } from "react-icons/fi";
 import { useNavigate, Link } from "react-router-dom";
-
+import { UserContext } from '../../../routes/UserContext.jsx'; 
 import ModalLoginAndRegister from "../Modals/ModalLoginAndRegister";
 import styles from "./ClientHeader.module.scss";
-import { UserContext } from '../../../routes/UserContext.jsx'; // Import UserContext
 
 const { Header } = Layout;
 
@@ -38,7 +37,7 @@ const IconButtonNavHeader = ({ name, onClick, className }) => {
   );
 };
 
-const ClientHeader = () => {
+export const ClientHeader = () => {
   const navigate = useNavigate();
   const [showModalLogin, setShowModalLogin] = useState(false);
   const [titleLogin, setTitleLogin] = useState(false);
