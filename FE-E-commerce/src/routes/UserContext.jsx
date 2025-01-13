@@ -14,6 +14,7 @@ const UserProvider = ({ children }) => {
   const [idNguoiDung, setIdNguoiDung] = useState(null);
   const [login, setLogin] = useState(false);
   const [trigger, setTrigger] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   axios.defaults.withCredentials = true;
 
@@ -72,7 +73,8 @@ const UserProvider = ({ children }) => {
         setAnhDaiDien(anhDaiDien);
         setRole(role);
         setLogin(true);
-        setToken(token)
+        setToken(token);
+        setLoading(false);
       } catch (err) {
         setLogin(false);
       }
@@ -120,6 +122,8 @@ const UserProvider = ({ children }) => {
         setTrigger,
         login,
         setLogin,
+        loading,
+        idNguoiDung,
       }}
     >
       {children}
