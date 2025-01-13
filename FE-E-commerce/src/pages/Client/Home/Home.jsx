@@ -111,7 +111,6 @@ const Home = () => {
         <div className="mt-3">
           <SanPhamNav
             title="Sản phẩm mới"
-            onNext={() => handleNextSlideShow((currentSlide + 1) % 3)}
           />
         </div>
         <Row gutter={[16, 16]} className="mt-3">
@@ -151,7 +150,6 @@ const Home = () => {
         <div className="mt-3">
           <SanPhamNav
             title="Laptop"
-            onNext={() => handleNextSlideShow((currentSlide + 1) % 3)}
           />
         </div>
         <Row gutter={[16, 16]} className="mt-3">

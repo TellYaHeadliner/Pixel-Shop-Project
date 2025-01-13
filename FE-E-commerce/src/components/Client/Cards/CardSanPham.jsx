@@ -1,8 +1,8 @@
 import { Card, Flex, Button } from "antd";
 function SanPhamCard({ tenSanPham, hang, gia, img, slug }) {
   const formattedPrice = `${gia.toLocaleString()} VND`
-  const linkImg = `http://localhost:8000/imgs/` + img;
-  const link = `http://localhost:5173/` + slug;
+  const linkImg = `http://127.0.0.1:8000/imgs/` + img;
+  const link = `http://127.0.0.1:5173/product/` + slug;
   return (
     <Card
       bordered

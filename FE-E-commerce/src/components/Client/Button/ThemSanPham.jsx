@@ -2,14 +2,16 @@ import { Button } from "antd";
 import { useState } from "react";
 import ModalConfirmCart from "../Modals/ModalConfirmCart";
 
-const ThemSanPham = () => {
+const ThemSanPham = (props) => {
     const [isModalVisible, setIsModalVisible] = useState(false)
+
+    
 
     const openModalCart = () => {
         setIsModalVisible(true);
 
     }
-
+    
 
     const handleCancel = () => {
         setIsModalVisible(false);
@@ -19,7 +21,7 @@ const ThemSanPham = () => {
         <Button style={{ width: "25%" }} onClick={openModalCart}>
           Thêm sản phẩm
         </Button>
-        <ModalConfirmCart isModalVisible={isModalVisible} onClose={handleCancel} />
+        <ModalConfirmCart slug={props.slug} tenSanPham={props.tenSanPham} gia={props.gia} khuyenmai={props.khuyenmai} isModalVisible={isModalVisible} onClose={handleCancel} />
       </>
     );
 }

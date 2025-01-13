@@ -1,6 +1,6 @@
 import React from "react";
 import { Descriptions } from "antd";
-
+import "./SpecProduct.css"
 // Ánh xạ các label sang tiếng Việt
 const labelMapping = {
   heDieuHanh: "Hệ điều hành",
@@ -28,7 +28,12 @@ const labelMapping = {
 
 const SpecProduct = ({ detailProduct }) => {
   return (
-    <Descriptions bordered title="Chi tiết sản phẩm" column={1}>
+    <Descriptions
+      bordered
+      title="Chi tiết sản phẩm"
+      column={1}
+      className="spec-descriptions"
+    >
       <Descriptions.Item label={labelMapping.heDieuHanh}>
         {detailProduct?.heDieuHanh}
       </Descriptions.Item>

@@ -11,7 +11,6 @@ import HeartCount from "../../components/Client/Descriptions/HeartCount";
 import ThemSanPham from "../../components/Client/Button/ThemSanPham";
 import DescriptionsProduct from "../../components/Client/Descriptions/DescriptionsProduct";
 import Review from "../../components/Client/Input/Review";
-import RatingStar from "../../components/Client/Input/RatingStar";
 import TableComment from "../../components/Client/Table/TableComment";
 import CardSanPham from "../../components/Client/Cards/CardSanPham";
 import Price from "../../components/Client/Descriptions/Price"
@@ -25,17 +24,21 @@ const DetailProduct = () => {
   const [detailProduct, setDetailProduct] = useState(null);
   const [spLienQuan, setSPLienQuan] = useState([]);
   const [rating, setRating] = useState(null);
+  const [khuyenmai,setKhuyenMai]=useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
 
   useEffect(() => {
     const fetchProductDetail = async () => {
       try {
         const response = await productsService.getDetailProduct(slug);
         setProduct(response.data.data.sanPham);
+        document.title = response.data.data.sanPham.tenSanPham
         setDetailProduct(response.data.data.thongSoSanPham);
         setRating(response.data.data.danhGia);
         setSPLienQuan(response.data.data.sanPhamLienQuan);
+        setKhuyenMai(response.data.data.khuyenmai); khuyenmai
         setLoading(false);
       } catch (error) {
         setError(error.message);
@@ -43,14 +46,16 @@ const DetailProduct = () => {
       }
     };
     fetchProductDetail();
+    console.log(spLienQuan)
   }, [slug])
+
   return (
     <div style={{ marginTop: "16px" }}>
       <Row justify="center" align="flex-start" gutter={[16, 16]}>
         <Col md={10}>
           <ImageProduct img={product?.img} />
-          <HeadingProduct tenSanPham={product?.tenSanPham} />
-          <Price gia={product?.gia} />
+          <HeadingProduct tenSanPham={product?.tenSanPham} /> 
+          <Price gia={product?.gia} />  
           <Row justify="flex-start" align="middle">
             <Col>
               <StarRating />
@@ -63,7 +68,7 @@ const DetailProduct = () => {
             </Col>
           </Row>
           <div style={{ marginTop: "1rem" }}>
-            <ThemSanPham />
+            <ThemSanPham slug={slug} tenSanPham={product?.tenSanPham} gia={product?.gia} khuyenmai={khuyenmai} />
           </div>
         </Col>
         <Col md="16">
@@ -78,7 +83,6 @@ const DetailProduct = () => {
       <Row justify="center" align="middle">
         <Col span={18} style={{ marginTop: "2rem" }}>
           <Card title="Đánh giá sản phẩm">
-            <RatingStar />
             <Review />
           </Card>
         </Col>
