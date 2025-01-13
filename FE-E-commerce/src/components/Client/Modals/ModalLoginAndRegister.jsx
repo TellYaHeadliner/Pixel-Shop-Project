@@ -9,10 +9,10 @@ import {
   Radio,
   message,
 } from "antd";
-import { useState, useEffect, useCallback, useContext } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
-import { UserContext } from '../../../routes/UserContext.jsx'; // Import UserContext
+import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./ModalLoginAndRegister.module.scss";
+import Cookies from "js-cookie"; // Import js-cookie
 import axios from "axios";
 
 const { TabPane } = Tabs;
@@ -24,8 +24,7 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
   const [showCaptcha, setShowCaptcha] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const [countdown, setCountdown] = useState(0);
-  const navigate = useNavigate(); // Initialize useNavigate
-  const { setRole } = useContext(UserContext); // Access setRole from UserContext
+  const navigate = useNavigate();
 
   axios.defaults.withCredentials = true;
 
@@ -36,18 +35,17 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
       });
 
       if (response.data.success) {
-        setShowCaptcha(false);
-
         const { hoVaTen, anhDaiDien, email, role, token } = response.data.data;
 
-        setRole(role);
-
+        // Store user information in cookies
+        Cookies.set('token', token, { expires: 1 }); // Expires in 1 day
+        Cookies.set('user', JSON.stringify({ hoVaTen, email, role, anhDaiDien }), { expires: 1 });
+        
         message.success(response.data.message);
         onClose();
 
         // Navigate based on role
         navigate(role === 1 ? "/admin" : role === 2 ? "/staff" : "/");
-        console.log(response.data);
       } else {
         message.error(response.data.message);
       }
@@ -56,7 +54,7 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
       const data = error.response?.data;
       message.error(data?.success ? data.message : "An error occurred during login.");
     }
-  }, [onClose, setRole, navigate]);
+  }, [onClose, navigate]);
 
   const handleRegister = useCallback(async (values) => {
     if (values.matKhau !== values.repeatMatKhau) {
@@ -124,7 +122,7 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
 
   useEffect(() => {
     return () => {
-      clearInterval(); // Clear interval on component unmount
+      clearInterval();
     };
   }, []);
 

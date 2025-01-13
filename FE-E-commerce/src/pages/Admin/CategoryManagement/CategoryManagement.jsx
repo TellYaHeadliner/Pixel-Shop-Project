@@ -196,21 +196,14 @@ const CategoryManagement = () => {
                 >
                     Đây là danh mục con
                 </Checkbox>
-                <Select
-                    placeholder="--- Chọn danh mục cấp 1 ---"
-                    onChange={(value) => handleSelect(setSelectedParent, categories.find(cat => cat.idDanhMuc === value))}
-                    style={{ width: '100%', marginTop: '10px' }}
-                >
-                    {categories.map(cat => <Option key={cat.idDanhMuc} value={cat.idDanhMuc}>{cat.tenDanhMuc}</Option>)}
-                </Select>
-                <Select
-                    placeholder="--- Chọn danh mục cấp 2 ---"
-                    onChange={(value) => handleSelect(setSelectedChild, selectedParent?.child.find(cat => cat.idDanhMuc === value))}
-                    disabled={!selectedParent}
-                    style={{ width: '100%', marginTop: '10px' }}
-                >
-                    {selectedParent?.child.map(subCat => <Option key={subCat.idDanhMuc} value={subCat.idDanhMuc}>{subCat.tenDanhMuc}</Option>)}
-                </Select>
+                <Tree
+                    treeData={renderTree(filteredCategories)}
+                    onRightClick={(e) => showContextMenu(e.event, e.node)}
+                    onSelect={(keys) => {
+                        const selected = categories.find(cat => cat.idDanhMuc === Number(keys[0]));
+                        handleSelect(setSelectedParent, selected);
+                    }}
+                />
                 <Button
                     type="primary"
                     icon={<PlusOutlined />}
