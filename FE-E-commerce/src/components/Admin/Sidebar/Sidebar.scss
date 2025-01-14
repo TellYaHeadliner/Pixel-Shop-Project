@@ -10,7 +10,8 @@
     background-color: var(--primary);
 
     &-header {
-        padding: 16px;
+        padding: 6px;
+        margin: 5px 10px;
         text-align: center;
         display: flex;
         flex-direction: row;
@@ -46,18 +47,18 @@
             justify-content: center;
 
             & a {
-                height: 40px;
+                height: 30px;
                 width: 300px;
-                padding: 17px 20px 40px 17px;
+                padding: 14px 1px 40px 10px;
                 text-decoration: none;
-                font-size: 17px;
+                font-size: 18px;
                 font-weight: bold;
                 color: var(--whited);
             }
 
             svg {
                 margin-right: 8px;
-                font-size: 18px;
+                font-size: 17px;
                 color: var(--whited);
                 /* Màu icon */
             }
