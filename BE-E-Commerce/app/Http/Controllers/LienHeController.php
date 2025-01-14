@@ -10,7 +10,7 @@ class LienHeController extends Controller
 {
 	function getList(){
 		try{
-			$data = LienHe::all();
+			$data = LienHe::orderByDesc('thoiGian')->get();
 			return response()->json([
 				'success'=>true,
 				'message'=>'Danh sách liên hệ',
