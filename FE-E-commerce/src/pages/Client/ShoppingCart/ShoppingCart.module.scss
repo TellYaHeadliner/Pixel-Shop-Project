@@ -1,7 +1,7 @@
 .cartContainer {
   padding: 20px;
   background-color: #f9f9f9;
-  margin: 10px 40px;
+  margin: 10px 20px;
 }
 
 .cartContent {
@@ -72,11 +72,14 @@
   align-items: center; // Để căn chỉnh bên phải
   text-align: center;
   padding: 10px;
-  width: 25vw;
+  width: 45vw;
   background-color: #fff;
   border: 1px solid #e0e0e0;
   border-radius: 10px;
-  aspect-ratio: 8/1;
+  aspect-ratio: 2/1;
+  &_totals{
+    font-size: 24px;
+  }
 }
 
 .orderButton {

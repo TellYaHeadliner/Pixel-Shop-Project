@@ -12,6 +12,10 @@ export default function ProfileLocation() {
     const [editedAddress, setEditedAddress] = useState('');
     const [form] = Form.useForm();
     const IdUser = 1;
+    const [listTinhThanh, setListTinhThanh] = useState([]);
+    const [listQuanHuyen, setListQuanHuyen] = useState([]);
+    const [listXa, setListXa] = useState([]);
+    const [formadd]=Form.useForm();
 
     const handleGetListLocation = async () => {
         const idNguoiDung = IdUser;
@@ -33,9 +37,52 @@ export default function ProfileLocation() {
             message.error(data.message);
         }
     };
-
+    const handleGetTinhTP = async () => {
+        try {
+            const response = await axios.get('https://provinces.open-api.vn/api/p/',
+                {
+                    withCredentials: false,
+                }
+            );
+            setListTinhThanh(response.data);
+        } catch (e) {
+            console.error('Lỗi:', e);
+            message.error('Lấy danh sách tỉnh thành thất bại! Vui lòng thử lại sau');
+        }
+    };
+    const handleGetQuanHuyen = async (key) => {
+        try {
+            const response = await axios.get('https://provinces.open-api.vn/api/p/'+key,
+                {
+                    withCredentials: false,
+                    params: {'depth':2},
+                }
+            );
+            setListQuanHuyen(response.data.districts);
+            formadd.setFieldsValue({district:null,ward:null});
+        } catch (e) {
+            console.error('Lỗi:', e);
+            message.error('Lấy danh sách quận huyện thất bại! Vui lòng thử lại sau');
+        }
+    };
+    const handleGetXa = async (key) => {
+        try {
+            const response = await axios.get('https://provinces.open-api.vn/api/d/'+key,
+                {
+                    withCredentials: false,
+                    params: {'depth':2},
+                }
+            );
+            setListXa(response.data.wards);
+            formadd.setFieldsValue({ward:null});
+        } catch (e) {
+            console.error('Lỗi:', e);
+            message.error('Lấy danh sách quận huyện thất bại! Vui lòng thử lại sau');
+        }
+    };
     useEffect(() => {
         handleGetListLocation();
+        handleGetTinhTP();
     }, []);
 
     const setDefaultAddress = (id) => {
@@ -110,6 +157,15 @@ export default function ProfileLocation() {
         localStorage.setItem('addresses', JSON.stringify(updatedAddresses));
         message.success('Địa chỉ đã được xóa!');
     };
+    const addAddress = async (values) => {
+        try{
+            const resphonse = await axios.post(
+                
+            )
+        }catch (e){
+            message.error(e.reponse.data.message);
+        }
+    }
 
     return (
         <div style={{ marginLeft: 10 }}>
@@ -133,11 +189,11 @@ export default function ProfileLocation() {
                 footer={null}
                 width={800}
             >
-                <Form form={form} layout="vertical" onFinish={{}}>
+                <Form form={formadd} layout="vertical" onFinish={addAddress()}>
                     <div style={{ display: 'flex' }}>
                         <Form.Item
                             label="Họ và tên"
-                            name="fullName"
+                            name="hoVaTen"
                             rules={[{ required: true, message: 'Vui lòng nhập họ và tên!' }]}
                         >
                             <Input type="text" style={{ width: '300px', height: '40px' }} />
@@ -145,22 +201,52 @@ export default function ProfileLocation() {
 
                         <Form.Item
                             label="Số điện thoại"
-                            name="phoneNumber"
+                            name="sdt"
                             rules={[{ required: true, message: 'Vui lòng nhập số điện thoại!' }]}
                             style={{ marginLeft: 50 }}
                         >
                             <Input type="text" style={{ width: '300px', height: '40px' }} />
                         </Form.Item>
                     </div>
-
+                    <div className='d-flex w-100'>
                     <Form.Item
+                        className='col-4'
                         label="Tỉnh/Thành phố"
-                        name="city"
+                        name="province"
                         rules={[{ required: true, message: 'Vui lòng nhập tỉnh thành!' }]}
                     >
-                        <Input type="text" style={{ width: '100%', height: '40px' }} />
+                        <Select style={{ width: '90%', height: '15%' }} onChange={(value,option)=>handleGetQuanHuyen(option.key)}>
+                        {listTinhThanh.map(i => {
+                            return <Option key={i.code} value={i.name}>{i.name}</Option>;
+                        })}
+                        </Select>
                     </Form.Item>
-
+                    <Form.Item
+                        className='col-4'
+                        label="Quận/Huyện"
+                        name="district"
+                        rules={[{ required: true, message: 'Vui lòng nhập tỉnh thành!' }]}
+                    >
+                        <Select style={{ width: '90%', height: '15%' }} onChange={(value,option)=>handleGetXa(option.key)}>
+                        {listQuanHuyen.map(i => {
+                            return <Option key={i.code} value={i.name}>{i.name}</Option>;
+                        })}
+                        </Select>
+                    </Form.Item>
+                    <Form.Item
+                        className='col-4'
+                        label="Quận/Huyện"
+                        name="ward"
+                        rules={[{ required: true, message: 'Vui lòng nhập tỉnh thành!' }]}
+                    >
+                        <Select style={{ width: '90%', height: '15%' }}>
+                        {listXa.map(i => {
+                            return <Option key={i.code} value={i.name}>{i.name}</Option>;
+                        })}
+                        </Select>
+                    </Form.Item>
+                    </div>
+                    
                     <Form.Item
                         label="Địa chỉ cụ thể"
                         name="specificAddress"
@@ -171,13 +257,27 @@ export default function ProfileLocation() {
 
                     <Form.Item
                         label="Loại địa chỉ"
-                        name="isOffice"
+                        name="loaiDiaChi"
                         rules={[{ required: true, message: 'Vui lòng chọn loại địa chỉ!' }]}
                     >
                         <Select style={{ width: '15%', height: '15%' }}>
                             <Option value={false}>Nhà riêng</Option>
                             <Option value={true}>Văn phòng</Option>
                         </Select>
+                    </Form.Item>
+                    <Form.Item
+                        label="Số điện thoại"
+                        name="sdt"
+                        rules={[{ required: true, message: 'Vui lòng chọn loại địa chỉ!' }]}
+                    >
+                        <Input/>
+                    </Form.Item>
+                    <Form.Item
+                        label="Ghi chú"
+                        name="note"
+                    >
+                        <Input/>
+
                     </Form.Item>
 
                     <ButtonProfile htmlType="submit">Thêm địa chỉ</ButtonProfile>

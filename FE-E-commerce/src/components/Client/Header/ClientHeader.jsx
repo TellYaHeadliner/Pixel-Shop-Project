@@ -1,12 +1,12 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { Layout, Button, Tree, Badge } from "antd";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { FaUser, FaBars } from "react-icons/fa";
 import { FiShoppingCart } from "react-icons/fi";
 import { useNavigate, Link } from "react-router-dom";
-import { UserContext } from '../../../routes/UserContext.jsx'; 
 import ModalLoginAndRegister from "../Modals/ModalLoginAndRegister";
 import styles from "./ClientHeader.module.scss";
+import Cookies from "js-cookie"; // Import js-cookie
 
 const { Header } = Layout;
 
@@ -42,7 +42,10 @@ export const ClientHeader = () => {
   const [showModalLogin, setShowModalLogin] = useState(false);
   const [titleLogin, setTitleLogin] = useState(false);
   const [showTree, setShowTree] = useState(false);
-  const { cartItemCount , login } = useContext(UserContext); 
+
+  // Retrieve user information from cookies
+  const user = Cookies.get('user') ? JSON.parse(Cookies.get('user')) : null;
+  const cartItemCount = Cookies.get('cartItemCount') ? parseInt(Cookies.get('cartItemCount')) : 0; // Assuming cart item count is stored in cookies
 
   const handleShowModalLogin = (isLogin = true) => {
     setTitleLogin(isLogin);

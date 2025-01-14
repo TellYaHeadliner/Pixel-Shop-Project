@@ -50,15 +50,7 @@ const ShoppingCart = () => {
 
     fetchCartItems();
   }, []);
-  const showRemoveAllConfirm = () => {
-    Modal.confirm({
-      title: "Xác nhận xóa tất cả sản phẩm",
-      content: "Bạn có chắc chắn muốn xóa tất cả sản phẩm trong giỏ hàng?",
-      okText: "Có",
-      cancelText: "Không",
-      onOk: handleRemoveAll,
-    });
-  };
+
   const callAPIUpdateSoLuong = async (idSanPham, soLuong) => {
     setLoading(true);
     try {
@@ -89,15 +81,12 @@ const ShoppingCart = () => {
     if (loading) return;
   
     let index = cartItems.findIndex((item) => item.id === id);
+<<<<<<< HEAD
     
-    if (cartItems[index].quantity >= 10) {
-      notification.warning({
-        message: "Giới hạn số lượng",
-        description: "Sản phẩm này đã đạt tối đa số lượng cho phép là 10.",
-      });
-      return; 
-    }
   
+=======
+     
+>>>>>>> 5b2ff5ff5ec9bb0092ff754ae4b1d8b12b73e3a0
     const callAPIupdate = await callAPIUpdateSoLuong(
       cartItems[index].id,
       cartItems[index].quantity + 1
@@ -116,8 +105,7 @@ const ShoppingCart = () => {
     if (loading) return;
     let index = cartItems.findIndex((item) => item.id === id);
 
-    // Prevent decreasing quantity below 1
-    if (cartItems[index].quantity <= 1) return;
+    if (cartItems[index].quantity <= 0) return;
 
     const callAPIupdate = await callAPIUpdateSoLuong(
       cartItems[index].id,
@@ -189,10 +177,8 @@ const ShoppingCart = () => {
           if (response.data.success) {
             setTrigger((prev) => !prev);
             setCartItems((prevItems) => {
-              // Remove selected items without altering selection state
               return prevItems.filter((item) => !idArray.includes(item.id));
             });
-            // Do not call toggleSelectAll() here
           }
         } catch (err) {
           console.log(err.response.data);
@@ -285,7 +271,7 @@ const ShoppingCart = () => {
             ))}
           </div>
           <div className={styles.totalContainer}>
-            <h3>Tổng tiền: {totalAmount.toLocaleString()} đ</h3>
+            <h3 className={styles.totalContainer_totals}>Tổng tiền: {totalAmount.toLocaleString()} đ</h3>
             <Button
               type="primary"
               className={styles.orderButton}

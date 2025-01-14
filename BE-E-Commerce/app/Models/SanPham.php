@@ -55,13 +55,6 @@ class SanPham extends Model
         'slug'
     ];
 
-    public function thongsodienthoai(){
-        return $this->hasOne(ThongSoDienThoai::class, 'idSanPham');
-    }
-
-    public function thongsolaptop(){
-        return $this->hasOne(ThongSoLapTop::class, 'idSanPham');
-    }
 
     public function chitietlohang(){
         return $this->hasMany(ChiTietLoHang::class, 'idSanPham');

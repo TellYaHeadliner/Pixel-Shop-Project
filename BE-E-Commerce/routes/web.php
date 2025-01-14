@@ -16,6 +16,8 @@ use App\Http\Controllers\BaiVietController;
 
 
 use App\Http\Middleware\CheckEmailSignUp;
+
+
 Route::controller(UserController::class)->group(function () {
 	Route::post('/api/login', [UserController::class, 'login']);
 	Route::post('/api/VerificationEmail', [UserController::class, 'sendVerificationEmail']);
@@ -45,6 +47,8 @@ Route::controller(NhaCungCapController::class)->group(function () {
 Route::controller(DiaChiController::class)->group(function () {
 	Route::post('/api/getDiaChiUser', 'getListByUser');
 	Route::post('/api/updateDefaultLocation', 'updateDefaultUser');
+	Route::post('/api/deleteLocation','delete');
+	Route::post('/api/updateLocation','update');
 });
 
 Route::controller(LienHeController::class)->group(function () {
@@ -60,6 +64,7 @@ Route::controller(SanPhamController::class)->group(function(){
     Route::get('/api/getChiTietSanPham', [SanPhamController::class, 'getChiTiet']);
 	Route::get('/api/listLaptop', [SanPhamController::class, 'getListProductsLaptop']);
 	Route::post('/api/addSanPham','addSanPham');
+	Route::post('/api/getListSanPham','search');
 });
 
 Route::controller(GioHangController::class)->group(function(){
@@ -67,8 +72,7 @@ Route::controller(GioHangController::class)->group(function(){
     Route::put('/api/updateSoLuongSanPhamGioHang',[GioHangController::class,'updateSoLuongSanPhamGioHang']);
     Route::delete('/api/deleteSanPhamId',[GioHangController::class,'deleteSanPhamId']);
     Route::delete('/api/deleteSanPhamAll',[GioHangController::class,'deleteSanPhamAll']);
-    Route::post('/api/addProductInGioHang',[GioHangController::class,'createGioHang']); // done 
-	
+    Route::post('/api/addProductInGioHang',[GioHangController::class,'addProductInGioHang']); // done 
 });
 
 Route::controller(BaiVietController::class)->group(function(){
