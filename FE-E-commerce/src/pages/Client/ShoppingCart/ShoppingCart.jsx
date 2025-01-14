@@ -247,7 +247,7 @@ const ShoppingCart = () => {
        
         <div className={styles.cartContent}>
           <div className={styles.cartItems}>
-            {currentItems.map((item) => (
+            {currentItems.slice().reverse().map((item) => (
               <div key={item.id} className={styles.cartItem}>
                 <Checkbox
                   checked={item.selected}
