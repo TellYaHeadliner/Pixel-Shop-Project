@@ -16,6 +16,7 @@ class DiaChi extends Model
     protected $fillable = [
         'idDiaChi',
         'idNguoiDung',
+				'hoVaTen',
         'diaChi',
         'sdt',
         'note',

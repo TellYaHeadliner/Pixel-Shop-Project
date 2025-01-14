@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import { Layout, Button, Tree, Badge } from "antd";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { FaUser, FaBars } from "react-icons/fa";
 import { FiShoppingCart } from "react-icons/fi";
 import apiService from "../../../api/api";
 import { useNavigate, Link } from "react-router-dom";
+import { UserContext } from '../../../routes/UserContext.jsx'; 
 import ModalLoginAndRegister from "../Modals/ModalLoginAndRegister";
 import styles from "./ClientHeader.module.scss";
-import Cookies from "js-cookie";
 
 const { Header } = Layout;
 
@@ -43,32 +43,7 @@ export const ClientHeader = () => {
   const [showModalLogin, setShowModalLogin] = useState(false);
   const [titleLogin, setTitleLogin] = useState(false);
   const [showTree, setShowTree] = useState(false);
-  const [treeData, setTreeData] = useState([]); // State to hold category data
-
-  const user = Cookies.get('user') ? JSON.parse(Cookies.get('user')) : null;
-  const cartItemCount = Cookies.get('cartItemCount') ? parseInt(Cookies.get('cartItemCount')) : 0;
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await apiService.getListDanhMuc();
-        const formattedData = response.data.data.map(category => ({
-          title: category.tenDanhMuc,
-          key: category.idDanhMuc, // Sử dụng idDanhMuc làm key
-          children: category.child.map(child => ({
-            title: child.tenDanhMuc,
-            key: child.idDanhMuc,
-            children: child.child || [] // Nếu có danh mục con
-          })) || [] // Đảm bảo rằng nếu không có child, nó sẽ là mảng rỗng
-        }));
-        setTreeData(formattedData);
-      } catch (error) {
-        console.error("Failed to fetch categories:", error);
-      }
-    };
-
-    fetchCategories();
-  }, []);
+  const { cartItemCount , login ,role } = useContext(UserContext); 
 
   const handleShowModalLogin = (isLogin = true) => {
     setTitleLogin(isLogin);
@@ -93,8 +68,8 @@ export const ClientHeader = () => {
   };
 
   const handleLoginClick = () => {
-    if (user && user.email) {
-      navigate("/profile");
+    if (login && role ===3) {
+      navigate("/profile"); 
     } else {
       handleShowModalLogin(true);
     }

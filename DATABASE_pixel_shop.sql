@@ -114,6 +114,7 @@ CREATE TABLE `danhmuc` (
 CREATE TABLE `diachi` (
   `idDiaChi` bigint NOT NULL,
   `idNguoiDung` bigint NOT NULL,
+  `hoVaTen` tinytext NOT NULL,
   `diaChi` text NOT NULL,
   `sdt` varchar(10) NOT NULL,
   `note` text ,

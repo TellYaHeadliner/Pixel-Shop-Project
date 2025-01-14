@@ -1,0 +1,4 @@
+.spec-descriptions {
+  height: 1000px; /* Chiều cao tối đa */
+  overflow-y: auto; /* Thêm cuộn dọc */
+}
