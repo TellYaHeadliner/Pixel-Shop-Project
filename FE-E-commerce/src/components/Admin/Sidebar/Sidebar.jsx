@@ -1,9 +1,38 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { UserOutlined, ShoppingCartOutlined, DashboardOutlined, SettingOutlined } from '@ant-design/icons';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { UserOutlined, ShoppingCartOutlined, DashboardOutlined, SettingOutlined, LogoutOutlined } from '@ant-design/icons';
+import { Modal } from 'antd';
+import Cookies from 'js-cookie';
 import './Sidebar.scss';
 
 const Sidebar = () => {
+    const navigate = useNavigate();
+    const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
+
+    const showLogoutModal = () => {
+        setIsLogoutModalVisible(true);
+    };
+
+    const handleLogout = () => {
+        // Clear the cookies
+        Cookies.remove('user');
+        Cookies.remove('token');
+        Cookies.remove('laravel_session');
+        Cookies.remove('XSRF-TOKEN');
+
+        // Redirect to the homepage
+        navigate('/');
+    };
+
+    const handleCancel = () => {
+        setIsLogoutModalVisible(false);
+    };
+
+    const handleConfirmLogout = () => {
+        handleLogout();
+        setIsLogoutModalVisible(false);
+    };
+
     return (
       <div className="sidebar">
         <div className="sidebar-header">
@@ -63,7 +92,23 @@ const Sidebar = () => {
               <SettingOutlined /> Thống kê doanh thu
             </Link>
           </li>
+          <li className="sidebar-menu-item" onClick={showLogoutModal} style={{ cursor: 'pointer' }}>
+            <a>
+            <LogoutOutlined /> Đăng xuất
+            </a>
+          </li>
         </ul>
+
+        <Modal
+          title="Xác nhận đăng xuất"
+          visible={isLogoutModalVisible}
+          onOk={handleConfirmLogout}
+          onCancel={handleCancel}
+          okText="Có"
+          cancelText="Không"
+        >
+          <p>Bạn có chắc chắn muốn đăng xuất không?</p>
+        </Modal>
       </div>
     );
 };

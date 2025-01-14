@@ -3,6 +3,7 @@ import { Layout, Button, Tree, Badge } from "antd";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { FaUser, FaBars } from "react-icons/fa";
 import { FiShoppingCart } from "react-icons/fi";
+import apiService from "../../../api/api";
 import { useNavigate, Link } from "react-router-dom";
 import { UserContext } from '../../../routes/UserContext.jsx'; 
 import ModalLoginAndRegister from "../Modals/ModalLoginAndRegister";
@@ -59,19 +60,20 @@ export const ClientHeader = () => {
     handleCloseModalLogin();
     navigate("/profile");
   };
-   
+
   const onSelect = (selectedKeys, info) => {
     console.log('Selected:', selectedKeys, info);
+    // Navigate to a different page or perform an action based on selected category
+    navigate(`/category/${selectedKeys[0]}`); // Example to navigate to category page
   };
 
   const handleLoginClick = () => {
     if (login && role ===3) {
       navigate("/profile"); 
     } else {
-      handleShowModalLogin(true); 
+      handleShowModalLogin(true);
     }
   };
-  
 
   return (
     <Header className={styles.header}>
@@ -87,7 +89,7 @@ export const ClientHeader = () => {
           <IconButtonNavHeader
             name="Liên hệ"
             className={styles.contactButton}
-            onClick={() => (navigate("/contact"))}
+            onClick={() => navigate("/contact")}
           />
         </Badge>
         <Badge count={cartItemCount} overflowCount={99}>
@@ -102,7 +104,7 @@ export const ClientHeader = () => {
           <IconButtonNavHeader
             name="Đăng nhập"
             className={styles.loginButton}
-            onClick={() => handleLoginClick()}
+            onClick={handleLoginClick}
           />
         </Badge>
       </div>
