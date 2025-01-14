@@ -52,7 +52,11 @@ Route::controller(DiaChiController::class)->group(function () {
 });
 
 Route::controller(LienHeController::class)->group(function () {
+	Route::get('/api/getListLienHe','getList');
+	Route::get('/api/getByIdLienHe/{id}','getById');
 	Route::post('/api/addLienHe','addLienHe');
+	Route::put('/api/updateStatusLienHe','updateStatusLienHe'); // request: idLienHe , trangThai (0,1)
+	Route::delete('/api/deleteLienHe','deleteLienHe'); // request:idLienHe
 });
 
 Route::controller(SanPhamController::class)->group(function(){
