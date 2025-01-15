@@ -44,6 +44,7 @@ class DanhMuc extends Model
 					$obj = new \stdClass();
 					$obj->idDanhMuc = $i['idDanhMuc'];
 					$obj->tenDanhMuc = $i['tenDanhMuc'];
+					$obj->idDanhMucCha = $i['idDanhMucCha'];
 					$obj->child = $this->getList([],$obj->idDanhMuc);
 					$list[] = $obj;
 				}
