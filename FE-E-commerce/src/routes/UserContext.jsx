@@ -81,7 +81,6 @@ const UserProvider = ({ children }) => {
     checkToken();
   }, []);
 
-  console.log(role);
 
   useEffect(() => {
     const fetchCartItemCount = async () => {

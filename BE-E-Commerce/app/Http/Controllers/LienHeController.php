@@ -25,29 +25,6 @@ class LienHeController extends Controller
 		}
 	}
 	
-	function getById($id){
-		try{
-			$data = LienHe::where('idLienHe',$id)->first();
-			if($data){
-				return response()->json([
-					'success'=>true,
-					'message'=>'liên hệ id '.$id,
-					'data'=>$data
-				],200);
-			}
-			return response()->json([
-				'success'=>false,
-				'message'=>'Liên hệ không tồn tại ',
-				'data'=>[]
-			],400);
-		}catch(\Exception $err){
-			return response()->json([
-				'success'=>false,
-				'message'=>'Lỗi server '.$err->getMessage(),
-				'data'=>[]
-			],500);
-		}
-	}
     function addLienHe(Request $request){
 			$data = $request->all();
 			try{

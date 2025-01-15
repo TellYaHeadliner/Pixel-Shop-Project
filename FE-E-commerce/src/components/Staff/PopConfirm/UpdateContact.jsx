@@ -5,7 +5,6 @@ const UpdateContact = ({ onConfirm }) => {
         if (onConfirm) {
             onConfirm();
         }
-        message.success("Cập nhập thành công");
     }
 
     const cancel = () => {
