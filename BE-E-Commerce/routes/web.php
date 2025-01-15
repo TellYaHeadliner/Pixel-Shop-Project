@@ -100,6 +100,10 @@ Route::controller(BaiVietController::class)->group(function(){
 
 Route::controller(HoaDonController::class)->group(function(){
 	Route::get('/api/checkHoaDonById/{idNguoiDung}/{idSanPham}','checkHoaDonById');
+	Route::get('/api/thongKeDoanhThuTheoThangVaNam/{thang}/{nam}','thongKeDoanhThuTheoNgay');
+	Route::get('/api/thongKeDoanhThuTheoNguoiDung/{idNguoiDung}','thongKeDoanhThuTheoNguoDung');
+	Route::get('/api/thongKeSanPhamTheoThangVaNam/{thang}/{nam}','thongKeSanPhamTheoNgay');
+
 });
 
 Route::controller(YeuThichController::class)->group(function(){
