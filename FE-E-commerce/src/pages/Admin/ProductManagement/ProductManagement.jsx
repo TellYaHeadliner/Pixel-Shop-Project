@@ -9,7 +9,6 @@ const ProductManagement = () => {
     const [searchTerm, setSearchTerm] = useState('');
 		const navigate = useNavigate();
     const [listPrd, setListPrd] = useState([]);
-		const userProvider = UserProvider;
     const columns = [
         {
             title: 'ID',
