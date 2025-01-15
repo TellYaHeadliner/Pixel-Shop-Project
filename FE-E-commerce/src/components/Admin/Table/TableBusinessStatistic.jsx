@@ -83,7 +83,7 @@ const columns = [
   },
 ];
 
-export function TableBusinessStatistic() {
+export default function TableBusinessStatistic() {
   return (
     <div style={{ padding: "20px" }}>
       <Title level={3}>Bảng Thống Kê Doanh Thu</Title>

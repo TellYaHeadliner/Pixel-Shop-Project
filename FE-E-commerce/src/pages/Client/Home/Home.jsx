@@ -3,62 +3,99 @@ import { AiOutlineCheck } from "react-icons/ai";
 import { useState, useEffect } from "react";
 
 import SanPhamNav from "../../../components/Client/Button/SanPhamNav";
-import SanPhamCard from "../../../components/Client/Cards/CardSanPham";
-import "./Home.scss"
-import SlideShowAds from "../../../components/Client/Slideshow/SlideShowAds";
-import SlideShowProducts from "../../../components/Client/Slideshow/SlideShowProducts";
+import "./Home.scss";
+import SlideShowKhuyenMai from "../../../components/Client/Slideshow/SlideShowKhuyenMai";
+import SlideShowSanPhamNoiBat from "../../../components/Client/Slideshow/SlideShowSanPhamNoiBat";
 import CardSanPham from "../../../components/Client/Cards/CardSanPham";
+import SlideShowQuangCao from "../../../components/Client/Slideshow/SlideShowQuangCao";
 
 const { Content } = Layout;
 const { Paragraph, Title, Text } = Typography;
 
 import productsService from "../../../services/productsService";
 
-
-
 const Home = () => {
-  const [products, setProducts] = useState([]);
+  const [newProducts, setNewProducts] = useState([]);
   const [loading, setLoading] = useState([]);
   const [error, setError] = useState([]);
   const [listLaptop, setListLaptop] = useState([]);
+  const [bestSellerList, setBestSellerList] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [listNoiBat, setListNoiBat] = useState([]);
 
-  const handleNextSlideShow = (current) =>{
+  const handleNextSlideShow = (current) => {
     setCurrentSlide(current);
-  }
+  };
 
   useEffect(() => {
+    document.title = "Trang chủ Pixel Shop";
     const fetchProducts = async () => {
       try {
-        const response = await productsService.getProducts;
-        if (response && response.data && response.data.data){
-          setProducts(response.data.data);
+        const response = await productsService.getListNewProducts;
+        if (response && response.data && response.data.data.listSanPham) {
+          setNewProducts(response.data.data?.listSanPham);
         }
         setLoading(false);
       } catch (error) {
         setError(error);
         setLoading(false);
       }
-    }
+    };
+    console.log(newProducts);
     fetchProducts();
-  },[products]);
+  }, [newProducts]);
 
   useEffect(() => {
     const fetchLaptops = async () => {
       try {
         const response = await productsService.getListLaptop;
-        if (response && response.data && response.data.data){
+        if (response && response.data && response.data.data) {
           setListLaptop(response.data.data);
         }
-        setLoading(false)
+        setLoading(false);
       } catch (error) {
         setError(error);
         console.error(error);
       }
-    }
+    };
     fetchLaptops();
     console.log(listLaptop);
-  },[listLaptop])
+  }, [listLaptop]);
+
+  useEffect(() => {
+    const fetchBestProductList = async () => {
+      try {
+        const response = await productsService.getListBestSellingProducts;
+        setBestSellerList(response.data.data);
+        setLoading(false);
+      } catch (error) {
+        setError(error);
+        setLoading(false);
+      }
+    };
+    fetchBestProductList();
+    console.log(bestSellerList);
+  }, [bestSellerList]);
+
+  useEffect(() => {
+    try {
+       const fetchNoiBatList = async () => {
+         try {
+           const response = await productsService.getListProductNoiBat;
+           setListNoiBat(response.data.data);
+           setLoading(false);
+         } catch (error) {
+           setError(error);
+           setLoading(false);
+         }
+       };
+       fetchNoiBatList();
+       console.log(bestSellerList);
+    } catch (error) {
+      setError(error);
+      setLoading(false);
+    }
+  },[listNoiBat])
 
   return (
     <Layout className="user-home-layout">
@@ -70,36 +107,21 @@ const Home = () => {
       >
         <Row gutter={[16, 16]}>
           <Col xs={24} md={14}>
-            <SlideShowAds
-              linkImg="/imgs/slideshow1.png"
-              width="100%"
-              height="300px"
-            />
+            <SlideShowSanPhamNoiBat width="100%" height="700px" />
           </Col>
           <Col xs={24} md={10}>
             <Flex gap="middle" vertical>
-              <SlideShowAds
-                linkImg="/imgs/slideshow2.png"
-                width="100%"
-                height="50%"
-              />
-              <SlideShowAds
-                linkImg="/imgs/slideshow3.png"
-                width="100%"
-                height="50%"
-              />
+              <SlideShowKhuyenMai width="100%" height="300px" />
+              <SlideShowQuangCao width="100%" height="380px" />
             </Flex>
           </Col>
         </Row>
 
         <div className="mt-3">
-          <SanPhamNav
-            title="Sản phẩm mới"
-            onNext={() => handleNextSlideShow((currentSlide + 1) % 3)}
-          />
+          <SanPhamNav title="Sản phẩm mới" />
         </div>
         <Row gutter={[16, 16]} className="mt-3">
-          {products.map((product, index) => (
+          {newProducts.map((product, index) => (
             <Col key={index} xs={24} sm={12} lg={8}>
               <CardSanPham
                 tenSanPham={product?.tenSanPham}
@@ -114,9 +136,43 @@ const Home = () => {
 
         <div className="mt-3">
           <SanPhamNav
-            title="Laptop"
+            title="Sản phẩm bán chạy"
             onNext={() => handleNextSlideShow((currentSlide + 1) % 3)}
           />
+        </div>
+        <Row gutter={[16, 16]} className="mt-3">
+          {bestSellerList.map((product, index) => (
+            <Col key={index} xs={24} sm={12} lg={8}>
+              <CardSanPham
+                tenSanPham={product?.tenSanPham}
+                hang={product?.hang}
+                gia={product?.gia}
+                img={product?.img}
+                slug={product?.slug}
+              />
+            </Col>
+          ))}
+        </Row>
+
+        <div className="mt-3">
+          <SanPhamNav title="Laptop" />
+        </div>
+        <Row gutter={[16, 16]} className="mt-3">
+          {listLaptop.map((product, index) => (
+            <Col key={index} xs={24} sm={12} lg={8}>
+              <CardSanPham
+                tenSanPham={product?.tenSanPham}
+                hang={product?.hang}
+                gia={product?.gia}
+                img={product?.img}
+                slug={product?.slug}
+              />
+            </Col>
+          ))}
+        </Row>
+
+        <div className="mt-3">
+          <SanPhamNav title="Sản phẩm nổi bật" />
         </div>
         <Row gutter={[16, 16]} className="mt-3">
           {listLaptop.map((product, index) => (

@@ -14,6 +14,7 @@ const UserProvider = ({ children }) => {
   const [idNguoiDung, setIdNguoiDung] = useState(null);
   const [login, setLogin] = useState(false);
   const [trigger, setTrigger] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   axios.defaults.withCredentials = true;
 
@@ -66,13 +67,13 @@ const UserProvider = ({ children }) => {
           }
         );
         const { idNguoiDung, hoVaTen, anhDaiDien, role } = response.data.data;
-        console.log(idNguoiDung);
+        setRole(role);
+        setLoading(false);
         setIdNguoiDung(idNguoiDung);
         setHoVaTen(hoVaTen);
         setAnhDaiDien(anhDaiDien);
-        setRole(role);
         setLogin(true);
-        setToken(token)
+        setToken(token);
       } catch (err) {
         setLogin(false);
       }
@@ -80,7 +81,7 @@ const UserProvider = ({ children }) => {
     checkToken();
   }, []);
 
-  
+  console.log(role);
 
   useEffect(() => {
     const fetchCartItemCount = async () => {
@@ -120,6 +121,8 @@ const UserProvider = ({ children }) => {
         setTrigger,
         login,
         setLogin,
+        loading,
+        idNguoiDung,
       }}
     >
       {children}

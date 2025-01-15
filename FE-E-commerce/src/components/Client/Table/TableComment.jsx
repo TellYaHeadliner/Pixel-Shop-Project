@@ -20,9 +20,9 @@ const columns = [
     }
 ];
 
-const TableComment = ({ rating }) => {
+const TableComment = ({ rating, localData }) => {
     return (
-        <Table dataSource={rating} columns={columns} pagination={{ pageSize: 5}} />
+        <Table dataSource={rating || localData} columns={columns} pagination={{ pageSize: 5}} />
     )
 }
 

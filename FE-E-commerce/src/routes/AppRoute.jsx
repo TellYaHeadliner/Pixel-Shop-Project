@@ -44,20 +44,22 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<ClientLayout />}>
         <Route index element={<Home />} />
-        <Route path="profile" element={<ProfileLayout/>}>
-          <Route index element={<ProfileInformation/>}/>
-          <Route path="locations" element={<ProfileLocation/>}/>
-          <Route path="changepassword" element={<ProfileChangePassWord/>}/>
-          <Route path="productloved" element={<ProfileProductloved/>}/>
+          <Route path="profile" element={
+            <ProtectedRoute allowedRoles={[3]}>
+              <ProfileLayout/>
+            </ProtectedRoute>
+          }>    
+          <Route index element={<ProfileInformation />} />
+          <Route path="locations" element={<ProfileLocation />} />
+          <Route path="changepassword" element={<ProfileChangePassWord />} />
+          <Route path="productloved" element={<ProfileProductloved />} />
           <Route path="productrated" element={<ProfileRatedProducts/>}/>
           <Route path="orderpendingconfirm" element={<ProfileOrderPendingConfirm/>}/>
-
-
         </Route>
         <Route path="news" element={<ListBlog/>}/>
         <Route path="contact" element={<ContactInformation/>}/>
         <Route path="about" element={<ProfileCompanyInformation/>}/>
-        <Route path="/product/:slug" element={<DetailProduct />} />
+        <Route path="product/:slug" element={<DetailProduct />} />
         <Route path="contact" element={<ContactInformation />} />
         <Route path="about" element={<ProfileCompanyInformation />} />
         <Route path="product" element={<DetailProduct />} />
@@ -65,11 +67,12 @@ const AppRoutes = () => {
         <Route path="shoppingcart" element={<ShoppingCart />} />
       </Route>
 
-      <Route path="/admin" element={
-        <ProtectedRoute allowedRoles={[1]}> {/* Only Admin */}
-          <AdminLayout />
-        </ProtectedRoute>
-      }>
+        <Route path="/admin" element={
+          <ProtectedRoute allowedRoles={[1]}> {/* Only Admin */}
+            <AdminLayout />
+          </ProtectedRoute>
+        }>
+
         <Route index element={<WebsiteInfo />} />
         <Route path="suppliers" element={<SupplierManagement />} />
         <Route path="categories" element={<CategoryManagement />} />

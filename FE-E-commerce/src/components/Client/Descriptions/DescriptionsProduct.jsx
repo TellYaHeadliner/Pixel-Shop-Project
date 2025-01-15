@@ -4,9 +4,7 @@ import "./DescriptionsProduct.module.css"
 const DescriptionsProduct = ({ description }) => {
     return (
       <Card title="Mô tả">
-        <p>
-          {description}
-        </p>
+        <div dangerouslySetInnerHTML={{ __html: description }} />
       </Card>
     );
 }

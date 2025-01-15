@@ -1,0 +1,14 @@
+.custom-carousel .slick-prev,
+.custom-carousel .slick-next {
+  color: black; /* Đặt màu cho nút điều khiển */
+}
+
+.custom-carousel .slick-prev:hover,
+.custom-carousel .slick-next:hover {
+  color: darkgray; /* Đặt màu khi hover */
+}
+
+.custom-carousel .slick-prev:before,
+.custom-carousel .slick-next:before {
+  color: black; /* Đặt màu cho icon trước */
+}
