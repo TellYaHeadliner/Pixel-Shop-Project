@@ -4,12 +4,12 @@ import { EllipsisOutlined } from '@ant-design/icons';
 import "./ProductManagement.scss"
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import {UserProvider} from '../../../routes/UserContext'
 const ProductManagement = () => {
     const [searchTerm, setSearchTerm] = useState('');
 		const navigate = useNavigate();
-    // Dữ liệu mẫu cho bảng
     const [listPrd, setListPrd] = useState([]);
-
+		const userProvider = UserProvider;
     const columns = [
         {
             title: 'ID',
@@ -76,7 +76,8 @@ const ProductManagement = () => {
 		}
 
 		useEffect(() =>{
-			handleGetListPrd()
+			handleGetListPrd();
+
 		},[]);
 
     const actionMenu = (record) => (
