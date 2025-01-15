@@ -37,6 +37,28 @@ class SanPham extends Model
             return $err;
         }
     } 
+public static function getSanPhamBanNhieuNhatTrongThang()
+    {
+        try {
+            $listSanPham = ChiTietHoaDon::select(
+                'chitiethoadon.idSanPham',
+                DB::raw('SUM(soLuong) as totalSoLuong'),
+            )
+                ->join('hoadon','hoadon.idHoaDon','=','chitiethoadon.idHoaDon')
+                ->where('hoadon.trangThai','=','1')
+                ->groupBy('chitiethoadon.idSanPham')
+                ->orderByDesc('totalSoLuong')
+                ->take(10)
+                ->get();
+            $temp= [];
+            foreach($listSanPham as $item){
+                $temp[]= $item->idSanPham;
+            }
+            return $temp;
+        } catch (\Exception $err) {
+            return $err;
+        }
+    } 
         protected $fillable = [
         'idSanPham',
         'tenSanPham',

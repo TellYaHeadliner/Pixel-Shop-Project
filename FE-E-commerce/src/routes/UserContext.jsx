@@ -75,6 +75,7 @@ const UserProvider = ({ children }) => {
         setLogin(true);
         setToken(token);
       } catch (err) {
+        setLoading(false);
         setLogin(false);
       }
     };
