@@ -33,8 +33,10 @@ Route::controller(UserController::class)->group(function () {
 });
 
 Route::controller(DanhMucController::class)->group(function () {
-	Route::get('/api/listDanhMuc', [DanhMucController::class, 'getList']);
-	Route::post('/api/addDanhMuc','add');
+    Route::get('/api/listDanhMuc', [DanhMucController::class, 'getList']); 
+    Route::post('/api/addDanhMuc', 'add'); 
+    Route::put('/api/updateDanhMuc/{id}', 'update'); 
+    Route::delete('/api/deleteDanhMuc/{id}', 'delete'); 
 });
 
 Route::controller(DanhGiaController::class)->group(function () {

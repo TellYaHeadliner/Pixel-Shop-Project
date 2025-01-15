@@ -9,27 +9,27 @@ const StaffSidebar = () => {
   const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
 
   const showLogoutModal = () => {
-      setIsLogoutModalVisible(true);
+    setIsLogoutModalVisible(true);
   };
 
   const handleLogout = () => {
-      // Clear the cookies
-      Cookies.remove('user');
-      Cookies.remove('token');
-      Cookies.remove('laravel_session');
-      Cookies.remove('XSRF-TOKEN');
+    // Clear the cookies
+    Cookies.remove('user');
+    Cookies.remove('token');
+    Cookies.remove('laravel_session');
+    Cookies.remove('XSRF-TOKEN');
 
-      // Redirect to the homepage
-      navigate('/');
+    // Redirect to the homepage
+    navigate('/');
   };
 
   const handleCancel = () => {
-      setIsLogoutModalVisible(false);
+    setIsLogoutModalVisible(false);
   };
 
   const handleConfirmLogout = () => {
-      handleLogout();
-      setIsLogoutModalVisible(false);
+    handleLogout();
+    setIsLogoutModalVisible(false);
   };
   return (
     <div className="sidebar">
@@ -56,21 +56,21 @@ const StaffSidebar = () => {
           </Link>
         </li>
         <li className="sidebar-menu-item" onClick={showLogoutModal} style={{ cursor: 'pointer' }}>
-            <a>
+          <a>
             <LogoutOutlined /> Đăng xuất
-            </a>
-          </li>
+          </a>
+        </li>
       </ul>
       <Modal
-          title="Xác nhận đăng xuất"
-          visible={isLogoutModalVisible}
-          onOk={handleConfirmLogout}
-          onCancel={handleCancel}
-          okText="Có"
-          cancelText="Không"
-        >
-          <p>Bạn có chắc chắn muốn đăng xuất không?</p>
-        </Modal>
+        title="Xác nhận đăng xuất"
+        visible={isLogoutModalVisible}
+        onOk={handleConfirmLogout}
+        onCancel={handleCancel}
+        okText="Có"
+        cancelText="Không"
+      >
+        <p>Bạn có chắc chắn muốn đăng xuất không?</p>
+      </Modal>
     </div>
   );
 };
