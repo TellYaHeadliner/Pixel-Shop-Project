@@ -1,30 +1,23 @@
 import { Table, Button, Flex, message } from "antd";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import UpdateContact from "../PopConfirm/UpdateContact";
-import DetailContact from "../Modal/DetailContact";
-
-/*
-  `idLienHe` bigint NOT NULL,
-  `hoVaTen` tinytext NOT NULL,
-  `email` tinytext NOT NULL,
-  `sdt` varchar(10) NOT NULL,
-  `noiDung` text NOT NULL,
-  `thoiGian` datetime NOT NULL,
-  `trangThai` tinyint(1) NOT NULL
-*/
+import ConfirmDeleteContact from "../Modal/ConfirmDeleteContact";
+import lienHeService from "../../../services/lienHeService";
 
 
 const ContactTable = ({ data }) => {   
-    const [contact, setContact] = useState(data)
     const [selectedContact, setSelectedContact] = useState(null);
-    const [isDetailOpen, setIsOpenDetail] = useState(false);
+    const [isConfirmDelete, setIsConfirmDelete] = useState(false);
+
+    useEffect(() => {
+    },[selectedContact])
 
     const columns = [
       {
         title: "ID liên hệ",
-        dataIndex: "id",
-        key: "id",
+        dataIndex: "idLienHe",
+        key: "idLienHe",
       },
       {
         title: "Họ và tên",
@@ -47,7 +40,7 @@ const ContactTable = ({ data }) => {
         key: "noiDung",
       },
       {
-        title: "Thờii gian",
+        title: "Thời gian",
         dataIndex: "thoiGian",
         key: "thoiGian",
         render: (time) => <>{time.toLocaleString()}</>,
@@ -64,53 +57,72 @@ const ContactTable = ({ data }) => {
         render: (_, record) => (
           <>
             <Flex justify="center" align="center" gap={10}>
-              <Button onClick={() => handleShowDetail(record)}>
-                Xem chi tiết
+              <Button color="danger" variant="solid"  onClick={() => handleDelete(record)}>
+                Xoá liên hệ
               </Button>
-              <UpdateContact onConfirm={() => handleUpdate(record.id)}/>
+              <UpdateContact onConfirm={() => handleUpdate(record)}/>
             </Flex>
           </>
         ),
       },
     ];
 
-    const handleUpdate = (id) => {
-        const updateContact = contact.find(item => item.id === id);
-        updateContact.trangThai = !updateContact.trangThai;;
-        setContact([...contact]);
+    const handleUpdate = async (record) => {
+      try {
+        const updateTrangThai = !record.trangThai
+        console.log(record.idLienHe, updateTrangThai);
+        const response = await lienHeService.updateStatusLienHe(
+          record.idLienHe,
+          updateTrangThai
+        );
+        if (response.data.success == true){
+          message.success("Cập nhật trạng thái thành công, trong 5 giây trang web sẽ reload lại !");
+          setInterval(() => {
+            window.location.reload();
+          }, 5000);
+        }
+      } catch (error) {
+        message.error(error.message);
+      }
     }
 
 
-    const handleShowDetail = (record) => {
+
+    const handleDelete = (record) => {
       setSelectedContact(record)
-      setIsOpenDetail(true);
+      setIsConfirmDelete(true);
     }
 
-    const handleCloseDetail = () => {
-      setIsOpenDetail(false);
+    const confirmDelete = async () => {
+      try {
+        const response = await lienHeService.deleteLienHe(selectedContact.idLienHe);
+        if (response.data.success){
+          message.success("Xoá liên hệ thành công!");
+          window.location.reload();
+        }
+      } catch (error) {
+        message.error(error.message);
+      }
     }
 
-    const handleDelete = (id) => {
-      const updatedContact = contact.filter((item) => item.id !== id);
-      console.log(updatedContact);
-      setContact(updatedContact);
-      setIsOpenDetail(!isDetailOpen);
-      message.success("Xóa thành công!");
-    }
+
+    const handleCancel = () => {
+      setIsConfirmDelete(false);
+    };
+
 
     return (
       <>
-        <Table columns={columns} dataSource={contact} rowKey="id" bordered />
-        {
-          selectedContact && (
-            <DetailContact
-              contact={selectedContact}
-              onCancel={handleCloseDetail}
-              open={isDetailOpen}
-              onDelete={() => handleDelete(selectedContact.id)}
-            />
-          )
-        }
+        <Table columns={columns} dataSource={data} rowKey="id" bordered />
+        {selectedContact && (
+          <>
+          <ConfirmDeleteContact
+            onDelete={confirmDelete}
+            onCancel={handleCancel}
+            open={isConfirmDelete}
+          />
+          </>
+        )}
       </>
     );
 }

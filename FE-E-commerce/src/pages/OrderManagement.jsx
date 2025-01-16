@@ -1,5 +1,5 @@
 import { useState } from "react";
-import OrderTable from "../../../components/Staff/Table/OrderTable";
+import OrderTable from "../components/Staff/Table/OrderTable";
 import { Typography, Row, Col } from "antd";
 
 const { Title } = Typography;

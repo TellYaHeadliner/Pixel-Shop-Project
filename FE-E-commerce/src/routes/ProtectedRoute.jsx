@@ -8,8 +8,6 @@ import { Spin } from 'antd';
 const ProtectedRoute = ({ children, allowedRoles }) => {
     const { role , loading } = useContext(UserContext); 
 
-    console.log(loading);
-
     if (loading) {
         return (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>

@@ -33,8 +33,10 @@ Route::controller(UserController::class)->group(function () {
 });
 
 Route::controller(DanhMucController::class)->group(function () {
-	Route::get('/api/listDanhMuc', [DanhMucController::class, 'getList']);
-	Route::post('/api/addDanhMuc','add');
+    Route::get('/api/listDanhMuc', [DanhMucController::class, 'getList']); 
+    Route::post('/api/addDanhMuc', 'add'); 
+    Route::put('/api/updateDanhMuc/{id}', 'update'); 
+    Route::delete('/api/deleteDanhMuc/{id}', 'delete'); 
 });
 
 Route::controller(DanhGiaController::class)->group(function () {
@@ -111,7 +113,8 @@ Route::controller(HoaDonController::class)->group(function(){
 	Route::post('/api/getListHoaDonByStatus','getListHoaDonByStatus')->middleware(JWT::class.':3');
 	Route::put('/api/updateStatusHoaDon','updateStatusHoaDon');
 	Route::put('/api/updateHiddenHoaDon','updateHiddenHoaDon');
-
+	Route::get('/api/thongKeDoanhThuTheoTatCaNguoiDung', 'thongKeDoanhThuTheoTatCaNguoiDung');
+	Route::get('/api/thongKeDoanhThuSanPhamTheoNgay','thongKeDoanhThuSanPhamTheoNgay');
 });
 
 Route::controller(YeuThichController::class)->group(function(){
@@ -119,7 +122,6 @@ Route::controller(YeuThichController::class)->group(function(){
 	Route::get('/api/getSoLuongYeuThichByIdSanPham/{idSanPham}','getSoLuongYeuThichByIdSanPham');
 	Route::post('/api/addYeuThich','addYeuThich');
 	Route::delete('/api/deleteYeuThich','deleteYeuThich');
-
 });
 
 
