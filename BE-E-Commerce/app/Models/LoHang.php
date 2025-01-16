@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class LoHang extends Model
 {
     use HasFactory;
-
+		protected $table = 'lohang';
+		protected $primaryKey = 'idLoHang';
+		public $timestamp = false;
     protected $fillable = [
         'idLoHang',
         'idNhaCungCap',

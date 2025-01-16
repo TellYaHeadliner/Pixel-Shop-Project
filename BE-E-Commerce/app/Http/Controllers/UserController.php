@@ -307,4 +307,31 @@ class UserController extends Controller
 				], 500);
 			}
 		}
+		function thongKeDoTuoi(){
+			try{
+				$data = NguoiDung::selectRaw("
+															CASE
+																	WHEN TIMESTAMPDIFF(YEAR, ngaySinh, CURDATE()) < 18 THEN '-18'
+																	WHEN TIMESTAMPDIFF(YEAR, ngaySinh, CURDATE()) BETWEEN 18 AND 24 THEN '18-24'
+																	WHEN TIMESTAMPDIFF(YEAR, ngaySinh, CURDATE()) BETWEEN 25 AND 34 THEN '25-34'
+																	WHEN TIMESTAMPDIFF(YEAR, ngaySinh, CURDATE()) BETWEEN 35 AND 44 THEN '35-44'
+																	WHEN TIMESTAMPDIFF(YEAR, ngaySinh, CURDATE()) >= 45 THEN '45+'
+																	ELSE 'Không xác định'
+															END AS doTuoi,
+															COUNT(*) AS soNguoi
+													")
+													->groupBy('doTuoi')
+													->get();
+				return response()->json([
+					'success' => true,
+					'message' => 'Lấy dữ liệu thành công!',
+					'data' => $data
+				],200);
+			}catch (\Exception $e){
+				return response()->json([
+					'success' => false,
+					'message' => $e->getMessage(),
+				],500);
+			}
+		}
 }

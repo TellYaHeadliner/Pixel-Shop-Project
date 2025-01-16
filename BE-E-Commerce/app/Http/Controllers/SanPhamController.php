@@ -350,5 +350,20 @@ class SanPhamController extends Controller
 		}
 	}
 
+	function getProductBySlug(Request $request){
+		try{
+			$data = SanPham::where('slug', '=', $request['slug'])->join('thongsosanpham','thongsosanpham.idSanPham','=','sanpham.idSanPham')->get();
+			return response()->json([
+				'success' => false,
+				'message' => 'Lấy thông tin sản phẩm thành công!',
+				'data' => $data
+			],200);
+		}catch (\Exception $e){
+			return response()->json([
+				'success' => false,
+				'message' => 'Có lỗi xảy ra: '.$e->getMessage(),
+			],500);
+		}
+	}
 	
 }
