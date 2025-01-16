@@ -22,6 +22,7 @@ const AdminLayout = lazy(() => import("../components/Admin/Layouts/AdminLayout")
 const SupplierManagement = lazy(() => import("../pages/Admin/SupplierManagement/SupplierManagement"));
 const CategoryManagement = lazy(() => import("../pages/Admin/CategoryManagement/CategoryManagement"));
 const ProductManagement = lazy(() => import("../pages/Admin/ProductManagement/ProductManagement"));
+const ProductManagementUpdate = lazy(() => import("../pages/Admin/ProductManagement/ProductManagementUpdate"));
 const ProductManagementAdd = lazy(() => import("../pages/Admin/ProductManagement/ProductManagementAdd"));
 const BatchManagement = lazy(() => import("../pages/Admin/BatchManagement/BatchManagement"));
 const CommentManagement = lazy(() => import("../pages/Admin/CommentManagement/CommentManagement"));
@@ -72,6 +73,7 @@ const AppRoutes = () => {
         <Route path="products">
           <Route index element={<ProductManagement />} />
           <Route path="add" element={<ProductManagementAdd />} />
+          <Route path="update/:slug" element={<ProductManagementUpdate/>} />
         </Route>
         <Route path="batches" element={<BatchManagement />} />
         <Route path="comments" element={<CommentManagement />} />
