@@ -87,7 +87,7 @@ Route::controller(SanPhamController::class)->group(function(){
 });
 
 Route::controller(GioHangController::class)->group(function(){
-    Route::get('/api/getListSanPhamGioHang',[GioHangController::class,'getListSanPhamGioHang']);
+    Route::post('/api/getListSanPhamGioHang',[GioHangController::class,'getListSanPhamGioHang'])->middleware(Jwt::class . ':3');
     Route::put('/api/updateSoLuongSanPhamGioHang',[GioHangController::class,'updateSoLuongSanPhamGioHang']);
     Route::delete('/api/deleteSanPhamId',[GioHangController::class,'deleteSanPhamId']);
     Route::delete('/api/deleteSanPhamAll',[GioHangController::class,'deleteSanPhamAll']);
@@ -110,7 +110,7 @@ Route::controller(HoaDonController::class)->group(function(){
 	Route::get('/api/getListHoaDon','getListHoaDon');
 	Route::get('/api/getListHoaDonHidden','getListHoaDonHidden');
 	Route::get('/api/getHoaDonById/{idHoaDon}','getHoaDonById');
-	Route::get('/api/getListHoaDonBySdt/{sdt}','getListHoaDonBySdt');
+	Route::post('/api/getListHoaDonBySdt','getListHoaDonBySdt');
 	Route::get('/api/getListHoaDonByStatusAndDay/{status}/{day}','getListHoaDonByStatusAndDay');
 	Route::post('/api/getListHoaDonByStatus','getListHoaDonByStatus')->middleware(JWT::class.':3');
 	Route::put('/api/updateStatusHoaDon','updateStatusHoaDon');

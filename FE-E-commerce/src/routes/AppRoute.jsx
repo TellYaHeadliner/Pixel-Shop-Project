@@ -102,7 +102,13 @@ const AppRoutes = () => {
         <Route path="about" element={<ProfileCompanyInformation />} />
         <Route path="product" element={<DetailProduct />} />
         <Route path="payment" element={<Payment />} />
-        <Route path="shoppingcart" element={<ShoppingCart />} />
+        <Route path="shoppingcart" element={
+           <ProtectedRoute allowedRoles={[3]}>
+            <ShoppingCart />
+         </ProtectedRoute>
+          
+        } 
+          />
       </Route>
 
       <Route

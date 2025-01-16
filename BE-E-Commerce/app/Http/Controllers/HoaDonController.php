@@ -203,7 +203,7 @@ class HoaDonController extends Controller
             ], 500);
         }
     }
-      function getListHoaDon()
+    function getListHoaDon()
     {
         try {
             $data = DB::table('hoadon')
@@ -270,9 +270,9 @@ class HoaDonController extends Controller
             $data = DB::table('hoadon')
                 ->join('nguoidung', 'hoadon.idNguoiDung', '=', 'nguoidung.idNguoiDung')
                 ->join('diachi', 'diachi.idDiaChi', '=', 'hoadon.idDiaChi')
-                ->join('chitiethoadon','chitiethoadon.idHoaDon','=','hoadon.idHoaDon')
-                ->join('sanpham','chitiethoadon.idSanPham','=','sanpham.idSanPham')
-                ->select('hoadon.*','chitiethoadon.*','sanpham.img','sanpham.tenSanPham','sanpham.gia' , 'nguoidung.hoVaTen', 'diachi.diaChi', 'diachi.sdt', 'diachi.note')
+                ->join('chitiethoadon', 'chitiethoadon.idHoaDon', '=', 'hoadon.idHoaDon')
+                ->join('sanpham', 'chitiethoadon.idSanPham', '=', 'sanpham.idSanPham')
+                ->select('hoadon.*', 'chitiethoadon.*', 'sanpham.img', 'sanpham.tenSanPham', 'sanpham.gia', 'nguoidung.hoVaTen', 'diachi.diaChi', 'diachi.sdt', 'diachi.note')
                 ->where('hoadon.idHoaDon', $idHoaDon)
                 ->get();
 
@@ -289,14 +289,14 @@ class HoaDonController extends Controller
             ], 500);
         }
     }
-    function getListHoaDonBySdt($sdt)
+    function getListHoaDonBySdt(Request $request)
     {
         try {
             $data = DB::table('hoadon')
                 ->join('nguoidung', 'hoadon.idNguoiDung', '=', 'nguoidung.idNguoiDung')
                 ->join('diachi', 'diachi.idDiaChi', '=', 'hoadon.idDiaChi')
                 ->select('hoadon.*', 'nguoidung.hoVaTen', 'diachi.diaChi', 'diachi.sdt', 'diachi.note')
-                ->where('diachi.sdt', $sdt)
+                ->where('diachi.sdt', $request['sdt'])
                 ->get();
 
             return response()->json([
@@ -312,16 +312,19 @@ class HoaDonController extends Controller
             ], 500);
         }
     }
-    function getListHoaDonByStatusAndDay($status,$day){
+    function getListHoaDonByStatusAndDay($status, $day)
+    {
         try {
+
+            $day = DateTime::createFromFormat('d-m-Y', $day)->format('Y-m-d');
+            var_dump($status);
             $data = DB::table('hoadon')
                 ->join('nguoidung', 'hoadon.idNguoiDung', '=', 'nguoidung.idNguoiDung')
                 ->join('diachi', 'diachi.idDiaChi', '=', 'hoadon.idDiaChi')
                 ->select('hoadon.*', 'nguoidung.hoVaTen', 'diachi.diaChi', 'diachi.sdt', 'diachi.note')
                 ->where('hoadon.trangThai', $status)
-                ->Where('hoadon.ngayDat',DateTime::createFromFormat('d-m-Y',$day))
+                ->whereRaw('Date(hoadon.ngayDat)=?', [$day])
                 ->get();
-
             return response()->json([
                 'success' => true,
                 'message' => '',
@@ -335,14 +338,15 @@ class HoaDonController extends Controller
             ], 500);
         }
     }
-    function getListHoaDonByStatus(Request $request){
+    function getListHoaDonByStatus(Request $request)
+    {
         try {
             $data = DB::table('hoadon')
                 ->join('nguoidung', 'hoadon.idNguoiDung', '=', 'nguoidung.idNguoiDung')
                 ->join('diachi', 'diachi.idDiaChi', '=', 'hoadon.idDiaChi')
                 ->select('hoadon.*', 'nguoidung.*', 'diachi.*')
                 ->where('hoadon.trangThai', $request['trangThai'])
-                ->Where('hoadon.idNguoiDung',$request['idNguoiDung'])
+                ->Where('hoadon.idNguoiDung', $request['idNguoiDung'])
                 ->get();
             return response()->json([
                 'success' => true,
@@ -376,9 +380,16 @@ class HoaDonController extends Controller
                     'data' => []
                 ], 401);
             }
-            $hoadon->update([
-                'trangThai' => $request['trangThai']
-            ]);
+            ($request['trangThai'] == 1) ?
+                $hoadon->update([
+                    'trangThai' => $request['trangThai'],
+                    'nhanVienXacNhan' => $request['idNguoiDung'],
+                    'ngayXacNhan' => now()
+                ]) : $hoadon->update([
+                    'trangThai' => $request['trangThai'],
+
+                ]);
+                
             return response()->json([
                 'success' => true,
                 'message' => 'cập nhập thành công trạng thái hóa đơn',
@@ -429,5 +440,4 @@ class HoaDonController extends Controller
             ], 500);
         }
     }
-
 }
