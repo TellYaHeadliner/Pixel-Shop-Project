@@ -132,6 +132,7 @@ const UserProvider = ({ children }) => {
         login,
         setLogin,
         loading,
+				setLoading,
         idNguoiDung,
       }}
     >

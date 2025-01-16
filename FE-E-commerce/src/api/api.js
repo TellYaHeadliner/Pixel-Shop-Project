@@ -36,8 +36,8 @@ const apiService = {
     getThongTin: async () => {
         return await axios.get(`${API_URL}/getThongTin`);
     },
-    updateThongTin: async () => {
-        return await axios.get(`${API_URL}/updateThongTin`);
+    updateThongTin: async (data) => {
+        return await axios.post(`${API_URL}/updateThongTin`, data);
     },
     addNhaCungCap: async (supplierData) => {
         return await axios.post(`${API_URL}/addNhaCungCap`, supplierData);

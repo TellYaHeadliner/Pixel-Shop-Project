@@ -54,21 +54,24 @@ class DanhMucController extends Controller
 	}
 
    // Sửa danh mục
-   function update(Request $request, $id) {
+function update(Request $request, $id) {
     $data = $request->all();
     try {
         $danhMuc = DanhMuc::findOrFail($id);
 
-        // Nếu danh mục con, giữ nguyên idDanhMucCha
-        if ($danhMuc->idDanhMucCha) {
-            $data["idDanhMucCha"] = $danhMuc->idDanhMucCha; // Giữ nguyên danh mục cha
+        // Nếu danh mục có idDanhMucCha là null, chỉ cập nhật tên
+        if ($danhMuc->idDanhMucCha === null) {
+            // Chỉ cập nhật tên danh mục
+            $danhMuc->update([
+                "tenDanhMuc" => $data["tenDanhMuc"],
+            ]);
+        } else {
+            // Nếu là danh mục con, giữ nguyên idDanhMucCha
+            $danhMuc->update([
+                "tenDanhMuc" => $data["tenDanhMuc"],
+                // Không cập nhật idDanhMucCha
+            ]);
         }
-
-        // Cập nhật tên danh mục
-        $danhMuc->update([
-            "tenDanhMuc" => $data["tenDanhMuc"],
-            "idDanhMucCha" => $data["idDanhMucCha"], // Đồng thời cập nhật nếu có thay đổi
-        ]);
 
         return response()->json([
             'success' => true,

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\HoaDon;
+use App\Models\LoHang;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use DateTime;
@@ -156,7 +157,7 @@ class HoaDonController extends Controller
                     DB::raw('COUNT(hoadon.idHoaDon) AS SoDonHang'),
                     DB::raw('SUM(c.tongTien) AS DoanhThu')
                 )
-                ->where('hoadon.trangThai', 2) // Giả sử trạng thái 2 là đã xác nhận
+                ->where('hoadon.trangThai', 2)
                 ->groupBy(DB::raw('DATE(hoadon.ngayXacNhan)'))
                 ->orderBy('Ngay')
                 ->get();
@@ -202,6 +203,94 @@ class HoaDonController extends Controller
                 'data' => []
             ], 500);
         }
+    }
+    function loiNhuanHienTai()
+    {
+        try {
+            $ban = HoaDon::join('chitiethoadon', 'hoadon.idHoaDon', '=', 'chitiethoadon.idHoaDon')
+                ->select(
+                    'chitiethoadon.idSanPham',
+                    DB::raw('SUM(chitiethoadon.soLuong) as soLuongBan'),
+                    DB::raw('SUM(chitiethoadon.tongGia) as doanhThu')
+                )
+                ->whereIn('hoadon.trangThai', [1, 2])
+                ->groupBy('chitiethoadon.idSanPham')
+                ->get();
+            $nhap = LoHang::join('chitietlohang', 'lohang.idLoHang', '=', 'chitietlohang.idLoHang')
+                ->select('chitietlohang.idSanPham', 'chitietlohang.giaNhap', 'chitietlohang.soLuong')
+                ->orderBy('lohang.date', 'asc')
+                ->get();
+
+            $thongKe = [];
+            foreach ($ban as $b) {
+                $soBan = $b->soLuongBan;
+                $tongNhap = 0;
+                $sanPhamTonKho = 0;
+                $tienTonKho = 0;
+
+                foreach ($nhap as $n) {
+                    if ($b->idSanPham == $n->idSanPham) {
+                        if ($soBan > $n->soLuong) {
+                            $tongNhap += $n->soLuong * $n->giaNhap;
+                            $soBan -= $n->soLuong;
+                        } else {
+                            $tongNhap += $soBan * $n->giaNhap;
+                            $sanPhamTonKho += $n->soLuong - $soBan;
+                            $tienTonKho += ($n->soLuong - $soBan) * $n->giaNhap;
+                            $soBan = 0;
+                        }
+                    }
+                }
+
+                $thongKe[] = [
+                    'idSanPham' => $b->idSanPham,
+                    'doanhThu' => $b->doanhThu,
+                    'chiPhiNhap' => $tongNhap,
+                    'loiNhuan' => $b->doanhThu - $tongNhap,
+                    'sanPhamTonKho' => $sanPhamTonKho,
+                    'tienTonKho' => $tienTonKho
+                ];
+            }
+            return response()->json([
+                'success' => true,
+                'message' => 'Lấy thống kê thành công!',
+                'data' => $thongKe,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    function thongKeSanPhamDaBanTheoThang()
+    {
+        try {
+            $data = DB::table('chitiethoadon')
+                ->join('hoadon', 'hoadon.idHoaDon', '=', 'chitiethoadon.idHoaDon')
+                ->selectRaw('
+							YEAR(hoadon.ngayDat) as nam,
+							MONTH(hoadon.ngayDat) as thang,
+							chitiethoadon.idSanPham,
+							SUM(chitiethoadon.soLuong) as tongSoLuong
+					')
+                ->whereIn('hoadon.trangThai', [1, 2])
+                ->groupBy(DB::raw('YEAR(hoadon.ngayDat), MONTH(hoadon.ngayDat), chitiethoadon.idSanPham'))
+                ->orderBy('nam')
+                ->orderBy('thang')
+                ->get();
+            return response()->json([
+                'success' => false,
+                'message' => 'Lấy danh sách thành công!',
+                'data' => $data,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        };
     }
     function getListHoaDon()
     {
@@ -389,7 +478,7 @@ class HoaDonController extends Controller
                     'trangThai' => $request['trangThai'],
 
                 ]);
-                
+
             return response()->json([
                 'success' => true,
                 'message' => 'cập nhập thành công trạng thái hóa đơn',
