@@ -18,6 +18,9 @@ class ThongTin extends Model
         'tiktok'
     ];
 
+    public $timestamps= false;
+    protected $primaryKey = null;
+    public $incrementing = false;
 		static function Add(){
 			
 		}

@@ -117,6 +117,7 @@ const AppRoutes = () => {
       >
         <Route index element={<BusinessStatistics />} />
         <Route path="suppliers" element={<SupplierManagement />} />
+        <Route path="websiteInfo" element={<WebsiteInfo />} />
         <Route path="categories" element={<CategoryManagement />} />
         <Route path="products">
           <Route index element={<ProductManagement />} />

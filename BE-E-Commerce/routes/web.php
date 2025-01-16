@@ -49,7 +49,7 @@ Route::controller(DanhGiaController::class)->group(function () {
 
 Route::controller(ThongTinController::class)->group(function () {
 	Route::get('/api/getThongTin', [ThongTinController::class, 'get']);
-	Route::get('/api/updateThongTin', [ThongTinController::class, 'update']);
+	Route::post('/api/updateThongTin', [ThongTinController::class, 'update']);
 });
 
 Route::controller(NhaCungCapController::class)->group(function () {

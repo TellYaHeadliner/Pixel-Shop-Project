@@ -57,22 +57,27 @@ const CategoryManagement = () => {
             notification.warning({ message: 'Cảnh báo', description: 'Tên danh mục không được để trống!' });
             return;
         }
-
+    
         let categoryData = { tenDanhMuc: categoryName };
-
+    
         // Kiểm tra điều kiện để xác định idDanhMucCha
         if (isSubCategory && selectedParent) {
-            categoryData.idDanhMucCha = selectedParent.idDanhMuc;
-        } else if (!isSubCategory && selectedParent) {
-            categoryData.idDanhMucCha = selectedParent.idDanhMuc;
-        } else {
+            categoryData.idDanhMucCha = selectedParent.idDanhMuc; // Nếu là danh mục con
+        }
+        else if (!isSubCategory && !selectedParent) {
             categoryData.idDanhMucCha = null; // Tạo danh mục cấp cao nhất
         }
-
+        else if (!isSubCategory && selectedParent && selectedParent.idDanhMuc !== null) {
+            categoryData.idDanhMucCha = selectedParent.idDanhMucCha; // Tạo danh mục cấp cao nhất
+        }
+        else {
+            categoryData.idDanhMucCha = selectedParent.idDanhMuc; // Nếu là danh mục con
+        }
+    
         try {
             const response = await apiService.addDanhMuc(categoryData);
             const newCategory = { ...response.data.data, child: [] };
-
+    
             setCategories(prev => {
                 const updatedCategories = [...prev];
                 if (isSubCategory && selectedParent) {
@@ -81,16 +86,17 @@ const CategoryManagement = () => {
                         updatedCategories[parentIndex].child.push(newCategory);
                     }
                 } else if (selectedParent) {
+                    // Nếu không phải là danh mục con, thêm vào cùng cấp với danh mục đã chọn
                     const parentIndex = updatedCategories.findIndex(cat => cat.idDanhMuc === selectedParent.idDanhMuc);
                     if (parentIndex !== -1) {
-                        updatedCategories.splice(parentIndex + 1, 0, newCategory);
+                        updatedCategories.splice(parentIndex + 1, 0, newCategory); // Thêm vào sau danh mục đã chọn
                     }
                 } else {
-                    updatedCategories.push(newCategory);
+                    updatedCategories.push(newCategory); // Thêm vào danh mục cấp cao nhất
                 }
                 return updatedCategories;
             });
-
+    
             resetForm();
             notification.success({ message: 'Thành công', description: 'Danh mục đã được thêm thành công!' });
         } catch (error) {
@@ -123,9 +129,9 @@ const CategoryManagement = () => {
     const updateCategoryName = async () => {
         if (contextMenu.category) {
             const categoryId = contextMenu.category.key;
-
             try {
                 await apiService.updateDanhMuc(categoryId, { tenDanhMuc: newCategoryName });
+                console.log(newCategoryName);
                 setCategories(prev => {
                     const updatedCategories = prev.map(cat => {
                         if (cat.idDanhMuc === categoryId) {
@@ -228,7 +234,7 @@ const CategoryManagement = () => {
                 <Checkbox
                     checked={isSubCategory}
                     onChange={(e) => setIsSubCategory(e.target.checked)}
-                    style={{ margin: '10px 0', opacity: '0' }}
+                    style={{ margin: '10px 0' }}
                 >
                     Đây là danh mục con
                 </Checkbox>
@@ -237,6 +243,7 @@ const CategoryManagement = () => {
                     onRightClick={(e) => showContextMenu(e.event, e.node)}
                     onSelect={(keys) => {
                         const selected = findCategoryById(categories, Number(keys[0]));
+                        console.log(selected);
                         if (selected) {
                             setSelectedParent(selected); // Set selected parent
                         }
