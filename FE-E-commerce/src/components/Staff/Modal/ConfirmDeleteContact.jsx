@@ -28,7 +28,7 @@ const ConfirmDeleteContact = ({ open, onCancel, onDelete }) => {
         ]}
     >
       {contextHolder}
-      <p>Hãy gõ chữ &quot;Xác nhận&quot; để xóa liên hệ này</p>
+      <p>Hãy gõ chữ &quot;Xác nhận&quot; để xóa</p>
       <Input
         placeholder={`Gõ "${confirmationWord}" để xác nhận`}
         value={confirmationText}
