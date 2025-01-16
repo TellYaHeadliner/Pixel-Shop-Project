@@ -182,7 +182,7 @@ class HoaDonController extends Controller
             $data = DB::table('hoadon')
                 ->join('diachi', 'hoadon.idDiaChi', '=', 'diachi.idDiaChi')
                 ->select('hoadon.idHoaDon', 'hoadon.tongSoTien', 'diachi.sdt', 'diachi.diaChi', 'hoadon.phuongThucThanhToan')
-                ->whereNotNull('hoadon.thoiGianKhoa')
+                ->whereNull('hoadon.thoiGianKhoa')
                 ->orWhere('hoadon.thoiGianKhoa', '<', time())
                 ->orderByRaw("
             CASE 
@@ -244,9 +244,10 @@ class HoaDonController extends Controller
                 ->join('nguoidung', 'hoadon.idNguoiDung', '=', 'nguoidung.idNguoiDung')
                 ->join('diachi', 'diachi.idDiaChi', '=', 'hoadon.idDiaChi')
                 ->join('chitiethoadon','chitiethoadon.idHoaDon','=','hoadon.idHoaDon')
-                ->select('hoadon.*','chitiethoadon.*', 'nguoidung.hoVaTen', 'diachi.diaChi', 'diachi.sdt', 'diachi.note')
-                ->where('idHoaDon', $idHoaDon)
-                ->first();
+                ->join('sanpham','chitiethoadon.idSanPham','=','sanpham.idSanPham')
+                ->select('hoadon.*','chitiethoadon.*','sanpham.img','sanpham.tenSanPham','sanpham.gia' , 'nguoidung.hoVaTen', 'diachi.diaChi', 'diachi.sdt', 'diachi.note')
+                ->where('hoadon.idHoaDon', $idHoaDon)
+                ->get();
 
             return response()->json([
                 'success' => true,
