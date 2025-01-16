@@ -104,8 +104,8 @@ Route::controller(HoaDonController::class)->group(function(){
 	Route::get('/api/checkHoaDonById/{idNguoiDung}/{idSanPham}','checkHoaDonById');
 	Route::get('/api/thongKeDoanhThuTheoThangVaNam/{thang}/{nam}','thongKeDoanhThuTheoNgay');
 	Route::get('/api/thongKeDoanhThuTheoNguoiDung/{idNguoiDung}','thongKeDoanhThuTheoNguoDung');
-	Route::get('/api/thongKeSanPhamTheoThangVaNam/{thang}/{nam}','thongKeSanPhamTheoNgay');
-
+	Route::get('/api/thongKeDoanhThuTheoTatCaNguoiDung', 'thongKeDoanhThuTheoTatCaNguoiDung');
+	Route::get('/api/thongKeDoanhThuSanPhamTheoNgay','thongKeDoanhThuSanPhamTheoNgay');
 });
 
 Route::controller(YeuThichController::class)->group(function(){
@@ -113,7 +113,6 @@ Route::controller(YeuThichController::class)->group(function(){
 	Route::get('/api/getSoLuongYeuThichByIdSanPham/{idSanPham}','getSoLuongYeuThichByIdSanPham');
 	Route::post('/api/addYeuThich','addYeuThich');
 	Route::delete('/api/deleteYeuThich','deleteYeuThich');
-
 });
 
 
