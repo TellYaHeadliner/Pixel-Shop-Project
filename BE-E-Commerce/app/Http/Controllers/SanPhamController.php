@@ -349,4 +349,9 @@ class SanPhamController extends Controller
 			], 500);
 		}
 	}
+
+	function getSanPhamBanNhieuNhatTrongThang(){
+		
+	}
+	
 }

@@ -21,6 +21,13 @@ const ProfileCompanyInformation = lazy(() => import("../pages/Client/Profile/Pro
 const ProfileProductloved = lazy(() => import("../pages/Client/Profile/ProfileProductloved"));
 const ContactInformation = lazy(() => import("../pages/Client/ContactInformation"));
 const ProfileOrderPendingConfirm = lazy(() => import("../pages/Client/Profile/ProfileOrderPendingConfirm"));
+const ProfileOrderBeingShip = lazy(() => import("../pages/Client/Profile/ProfileOrderBeingShip"));
+const ProfileOrderReceived = lazy(() => import("../pages/Client/Profile/ProfileOrderReceived"));
+const ProfileOrderCanceled = lazy(() => import("../pages/Client/Profile/ProfileOrderCanceled"));
+
+const ListOrder = lazy(() => import("../pages/Client/Profile/ListOrder"));
+
+
 // Admin components
 const AdminLayout = lazy(() => import("../components/Admin/Layouts/AdminLayout"));
 const SupplierManagement = lazy(() => import("../pages/Admin/SupplierManagement/SupplierManagement"));
@@ -54,7 +61,18 @@ const AppRoutes = () => {
           <Route path="changepassword" element={<ProfileChangePassWord />} />
           <Route path="productloved" element={<ProfileProductloved />} />
           <Route path="productrated" element={<ProfileRatedProducts/>}/>
-          <Route path="orderpendingconfirm" element={<ProfileOrderPendingConfirm/>}/>
+          <Route path="orderpendingconfirm" element={<ListOrder trangThai={0}/>}/>
+          <Route path="orderbeingship" element={<ListOrder trangThai={1}/>}/>
+          <Route path="orderreceived" element={<ListOrder trangThai={2}/>}/>
+          <Route path="ordercanceled" element={<ListOrder trangThai={3}/>}/>
+          <Route path="orderpendingconfirm/:id" element={<ProfileOrderPendingConfirm/>}/>
+          <Route path="orderbeingship/:id" element={<ProfileOrderBeingShip/>}/>
+          <Route path="orderreceived/:id" element={<ProfileOrderReceived/>}/>
+          <Route path="ordercanceled/:id" element={<ProfileOrderCanceled/>}/>
+
+
+
+
         </Route>
         <Route path="news" element={<ListBlog/>}/>
         <Route path="contact" element={<ContactInformation/>}/>

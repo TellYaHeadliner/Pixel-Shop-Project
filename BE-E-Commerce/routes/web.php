@@ -13,6 +13,9 @@ use App\Http\Controllers\LienHeController;
 use App\Http\Controllers\GioHangController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\BaiVietController;
+use App\Http\Controllers\DanhGiaController;
+use App\Http\Controllers\HoaDonController;
+use App\Http\Controllers\YeuThichController;
 
 use App\Http\Middleware\CheckEmailSignUp;
 
@@ -34,6 +37,14 @@ Route::controller(DanhMucController::class)->group(function () {
 	Route::post('/api/addDanhMuc','add');
 });
 
+Route::controller(DanhGiaController::class)->group(function () {
+	Route::get('/api/getDanhGiaByIdSanPham/{id}','getDanhGiaByIdSanPham');
+	Route::get('/api/checkDanhGia/{idNguoiDung}/{idSanPham}','checkDanhGia'); 
+	Route::get('/api/getDanhGiaById/{idNguoiDung}/{idSanPham}','getDanhGiaById'); 
+	Route::post('/api/addDanhGia','addDanhGia');
+	Route::delete('/api/deleteDanhGia','deleteDanhGia');
+});
+
 Route::controller(ThongTinController::class)->group(function () {
 	Route::get('/api/getThongTin', [ThongTinController::class, 'get']);
 	Route::get('/api/updateThongTin', [ThongTinController::class, 'update']);
@@ -53,7 +64,11 @@ Route::controller(DiaChiController::class)->group(function () {
 });
 
 Route::controller(LienHeController::class)->group(function () {
+	Route::get('/api/getListLienHe','getList');
+	Route::get('/api/getByIdLienHe/{id}','getById');
 	Route::post('/api/addLienHe','addLienHe');
+	Route::put('/api/updateStatusLienHe','updateStatusLienHe'); // request: idLienHe , trangThai (0,1)
+	Route::delete('/api/deleteLienHe','deleteLienHe'); // request:idLienHe
 });
 
 Route::controller(SanPhamController::class)->group(function(){
@@ -84,4 +99,21 @@ Route::controller(BaiVietController::class)->group(function(){
 	Route::get('/api/getListBaiVietKhuyenMai', [BaiVietController::class, 'getListKhuyenMai']);
 	Route::get('/api/getListQuangCao', [BaiVietController::class, 'getListQuangCao']);
 });
+
+Route::controller(HoaDonController::class)->group(function(){
+	Route::get('/api/checkHoaDonById/{idNguoiDung}/{idSanPham}','checkHoaDonById');
+	Route::post('/api/getListOrder','getListOrder');
+});
+
+Route::controller(YeuThichController::class)->group(function(){
+	Route::get('/api/checkYeuThich/{idNguoiDung}/{idSanPham}','checkYeuThich');
+	Route::get('/api/getSoLuongYeuThichByIdSanPham/{idSanPham}','getSoLuongYeuThichByIdSanPham');
+	Route::post('/api/addYeuThich','addYeuThich');
+	Route::delete('/api/deleteYeuThich','deleteYeuThich');
+	Route::post('/api/getListYeuThich','getListByIdUser');
+
+
+});
+
+
 
