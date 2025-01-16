@@ -147,6 +147,34 @@ class HoaDonController extends Controller
         }
     }
 
+    function thongKeDonHangTheoNgay()
+    {
+        try {
+            $data =  HoaDon::join('chitiethoadon AS c', 'c.idHoaDon', '=', 'hoadon.idHoaDon')
+                ->select(
+                    DB::raw('DATE(hoadon.ngayXacNhan) AS Ngay'),
+                    DB::raw('COUNT(hoadon.idHoaDon) AS SoDonHang'),
+                    DB::raw('SUM(c.tongTien) AS DoanhThu')
+                )
+                ->where('hoadon.trangThai', 2) // Giả sử trạng thái 2 là đã xác nhận
+                ->groupBy(DB::raw('DATE(hoadon.ngayXacNhan)'))
+                ->orderBy('Ngay')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Thống kê đơn hàng theo ngày',
+                'data' => $data
+            ], 200);
+        } catch (\Exception $err) {
+            return response()->json([
+                'success' => false,
+                'message' => 'lỗi server ' . $err->getMessage(),
+                'data' => []
+            ], 500);
+        }
+    }
+
     function thongKeSanPhamTheoNgay($idSanPham, $thang = null, $nam = null)
     {
         $thang = $thang ?: now()->month;
@@ -175,8 +203,7 @@ class HoaDonController extends Controller
             ], 500);
         }
     }
-
-    function getListHoaDon()
+      function getListHoaDon()
     {
         try {
             $data = DB::table('hoadon')
@@ -402,7 +429,5 @@ class HoaDonController extends Controller
             ], 500);
         }
     }
-
-
 
 }

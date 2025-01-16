@@ -1,22 +1,16 @@
 import { Table, Button } from "antd";
 import * as XLSX from "xlsx";
 
-const data = [
-  { date: "01/01/2023", orders: 10, revenue: 1000 },
-  { date: "02/01/2023", orders: 15, revenue: 1500 },
-  { date: "03/01/2023", orders: 20, revenue: 2000 },
-  { date: "04/01/2023", orders: 25, revenue: 2500 },
-];
 
 const columns = [
-  { title: "Ngày", dataIndex: "date", key: "date" },
-  { title: "Số đơn hàng", dataIndex: "orders", key: "orders" },
-  { title: "Doanh thu", dataIndex: "revenue", key: "revenue" },
+  { title: "Ngày", dataIndex: "Ngay", key: "Ngay" },
+  { title: "Số đơn hàng", dataIndex: "SoDonHang", key: "SoDonHang" },
+  { title: "Doanh thu", dataIndex: "DoanhThu", key: "DoanhThu" },
 ];
 
-export default function TableOrderStatistic() {
+export default function TableOrderStatistic({ dataThongKeLuotMua }) {
   const exportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(data);
+    const worksheet = XLSX.utils.json_to_sheet(dataThongKeLuotMua);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
     XLSX.writeFile(workbook, "Order_Statistics.xlsx");
@@ -31,7 +25,7 @@ export default function TableOrderStatistic() {
       >
         Xuất Excel
       </Button>
-      <Table columns={columns} dataSource={data} />
+      <Table columns={columns} dataSource={dataThongKeLuotMua} />
     </div>
   );
 }

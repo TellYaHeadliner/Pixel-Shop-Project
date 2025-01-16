@@ -31,7 +31,12 @@ class DanhGiaController extends Controller
     public function getListDanhGia()
     {
         try {
-            $data = DanhGia::orderByDesc('ngayGio')->get();
+            $data =  DB::table('DanhGia')
+                ->join('sanpham', 'sanpham.idSanPham', '=', 'DanhGia.idSanPham')
+                ->join('nguoidung', 'nguoidung.idNguoiDung', '=', 'DanhGia.idNguoiDung')
+                ->select('sanpham.tenSanPham', 'DanhGia.soSao', 'DanhGia.ngayGio', 'nguoidung.hoVaTen', 'DanhGia.noiDung', 'DanhGia.idSanPham', 'DanhGia.idNguoiDung')
+                ->orderBy('DanhGia.ngayGio', 'desc')
+                ->get();
             return response()->json([
                 'success' => true,
                 'message' => 'Danh sách đánh giá của sản phẩm ',
@@ -45,15 +50,16 @@ class DanhGiaController extends Controller
             ], 500);
         }
     }
-    function getDanhGiaById($idNguoiDung,$idSanPham){
-        $data = DanhGia::where('idNguoiDung',$idNguoiDung)
-            ->where('idSanPham',$idSanPham)
+    function getDanhGiaById($idNguoiDung, $idSanPham)
+    {
+        $data = DanhGia::where('idNguoiDung', $idNguoiDung)
+            ->where('idSanPham', $idSanPham)
             ->first();
-            return response()->json([
-                'success'=>true,
-                'message'=>"đánh giá sản phẩm ". $idSanPham . " của người dùng " .$idNguoiDung,
-                'data'=>$data
-            ]);
+        return response()->json([
+            'success' => true,
+            'message' => "đánh giá sản phẩm " . $idSanPham . " của người dùng " . $idNguoiDung,
+            'data' => $data
+        ]);
     }
     public  function checkDanhGia($idNguoiDung, $idSanPham)
     {
@@ -122,9 +128,9 @@ class DanhGiaController extends Controller
     {
         try {
             DB::table('danhgia')
-            ->where('idSanPham', $request['idSanPham'])
-            ->where('idNguoiDung', $request['idNguoiDung'])
-            ->delete();
+                ->where('idSanPham', $request['idSanPham'])
+                ->where('idNguoiDung', $request['idNguoiDung'])
+                ->delete();
             return response()->json([
                 'success' => true,
                 'message' => ' xóa đánh giá thành công',
@@ -138,6 +144,4 @@ class DanhGiaController extends Controller
             ], 500);
         }
     }
-
-
 }
