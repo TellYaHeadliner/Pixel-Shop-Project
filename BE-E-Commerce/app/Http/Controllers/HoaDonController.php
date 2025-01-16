@@ -319,6 +319,7 @@ class HoaDonController extends Controller
             ], 500);
         }
     }
+    
     function getListHoaDonHidden()
     {
         try {

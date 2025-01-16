@@ -64,6 +64,21 @@ const apiService = {
     getListQuangCao: async () => {
         return await axios.get(`${API_URL}/getListQuangCao`);
     },
+    loiNhuanHienTai: async () => {
+        return await axios.get(`${API_URL}/loiNhuanHienTai`);
+    },
+    sanPhamDaBanTheoThang: async () => {
+        return await axios.get(`${API_URL}/sanPhamDaBanTheoThang`);
+    },
+    thongKeDoanhThuTheoTatCaNguoiDung: async () => {
+        return await axios.get(`${API_URL}/thongKeDoanhThuTheoTatCaNguoiDung`);
+    },
+    thongKeDoanhThuSanPhamTheoNgay: async () => {
+        return await axios.get(`${API_URL}/thongKeDoanhThuSanPhamTheoNgay`);
+    },
+    thongKeDonHangTheoNgay: async () => {
+        return await axios.get(`${API_URL}/thongKeDonHangTheoNgay`);
+    },
 };
 
 export default apiService;
