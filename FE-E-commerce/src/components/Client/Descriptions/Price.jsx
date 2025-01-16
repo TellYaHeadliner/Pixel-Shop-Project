@@ -3,14 +3,16 @@ import { Typography, Flex, Row, Col } from "antd"
 const { Title } = Typography;
 const Price = ({ gia, khuyenMai }) => {
 
-    const giaKhuyenMai = (gia, khuyenMai) => {
-        if (gia == null || khuyenMai == null || gia <= 0 || khuyenMai < 0 || khuyenMai > 1) {
-            return null;
+     const giaKhuyenMai = (gia, khuyenMai) => {
+        if (gia == null || khuyenMai == null || gia <= 0 || khuyenMai < 0 || khuyenMai == 0) {
+            return null; // hoặc có thể trả về chuỗi thông báo
         } else {
-            const giaSauKhuyenMai = gia - (gia * khuyenMai);
-            return <span>Giá: {giaSauKhuyenMai.toLocaleString()} VNĐ</span>;
+            const giaSauKhuyenMai = gia - (gia * khuyenMai / 100);
+            return giaSauKhuyenMai; // trả về giá sau khuyến mãi
         }
     };
+
+    const giaSauKhuyenMai = giaKhuyenMai(gia, khuyenMai);
 
     return (
       <Row gutter={[16, 16]}>
@@ -19,11 +21,16 @@ const Price = ({ gia, khuyenMai }) => {
         </Col>
         <Col span={8}>
           <Title delete level={3}>
-            {khuyenMai ? (khuyenMai * 100) + "%" : ""} 
+            {khuyenMai ? khuyenMai + "%" : ""}
           </Title>
         </Col>
         <Col span={8}>
-          <Title level={3}>{giaKhuyenMai(gia, khuyenMai)}</Title>
+          <Title level={3}>
+            {" "}
+            {giaSauKhuyenMai !== null
+              ? giaSauKhuyenMai.toLocaleString() + " VNĐ"
+              : ""}
+          </Title>
         </Col>
       </Row>
     );

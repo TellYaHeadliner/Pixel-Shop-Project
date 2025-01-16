@@ -90,6 +90,7 @@ const UserProvider = ({ children }) => {
           "http://127.0.0.1:8000/api/getListSanPhamGioHang",
           {
             headers: {
+              'Authorization': 'Bearer ' + token,
               "Content-Type": "application/json",
             },
           }

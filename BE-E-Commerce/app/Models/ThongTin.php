@@ -17,7 +17,6 @@ class ThongTin extends Model
         'youtube',
         'tiktok'
     ];
-
     public $timestamps= false;
     protected $primaryKey = null;
     public $incrementing = false;

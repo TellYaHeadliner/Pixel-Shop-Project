@@ -5,7 +5,8 @@ const businessStatistic = {
     thongKeDoanhThuTheoThangVaNam: (thang, nam) => api.get(`/api/thongKeDoanhThuTheoThangVaNam/${thang}/${nam}`),
     thongKeDoanhThuTheoNguoiDung: (idNguoiDung) => api.get(`/api/thongKeDoanhThuTheoNguoiDung/${idNguoiDung}`),
     thongKeDoanhThuTheoTatCaNguoiDung: api.get('/api/thongKeDoanhThuTheoTatCaNguoiDung'),
-    thongKeDoanhThuSanPhamTheoNgay: api.get('/api/thongKeDoanhThuSanPhamTheoNgay')
+    thongKeDoanhThuSanPhamTheoNgay: api.get('/api/thongKeDoanhThuSanPhamTheoNgay'),
+    thongKeDonHangTheoNgay: api.get('/api/thongKeDonHangTheoNgay')
 }
 
 export default businessStatistic;
