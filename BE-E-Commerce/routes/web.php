@@ -106,6 +106,7 @@ Route::controller(HoaDonController::class)->group(function(){
 	Route::get('/api/thongKeDoanhThuTheoNguoiDung/{idNguoiDung}','thongKeDoanhThuTheoNguoDung');
 	Route::get('/api/thongKeDoanhThuTheoTatCaNguoiDung', 'thongKeDoanhThuTheoTatCaNguoiDung');
 	Route::get('/api/thongKeDoanhThuSanPhamTheoNgay','thongKeDoanhThuSanPhamTheoNgay');
+	Route::get('/api/thongKeDonHangTheoNgay', 'thongKeDonHangTheoNgay');
 });
 
 Route::controller(YeuThichController::class)->group(function(){
