@@ -203,41 +203,37 @@ class HoaDonController extends Controller
             ], 500);
         }
     }
-
-public function getListHoaDon()
-{
-    try {
-        $data = DB::table('hoadon')
-            ->join('diachi', 'hoadon.idDiaChi', '=', 'diachi.idDiaChi')
-            ->select('hoadon.idHoaDon', 'hoadon.tongSoTien', 'diachi.sdt', 'diachi.diaChi', 'hoadon.phuongThucThanhToan')
-            ->where(function($query) {
-                $query->whereNotNull('hoadon.thoiGianKhoa')
-                      ->orWhere('hoadon.thoiGianKhoa', '<', now()); // Sử dụng `now()` để lấy thời gian hiện tại
-            })
-            ->orderByRaw("
-                CASE 
-                    WHEN hoadon.trangThai = 0 THEN 1
-                    WHEN hoadon.trangThai = 1 THEN 2
-                    WHEN hoadon.trangThai = 2 THEN 3
-                    WHEN hoadon.trangThai = 3 THEN 4
-                END,
-                hoadon.ngayDat ASC
-            ")
-            ->get();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Danh sách đơn hàng',
-            'data' => $data
-        ], 200);
-    } catch (\Exception $err) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Lỗi server: ' . $err->getMessage(),
-            'data' => []
-        ], 500);
+      function getListHoaDon()
+    {
+        try {
+            $data = DB::table('hoadon')
+                ->join('diachi', 'hoadon.idDiaChi', '=', 'diachi.idDiaChi')
+                ->select('hoadon.idHoaDon', 'hoadon.tongSoTien', 'diachi.sdt', 'diachi.diaChi', 'hoadon.phuongThucThanhToan')
+                ->whereNull('hoadon.thoiGianKhoa')
+                ->orWhere('hoadon.thoiGianKhoa', '<', time())
+                ->orderByRaw("
+            CASE 
+                WHEN trangThai = 0 THEN 1
+                WHEN trangThai = 1 THEN 2
+                WHEN trangThai = 2 THEN 3
+                WHEN trangThai = 3 THEN 4
+            END,
+            ngayDat ASC
+        ")
+                ->get();
+            return response()->json([
+                'success' => true,
+                'message' => 'Danh sách đơn hàng',
+                'data' => $data
+            ], 200);
+        } catch (\Exception $err) {
+            return response()->json([
+                'success' => false,
+                'message' => 'lỗi server ' . $err->getMessage(),
+                'data' => []
+            ], 500);
+        }
     }
-}
     function getListHoaDonHidden()
     {
         try {
@@ -275,9 +271,10 @@ public function getListHoaDon()
                 ->join('nguoidung', 'hoadon.idNguoiDung', '=', 'nguoidung.idNguoiDung')
                 ->join('diachi', 'diachi.idDiaChi', '=', 'hoadon.idDiaChi')
                 ->join('chitiethoadon','chitiethoadon.idHoaDon','=','hoadon.idHoaDon')
-                ->select('hoadon.*','chitiethoadon.*', 'nguoidung.hoVaTen', 'diachi.diaChi', 'diachi.sdt', 'diachi.note')
-                ->where('idHoaDon', $idHoaDon)
-                ->first();
+                ->join('sanpham','chitiethoadon.idSanPham','=','sanpham.idSanPham')
+                ->select('hoadon.*','chitiethoadon.*','sanpham.img','sanpham.tenSanPham','sanpham.gia' , 'nguoidung.hoVaTen', 'diachi.diaChi', 'diachi.sdt', 'diachi.note')
+                ->where('hoadon.idHoaDon', $idHoaDon)
+                ->get();
 
             return response()->json([
                 'success' => true,
@@ -432,7 +429,5 @@ public function getListHoaDon()
             ], 500);
         }
     }
-
-
 
 }
