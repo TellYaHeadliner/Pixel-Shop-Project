@@ -21,7 +21,7 @@ use App\Http\Middleware\CheckEmailSignUp;
 
 
 Route::controller(UserController::class)->group(function () {
-	Route::post('/api/login', [UserController::class, 'login']);
+	Route::post('/api/login', [UserController::class, 'login'])->middleware(JWT::class. '1');
 	Route::post('/api/VerificationEmail', [UserController::class, 'sendVerificationEmail']);
 	Route::post('/api/signup', [UserController::class, 'signup'])->middleware(CheckEmailSignUp::class);
 	Route::post('/api/getProfile', [UserController::class, 'getById']);
@@ -103,6 +103,14 @@ Route::controller(HoaDonController::class)->group(function(){
 	Route::get('/api/thongKeDoanhThuTheoThangVaNam/{thang}/{nam}','thongKeDoanhThuTheoNgay');
 	Route::get('/api/thongKeDoanhThuTheoNguoiDung/{idNguoiDung}','thongKeDoanhThuTheoNguoDung');
 	Route::get('/api/thongKeSanPhamTheoThangVaNam/{thang}/{nam}','thongKeSanPhamTheoNgay');
+	Route::get('/api/getListHoaDon','getListHoaDon');
+	Route::get('/api/getListHoaDonHidden','getListHoaDonHidden');
+	Route::get('/api/getHoaDonById/{idHoaDon}','getHoaDonById');
+	Route::get('/api/getListHoaDonBySdt/{sdt}','getListHoaDonBySdt');
+	Route::get('/api/getListHoaDonByStatusAndDay/{status}/{day}','getListHoaDonByStatusAndDay');
+	Route::post('/api/getListHoaDonByStatus','getListHoaDonByStatus')->middleware(JWT::class.':3');
+	Route::put('/api/updateStatusHoaDon','updateStatusHoaDon');
+	Route::put('/api/updateHiddenHoaDon','updateHiddenHoaDon');
 
 });
 
