@@ -1,4 +1,3 @@
-// src/apiService.js
 import axios from 'axios';
 
 const API_URL = 'http://127.0.0.1:8000/api';
@@ -24,6 +23,15 @@ const apiService = {
     },
     getListDanhMuc: async () => {
         return await axios.get(`${API_URL}/listDanhMuc`);
+    },
+    addDanhMuc: async (categoryData) => {
+        return await axios.post(`${API_URL}/addDanhMuc`, categoryData);
+    },
+    updateDanhMuc: async (id, categoryData) => {
+        return await axios.put(`${API_URL}/updateDanhMuc/${id}`, categoryData);
+    },
+    deleteDanhMuc: async (id) => {
+        return await axios.delete(`${API_URL}/deleteDanhMuc/${id}`);
     },
     getThongTin: async () => {
         return await axios.get(`${API_URL}/getThongTin`);

@@ -1,109 +1,154 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Modal, Menu, Button, Input, Select, Tree, Checkbox } from 'antd';
+import { Modal, Menu, Button, Input, Checkbox, Tree, notification } from 'antd';
+import apiService from '../../../api/api';
 import './CategoryManagement.scss';
 
-const { Option } = Select;
+const { Search } = Input;
 
 const CategoryManagement = () => {
-    const initialCategories = [
-        {
-            idDanhMuc: 1,
-            tenDanhMuc: "Điện thoại",
-            child: [
-                {
-                    idDanhMuc: 3,
-                    tenDanhMuc: "Điện thoại 1",
-                    child: [
-                        {
-                            idDanhMuc: 6,
-                            tenDanhMuc: "Điện thoại 12",
-                            child: []
-                        }
-                    ]
-                },
-                {
-                    idDanhMuc: 4,
-                    tenDanhMuc: "Điện thoại 2",
-                    child: [
-                        {
-                            idDanhMuc: 7,
-                            tenDanhMuc: "Điện thoại 21",
-                            child: [
-                                {
-                                    idDanhMuc: 9,
-                                    tenDanhMuc: "Điện thoại 211",
-                                    child: []
-                                }
-                            ]
-                        },
-                        {
-                            idDanhMuc: 8,
-                            tenDanhMuc: "Điện thoại 22",
-                            child: []
-                        }
-                    ]
-                },
-                {
-                    idDanhMuc: 5,
-                    tenDanhMuc: "Điện thoại 3",
-                    child: []
-                }
-            ]
-        },
-        {
-            idDanhMuc: 2,
-            tenDanhMuc: "Laptop",
-            child: [
-                {
-                    idDanhMuc: 10,
-                    tenDanhMuc: "Laptop 1",
-                    child: []
-                }
-            ]
-        }
-    ];
-
-    const [categories, setCategories] = useState(initialCategories);
+    const [categories, setCategories] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [categoryName, setCategoryName] = useState('');
     const [selectedParent, setSelectedParent] = useState(null);
-    const [selectedChild, setSelectedChild] = useState(null);
     const [contextMenu, setContextMenu] = useState({ visible: false, position: {}, category: null });
     const [isEditModalVisible, setEditModalVisible] = useState(false);
     const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
     const [newCategoryName, setNewCategoryName] = useState('');
     const [isSubCategory, setIsSubCategory] = useState(false);
 
-    const addCategory = () => {
-        if (!categoryName.trim()) return;
-        const newCategory = { idDanhMuc: Date.now(), tenDanhMuc: categoryName, child: [] };
-        const updateCategories = (list) => list.map(cat => {
-            if (cat.idDanhMuc === (selectedChild ? selectedParent.idDanhMuc : selectedParent?.idDanhMuc)) {
-                return {
-                    ...cat,
-                    child: selectedChild ?
-                        cat.child.map(subCat => subCat.idDanhMuc === selectedChild.idDanhMuc ? { ...subCat, child: [...subCat.child, newCategory] } : subCat)
-                        : [...cat.child, newCategory]
-                };
+    // Fetch categories every second
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await apiService.getListDanhMuc();
+                setCategories(Array.isArray(response.data.data) ? response.data.data : []);
+            } catch (error) {
+                console.error("Error fetching categories:", error);
             }
-            return cat;
-        });
+        };
 
-        setCategories(selectedChild || selectedParent ? updateCategories(categories) : [...categories, newCategory]);
-        resetForm();
+        fetchCategories();
+        const intervalId = setInterval(fetchCategories, 1000);
+        return () => clearInterval(intervalId);
+    }, []);
+
+    const handleClickOutside = (event) => {
+        if (isEditModalVisible && !event.target.closest('.ant-modal')) {
+            setEditModalVisible(false);
+        }
+        if (isDeleteModalVisible && !event.target.closest('.ant-modal')) {
+            setDeleteModalVisible(false);
+        }
+        if (contextMenu.visible && !event.target.closest('.ant-menu')) {
+            setContextMenu({ ...contextMenu, visible: false });
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isEditModalVisible, isDeleteModalVisible, contextMenu.visible]);
+
+    const addCategory = async () => {
+        if (!categoryName.trim()) {
+            notification.warning({ message: 'Cảnh báo', description: 'Tên danh mục không được để trống!' });
+            return;
+        }
+
+        let categoryData = { tenDanhMuc: categoryName };
+
+        // Kiểm tra điều kiện để xác định idDanhMucCha
+        if (isSubCategory && selectedParent) {
+            categoryData.idDanhMucCha = selectedParent.idDanhMuc;
+        } else if (!isSubCategory && selectedParent) {
+            categoryData.idDanhMucCha = selectedParent.idDanhMuc;
+        } else {
+            categoryData.idDanhMucCha = null; // Tạo danh mục cấp cao nhất
+        }
+
+        try {
+            const response = await apiService.addDanhMuc(categoryData);
+            const newCategory = { ...response.data.data, child: [] };
+
+            setCategories(prev => {
+                const updatedCategories = [...prev];
+                if (isSubCategory && selectedParent) {
+                    const parentIndex = updatedCategories.findIndex(cat => cat.idDanhMuc === selectedParent.idDanhMuc);
+                    if (parentIndex !== -1) {
+                        updatedCategories[parentIndex].child.push(newCategory);
+                    }
+                } else if (selectedParent) {
+                    const parentIndex = updatedCategories.findIndex(cat => cat.idDanhMuc === selectedParent.idDanhMuc);
+                    if (parentIndex !== -1) {
+                        updatedCategories.splice(parentIndex + 1, 0, newCategory);
+                    }
+                } else {
+                    updatedCategories.push(newCategory);
+                }
+                return updatedCategories;
+            });
+
+            resetForm();
+            notification.success({ message: 'Thành công', description: 'Danh mục đã được thêm thành công!' });
+        } catch (error) {
+            console.error("Error adding category:", error);
+            notification.error({ message: 'Lỗi', description: 'Có lỗi xảy ra khi thêm danh mục!' });
+        }
+    };
+
+    const deleteCategory = async () => {
+        if (contextMenu.category) {
+            const hasChildren = contextMenu.category.child && contextMenu.category.child.length > 0;
+            if (hasChildren) {
+                notification.warning({ message: 'Cảnh báo', description: 'Không thể xóa danh mục này vì nó có danh mục con.' });
+                return;
+            }
+
+            const categoryId = contextMenu.category.key;
+            try {
+                await apiService.deleteDanhMuc(categoryId);
+                setCategories(prev => prev.filter(cat => cat.idDanhMuc !== categoryId));
+                notification.success({ message: 'Thành công', description: 'Danh mục đã được xóa!' });
+            } catch (error) {
+                console.error("Error deleting category:", error);
+                notification.error({ message: 'Lỗi', description: 'Có lỗi xảy ra khi xóa danh mục!' });
+            }
+        }
+        setDeleteModalVisible(false);
+    };
+
+    const updateCategoryName = async () => {
+        if (contextMenu.category) {
+            const categoryId = contextMenu.category.key;
+
+            try {
+                await apiService.updateDanhMuc(categoryId, { tenDanhMuc: newCategoryName });
+                setCategories(prev => {
+                    const updatedCategories = prev.map(cat => {
+                        if (cat.idDanhMuc === categoryId) {
+                            return { ...cat, tenDanhMuc: newCategoryName };
+                        }
+                        return cat;
+                    });
+                    return updatedCategories;
+                });
+
+                notification.success({ message: 'Thành công', description: 'Danh mục đã được cập nhật!' });
+            } catch (error) {
+                console.error("Error updating category:", error);
+                notification.error({ message: 'Lỗi', description: 'Có lỗi xảy ra khi cập nhật danh mục!' });
+            }
+        }
+        setEditModalVisible(false);
     };
 
     const resetForm = () => {
         setCategoryName('');
         setSelectedParent(null);
-        setSelectedChild(null);
         setIsSubCategory(false);
-    };
-
-    const handleSelect = (setSelected, category) => {
-        setSelected(category);
-        if (setSelected === setSelectedParent) setSelectedChild(null);
     };
 
     const showContextMenu = (e, category) => {
@@ -111,9 +156,42 @@ const CategoryManagement = () => {
         setContextMenu({ visible: true, position: { x: e.clientX, y: e.clientY }, category });
     };
 
+    const filterCategories = (data = [], term) => {
+        return Array.isArray(data)
+            ? data
+                .map(cat => {
+                    const matchedChildren = filterCategories(cat.child || [], term);
+                    if (cat.tenDanhMuc.toLowerCase().includes(term.toLowerCase()) || matchedChildren.length > 0) {
+                        return { ...cat, child: matchedChildren };
+                    }
+                    return null;
+                })
+                .filter(Boolean)
+            : [];
+    };
+
+    const findCategoryById = (data, id) => {
+        for (const category of data) {
+            if (category.idDanhMuc === id) {
+                return category;
+            }
+            const found = findCategoryById(category.child || [], id);
+            if (found) {
+                return found;
+            }
+        }
+        return null;
+    };
+
+    const menuItems = [
+        { key: "edit", label: "Sửa", icon: <EditOutlined /> },
+        { key: "delete", label: "Xóa", icon: <DeleteOutlined /> },
+    ];
+
+    const filteredCategories = filterCategories(categories, searchTerm);
+
     const handleMenuClick = (action) => {
         if (!contextMenu.category) return;
-        console.log(contextMenu.category);
         if (action === "edit") {
             setNewCategoryName(contextMenu.category.tenDanhMuc);
             setEditModalVisible(true);
@@ -123,61 +201,19 @@ const CategoryManagement = () => {
         setContextMenu({ ...contextMenu, visible: false });
     };
 
-    const updateCategoryName = (id, newName) => {
-        const update = (list) => list.map(cat => {
-            if (cat.idDanhMuc === id) return { ...cat, tenDanhMuc: newName };
-            if (cat.child) cat.child = update(cat.child);
-            return cat;
-        });
-        setCategories(update(categories));
-        alert('Danh mục đã được cập nhật!');
-    };
-
-    const deleteCategory = (id) => {
-        const update = (list) => list.filter(cat => {
-            if (cat.idDanhMuc === id) return false;
-            if (cat.child) cat.child = update(cat.child);
-            return true;
-        });
-        setCategories(update(categories));
-        alert('Danh mục đã được xóa!');
-    };
-
-    const handleEdit = () => {
-        if (contextMenu.category) {
-            updateCategoryName(contextMenu.category.idDanhMuc, newCategoryName);
-        }
-        setEditModalVisible(false);
-    };
-
-    const confirmDelete = () => {
-        if (contextMenu.category) {
-            deleteCategory(contextMenu.category.idDanhMuc);
-        }
-        setDeleteModalVisible(false);
-    };
-
     const renderTree = (data) => {
-        return data.map(cat => ({
-            title: cat.tenDanhMuc,
-            key: cat.idDanhMuc,
-            children: cat.child.length > 0 ? renderTree(cat.child) : [],
-        }));
-    };
-
-    const filterCategories = (data, term) => {
-        return data
-            .map(cat => {
-                const matchedChildren = filterCategories(cat.child, term);
-                if (cat.tenDanhMuc.toLowerCase().includes(term.toLowerCase()) || matchedChildren.length > 0) {
-                    return { ...cat, child: matchedChildren };
-                }
+        return data.map(cat => {
+            if (!cat.idDanhMuc) {
+                console.warn("Danh mục không có idDanhMuc:", cat);
                 return null;
-            })
-            .filter(Boolean);
+            }
+            return {
+                title: cat.tenDanhMuc,
+                key: cat.idDanhMuc.toString(),
+                children: cat.child && cat.child.length > 0 ? renderTree(cat.child) : [],
+            };
+        }).filter(Boolean);
     };
-
-    const filteredCategories = filterCategories(categories, searchTerm);
 
     return (
         <div className="category-management-container">
@@ -192,7 +228,7 @@ const CategoryManagement = () => {
                 <Checkbox
                     checked={isSubCategory}
                     onChange={(e) => setIsSubCategory(e.target.checked)}
-                    style={{ marginTop: '10px' }}
+                    style={{ margin: '10px 0', opacity: '0' }}
                 >
                     Đây là danh mục con
                 </Checkbox>
@@ -200,8 +236,10 @@ const CategoryManagement = () => {
                     treeData={renderTree(filteredCategories)}
                     onRightClick={(e) => showContextMenu(e.event, e.node)}
                     onSelect={(keys) => {
-                        const selected = categories.find(cat => cat.idDanhMuc === Number(keys[0]));
-                        handleSelect(setSelectedParent, selected);
+                        const selected = findCategoryById(categories, Number(keys[0]));
+                        if (selected) {
+                            setSelectedParent(selected); // Set selected parent
+                        }
                     }}
                 />
                 <Button
@@ -214,9 +252,9 @@ const CategoryManagement = () => {
                 </Button>
             </div>
 
-            <div className="view-section" style={{width:'auto'}}>
+            <div className="view-section" style={{ width: 'auto' }}>
                 <h4 className="view-title">Xem và quản lý danh mục</h4>
-                <Input
+                <Search
                     placeholder="Tìm kiếm danh mục"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -226,8 +264,14 @@ const CategoryManagement = () => {
                     treeData={renderTree(filteredCategories)}
                     onRightClick={(e) => showContextMenu(e.event, e.node)}
                     onSelect={(keys) => {
-                        const selected = categories.find(cat => cat.idDanhMuc === Number(keys[0]));
-                        handleSelect(setSelectedParent, selected);
+                        const selected = findCategoryById(categories, Number(keys[0]));
+                        if (selected) {
+                            console.log({
+                                idDanhMuc: selected.idDanhMuc,
+                                tenDanhMuc: selected.tenDanhMuc,
+                                idDanhMucCha: selected.idDanhMucCha,
+                            });
+                        }
                     }}
                 />
             </div>
@@ -236,16 +280,14 @@ const CategoryManagement = () => {
                 <Menu
                     style={{ position: 'absolute', left: contextMenu.position.x, top: contextMenu.position.y }}
                     onClick={({ key }) => handleMenuClick(key)}
-                >
-                    <Menu.Item key="edit" icon={<EditOutlined />}>Sửa</Menu.Item>
-                    <Menu.Item key="delete" icon={<DeleteOutlined />}>Xóa</Menu.Item>
-                </Menu>
+                    items={menuItems}
+                />
             )}
 
             <Modal
                 title="Sửa tên danh mục"
                 open={isEditModalVisible}
-                onOk={handleEdit}
+                onOk={updateCategoryName}
                 onCancel={() => setEditModalVisible(false)}
             >
                 <Input
@@ -257,14 +299,18 @@ const CategoryManagement = () => {
 
             <Modal
                 title="Xác nhận xóa"
-                visible={isDeleteModalVisible}
-                onOk={confirmDelete}
+                open={isDeleteModalVisible}
+                onOk={deleteCategory}
                 onCancel={() => setDeleteModalVisible(false)}
             >
-                <p>Bạn có chắc chắn muốn xóa danh mục "{contextMenu.category?.tenDanhMuc}" không?</p>
+                <p>Bạn có chắc chắn muốn xóa danh mục không?</p>
             </Modal>
         </div>
     );
 };
 
-export default CategoryManagement;
+const App = () => (
+    <CategoryManagement />
+);
+
+export default App;

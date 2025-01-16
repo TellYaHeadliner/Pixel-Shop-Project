@@ -33,8 +33,10 @@ Route::controller(UserController::class)->group(function () {
 });
 
 Route::controller(DanhMucController::class)->group(function () {
-	Route::get('/api/listDanhMuc', [DanhMucController::class, 'getList']);
-	Route::post('/api/addDanhMuc','add');
+    Route::get('/api/listDanhMuc', [DanhMucController::class, 'getList']); 
+    Route::post('/api/addDanhMuc', 'add'); 
+    Route::put('/api/updateDanhMuc/{id}', 'update'); 
+    Route::delete('/api/deleteDanhMuc/{id}', 'delete'); 
 });
 
 Route::controller(DanhGiaController::class)->group(function () {
@@ -103,6 +105,10 @@ Route::controller(BaiVietController::class)->group(function(){
 Route::controller(HoaDonController::class)->group(function(){
 	Route::get('/api/checkHoaDonById/{idNguoiDung}/{idSanPham}','checkHoaDonById');
 	Route::post('/api/getListOrder','getListOrder');
+	Route::get('/api/thongKeDoanhThuTheoThangVaNam/{thang}/{nam}','thongKeDoanhThuTheoNgay');
+	Route::get('/api/thongKeDoanhThuTheoNguoiDung/{idNguoiDung}','thongKeDoanhThuTheoNguoDung');
+	Route::get('/api/thongKeSanPhamTheoThangVaNam/{thang}/{nam}','thongKeSanPhamTheoNgay');
+
 });
 
 Route::controller(YeuThichController::class)->group(function(){

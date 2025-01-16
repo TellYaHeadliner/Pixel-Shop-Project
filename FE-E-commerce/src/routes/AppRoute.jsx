@@ -26,6 +26,8 @@ const ProfileOrderReceived = lazy(() => import("../pages/Client/Profile/ProfileO
 const ProfileOrderCanceled = lazy(() => import("../pages/Client/Profile/ProfileOrderCanceled"));
 
 const ListOrder = lazy(() => import("../pages/Client/Profile/ListOrder"));
+const SearchProduct = lazy(() => import("../pages/Client/Search/SearchProduct"));
+
 
 
 // Admin components
@@ -83,6 +85,8 @@ const AppRoutes = () => {
         <Route path="product" element={<DetailProduct />} />
         <Route path="payment" element={<Payment />} />
         <Route path="shoppingcart" element={<ShoppingCart />} />
+        <Route path="searchproduct/:categoriess?/:texts?/:conditions?/:pages?" element={<SearchProduct />} />
+
       </Route>
 
         <Route path="/admin" element={

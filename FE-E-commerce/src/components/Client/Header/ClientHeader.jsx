@@ -1,13 +1,14 @@
-import React, { useState, useContext } from "react";
-import { Layout, Button, Tree, Badge } from "antd";
+import React, { useState, useContext, useEffect } from "react";
+import { Layout, Button, Tree, Badge, Spin } from "antd";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { FaUser, FaBars } from "react-icons/fa";
 import { FiShoppingCart } from "react-icons/fi";
 import apiService from "../../../api/api";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useParams } from "react-router-dom";
 import { UserContext } from '../../../routes/UserContext.jsx'; 
 import ModalLoginAndRegister from "../Modals/ModalLoginAndRegister";
 import styles from "./ClientHeader.module.scss";
+
 
 const { Header } = Layout;
 
@@ -39,11 +40,39 @@ const IconButtonNavHeader = ({ name, onClick, className }) => {
 };
 
 export const ClientHeader = () => {
+  const {categoriess,conditions,texts} = useParams();
   const navigate = useNavigate();
   const [showModalLogin, setShowModalLogin] = useState(false);
   const [titleLogin, setTitleLogin] = useState(false);
   const [showTree, setShowTree] = useState(false);
-  const { cartItemCount , login ,role } = useContext(UserContext); 
+  const [treeData, setTreeData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { cartItemCount, login, role } = useContext(UserContext); 
+  const [searchText, setSearchText] = useState(texts);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await apiService.getListDanhMuc();
+        const formattedData = formatTreeData(response.data.data); // Format data if needed
+        setTreeData(formattedData);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  const formatTreeData = (data) => {
+    return data.map(item => ({
+      title: item.tenDanhMuc,
+      key: item.idDanhMuc,
+      children: item.child && item.child.length > 0 ? formatTreeData(item.child) : [],
+    }));
+  };
 
   const handleShowModalLogin = (isLogin = true) => {
     setTitleLogin(isLogin);
@@ -63,18 +92,22 @@ export const ClientHeader = () => {
 
   const onSelect = (selectedKeys, info) => {
     console.log('Selected:', selectedKeys, info);
-    // Navigate to a different page or perform an action based on selected category
-    navigate(`/category/${selectedKeys[0]}`); // Example to navigate to category page
+    navigate(`/searchproduct/${selectedKeys[0]}`);
   };
 
   const handleLoginClick = () => {
-    if (login && role ===3) {
-      navigate("/profile"); 
+    if (login && role === 3) {
+      navigate("/profile");
     } else {
       handleShowModalLogin(true);
     }
   };
-
+  const handleSearch = (event) => {
+    if (event.key === 'Enter') {
+      navigate(`/searchproduct/${categoriess ?? 0}/${searchText==""?" ":searchText??" "}/${conditions??0}/1`)
+    }
+    return event ;
+  };
   return (
     <Header className={styles.header}>
       <div className={styles.searchAndButtons}>
@@ -83,6 +116,9 @@ export const ClientHeader = () => {
             className={styles.searchInput}
             type="text"
             placeholder="Tìm kiếm"
+            defaultValue={texts}
+            onChange={(e) => setSearchText(e.target.value)}
+            onKeyDown={handleSearch}
           />
         </div>
         <Badge>
@@ -115,12 +151,16 @@ export const ClientHeader = () => {
         </Button>
         {showTree && (
           <div className={styles.tree}>
-            <Tree
-              showLine
-              treeData={treeData}
-              onSelect={onSelect}
-              style={{ flex: 1 }}
-            />
+            {loading ? (
+              <Spin />
+            ) : (
+              <Tree
+                showLine
+                treeData={treeData}
+                onSelect={onSelect}
+                style={{ flex: 1 }}
+              />
+            )}
           </div>
         )}
         <nav className={styles.navigation}>
