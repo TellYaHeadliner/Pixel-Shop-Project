@@ -6,19 +6,23 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\GioHang;
 use App\Models\SanPham;
-
+use stdClass;
 
 class GioHangController extends Controller
 {
-    function getListSanPhamGioHang()
+    function getListSanPhamGioHang(Request $request)
     {
 
         try {
             $listSanPham = DB::table('giohang')
-                ->select('giohang.idSanPham', 'giohang.soLuong', 'sanpham.tenSanPham', 'sanpham.gia')
+                ->select('giohang.idSanPham', 'giohang.soLuong', 'sanpham.tenSanPham', 'sanpham.gia','khuyenmai.phanTram')
                 ->join('sanpham', 'sanpham.idSanPham', '=', 'giohang.idSanPham')
-                ->where('giohang.idNguoiDung', '=', 1)
+                ->join('khuyenmai','sanpham.idKhuyenMai','=','khuyenmai.idKhuyenMai')
+                ->where('giohang.idNguoiDung', '=', $request['idNguoiDung'])
                 ->get();
+            foreach($listSanPham as $item){
+             $item->gia= $item->gia - ($item->gia * ($item->phanTram / 100) );
+            }
             return response()->json([
                 'success' => true,
                 'message' => "Danh sách sản phẩm giỏ hàng người dùng id:",
