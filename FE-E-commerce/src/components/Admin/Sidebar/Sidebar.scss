@@ -37,7 +37,9 @@
     &-menu {
         list-style: none;
         margin: 0;
-        padding: 0;
+        padding: 0px 10px;
+        height: 100%;
+        width: fit-content;
 
         &-item {
             cursor: pointer;
@@ -45,9 +47,8 @@
             border-radius: 10px;
             align-content: center;
             justify-content: center;
-
             & a {
-                height: 30px;
+                height: 10px;
                 width: 300px;
                 padding: 14px 1px 40px 10px;
                 text-decoration: none;

@@ -1,5 +1,5 @@
-import React, { useState, useContext } from "react";
-import { Layout, Button, Tree, Badge } from "antd";
+import React, { useState, useContext, useEffect } from "react";
+import { Layout, Button, Tree, Badge, Spin } from "antd";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { FaUser, FaBars } from "react-icons/fa";
 import { FiShoppingCart } from "react-icons/fi";
@@ -43,7 +43,33 @@ export const ClientHeader = () => {
   const [showModalLogin, setShowModalLogin] = useState(false);
   const [titleLogin, setTitleLogin] = useState(false);
   const [showTree, setShowTree] = useState(false);
-  const { cartItemCount , login ,role } = useContext(UserContext); 
+  const [treeData, setTreeData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { cartItemCount, login, role } = useContext(UserContext); 
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await apiService.getListDanhMuc();
+        const formattedData = formatTreeData(response.data.data); // Format data if needed
+        setTreeData(formattedData);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  const formatTreeData = (data) => {
+    return data.map(item => ({
+      title: item.tenDanhMuc,
+      key: item.idDanhMuc,
+      children: item.child && item.child.length > 0 ? formatTreeData(item.child) : [],
+    }));
+  };
 
   const handleShowModalLogin = (isLogin = true) => {
     setTitleLogin(isLogin);
@@ -63,13 +89,12 @@ export const ClientHeader = () => {
 
   const onSelect = (selectedKeys, info) => {
     console.log('Selected:', selectedKeys, info);
-    // Navigate to a different page or perform an action based on selected category
-    navigate(`/category/${selectedKeys[0]}`); // Example to navigate to category page
+    navigate(`/category/${selectedKeys[0]}`);
   };
 
   const handleLoginClick = () => {
-    if (login && role ===3) {
-      navigate("/profile"); 
+    if (login && role === 3) {
+      navigate("/profile");
     } else {
       handleShowModalLogin(true);
     }
@@ -115,12 +140,16 @@ export const ClientHeader = () => {
         </Button>
         {showTree && (
           <div className={styles.tree}>
-            <Tree
-              showLine
-              treeData={treeData}
-              onSelect={onSelect}
-              style={{ flex: 1 }}
-            />
+            {loading ? (
+              <Spin />
+            ) : (
+              <Tree
+                showLine
+                treeData={treeData}
+                onSelect={onSelect}
+                style={{ flex: 1 }}
+              />
+            )}
           </div>
         )}
         <nav className={styles.navigation}>
