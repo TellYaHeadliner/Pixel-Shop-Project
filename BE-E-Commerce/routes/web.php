@@ -21,7 +21,7 @@ use App\Http\Middleware\CheckEmailSignUp;
 
 
 Route::controller(UserController::class)->group(function () {
-	Route::post('/api/login', [UserController::class, 'login'])->middleware(JWT::class. '1');
+	Route::post('/api/login', [UserController::class, 'login']);
 	Route::post('/api/VerificationEmail', [UserController::class, 'sendVerificationEmail']);
 	Route::post('/api/signup', [UserController::class, 'signup'])->middleware(CheckEmailSignUp::class);
 	Route::post('/api/getProfile', [UserController::class, 'getById']);

@@ -345,7 +345,7 @@ public function getListHoaDon()
                 ->join('diachi', 'diachi.idDiaChi', '=', 'hoadon.idDiaChi')
                 ->select('hoadon.*', 'nguoidung.*', 'diachi.*')
                 ->where('hoadon.trangThai', $request['trangThai'])
-                ->Where('idNguoiDung',$request['idNguoiDung'])
+                ->Where('hoadon.idNguoiDung',$request['idNguoiDung'])
                 ->get();
             return response()->json([
                 'success' => true,
