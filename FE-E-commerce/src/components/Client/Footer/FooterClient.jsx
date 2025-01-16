@@ -1,5 +1,5 @@
 import React from "react";
-import { Row, Col, Layout, Input, Button } from "antd";
+import { Row, Col, Layout } from "antd";
 import styles from "./FooterClient.module.css";
 
 const { Footer } = Layout;
@@ -7,11 +7,23 @@ const { Footer } = Layout;
 const FooterClient = () => (
   <Footer className={styles.footerClient} style={{ backgroundColor: '#f0f0f0', color: '#000', padding: '40px 50px' }}>
     <Row justify="space-between">
+      <Col span={24}>
+        <h1 style={{ textAlign: 'left' }}>PIXEL</h1>
+      </Col>
+    </Row>
+    <Row justify="space-between" className="mt-4">
       <Col span={12}>
-        <h1>PIXEL</h1>
-        <p>Đăng ký để nhận các thông báo mới nhất</p>
-        <Input placeholder="*Email" style={{ width: '300px', marginBottom: '10px' }} />
-        <Button type="primary">Đăng ký</Button>
+        <p>Địa chỉ & Thông tin liên hệ:</p>
+        <ul style={{ listStyle: 'none', paddingLeft: 0 }}>
+          <li>Trụ sở chính: 65 Huỳnh Thúc Kháng, P. Bến Nghé, Q. 1, TP.HCM</li>
+          <li>Tổng đài hỗ trợ: 1900 123 456 (7:00 - 22:00 hàng ngày)</li>
+          <li>Email: support@ecommerce.com</li>
+        </ul>
+        <p>Phương thức thanh toán hỗ trợ:</p>
+        <ul style={{ listStyle: 'none', paddingLeft: 0 }}>
+          <li>VNPAY</li>
+          <li>Thanh toán COD (Cash on Delivery)</li>
+        </ul>
       </Col>
       <Col span={12}>
         <h2>Kết nối với chúng tôi:</h2>
@@ -26,23 +38,6 @@ const FooterClient = () => (
           <li>Giới thiệu</li>
           <li>Chính sách bảo mật</li>
           <li>Điều khoản sử dụng</li>
-        </ul>
-      </Col>
-    </Row>
-    <Row className="mt-3" gutter={[16, 16]}>
-      <Col span={16}>
-        <p className="m-0">Địa chỉ & Thông tin liên hệ:</p>
-        <ul>
-          <li>Trụ sở chính: 65 Huỳnh Khúc Kháng, P. Bến Nghé, Q. 1, TP.HCM</li>
-          <li>Tổng đài hỗ trợ: 1900 123 456 (7:00 - 22:00 hàng ngày)</li>
-          <li>Email: support@ecommerce.com</li>
-        </ul>
-      </Col>
-      <Col span={8}>
-        <p className="m-0">Phương thức thanh toán hỗ trợ:</p>
-        <ul>
-          <li>VNPAY</li>
-          <li>Thanh toán COD (Cash on Delivery)</li>
         </ul>
       </Col>
     </Row>

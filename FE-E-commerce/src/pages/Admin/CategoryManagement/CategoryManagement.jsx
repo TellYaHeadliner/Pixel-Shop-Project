@@ -29,7 +29,7 @@ const CategoryManagement = () => {
         };
 
         fetchCategories();
-        const intervalId = setInterval(fetchCategories, 1000);
+        const intervalId = setInterval(fetchCategories, 2000);
         return () => clearInterval(intervalId);
     }, []);
 
