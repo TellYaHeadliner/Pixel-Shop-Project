@@ -35,6 +35,8 @@ class Jwt
             }
            $request->attributes->set('token',$decode);
 
+           $request->merge(['idNguoiDung'=>$decode->idNguoiDung]);
+           
         } catch(\Firebase\JWT\ExpiredException $err){
             return response()->json(['error' => 'Token het han' . $err->getMessage()], 401);
         }

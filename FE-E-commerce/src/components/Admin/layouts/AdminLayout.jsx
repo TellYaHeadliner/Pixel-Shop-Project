@@ -4,9 +4,15 @@ import "./AdminLayout.scss"; // Đảm bảo import CSS
 import Sidebar from '../Sidebar/Sidebar';
 import "./AdminLayout.scss";
 const { Content, Sider } = Layout;
+import { useEffect } from 'react';
 
 
 export default function AdminLayout() {
+
+    useEffect(() => {
+        document.title = 'Quản trị';
+    }, []);
+    
     return (
         <Layout style={{ minHeight: '100vh' }}>
             <Sidebar />

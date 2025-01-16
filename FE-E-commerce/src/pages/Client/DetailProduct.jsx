@@ -24,7 +24,7 @@ const DetailProduct = () => {
   const [detailProduct, setDetailProduct] = useState(null);
   const [spLienQuan, setSPLienQuan] = useState([]);
   const [rating, setRating] = useState(null);
-  const [khuyenmai,setKhuyenMai]=useState(0);
+  const [khuyenmai,setKhuyenMai] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -55,7 +55,7 @@ const DetailProduct = () => {
         <Col md={10}>
           <ImageProduct img={product?.img} />
           <HeadingProduct tenSanPham={product?.tenSanPham} /> 
-          <Price gia={product?.gia} />  
+          <Price gia={product?.gia} khuyenMai={khuyenmai}/>  
           <Row justify="flex-start" align="middle">
             <Col>
               <StarRating />
