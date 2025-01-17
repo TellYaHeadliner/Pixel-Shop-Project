@@ -43,8 +43,8 @@ const ModalLoginAndRegister = ({ show, onClose }) => {
         document.cookie = `token=${token}; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT`;
         message.success(response.data.message);
         onClose();
-        window.location.reload();
         navigate(role === 1 ? "/admin" : role === 2 ? "/staff" : "/");
+        window.location.reload();
         console.log(response.data);
       } else {
         message.error(response.data.message);

@@ -110,7 +110,7 @@ class UserController extends Controller
             'anhDaiDien' => $User['anhDaiDien'],
             'role' => $User['vaiTro'],
             'iat' => time(),
-            'exp' => time() + 60 * 60,
+            'exp' => time() + 3600*2,
         ];
 
         session()->forget(["login_solanthu_{$User['idNguoiDung']}", "login_timeblock_{$User['idNguoiDung']}", "login_captcha_{$User['idNguoiDung']}"]);
