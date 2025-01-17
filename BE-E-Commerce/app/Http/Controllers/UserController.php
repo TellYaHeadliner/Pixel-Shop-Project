@@ -216,7 +216,7 @@ class UserController extends Controller
         } catch (\Exception $err) {
             return response()->json([
                 'success' => false,
-                'message' => 'Gửi mã thất bại. vui lòng thử lại',
+                'message' => 'Gửi mã thất bại. vui lòng thử lại'.$err->getMessage(),
                 'data' => [],
             ], 500);
         }

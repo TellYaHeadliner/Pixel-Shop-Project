@@ -145,17 +145,19 @@ export default function ProfileLocation() {
             const response=await axios.post(
                   "http://127.0.0.1:8000/api/deleteLocation",
                  {idDiaChi:id},
-                  {headers: {'Content-Type': 'application/json',
+                  {headers: {
+                    'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + token,
-
                   }}
             )
             if(response.data.success){
+                
                 message.success(response.data.message);
                 handleGetListLocation();
                
             }
         }catch(e){
+            console.log(e.response.data)
             message.error(e.response.data.message);
         }
        
@@ -273,7 +275,7 @@ export default function ProfileLocation() {
                         </Form.Item>
                         <Form.Item
                             className='col-4'
-                            label="Quận/Huyện"
+                            label="Xã/Phường"
                             name="ward"
                             rules={[{ required: true, message: 'Vui lòng nhập tỉnh thành!' }]}
                         >

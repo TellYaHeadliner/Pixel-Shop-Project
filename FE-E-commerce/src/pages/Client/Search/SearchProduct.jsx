@@ -10,8 +10,8 @@ const { Option } = Select;
 export default function SearchProduct() {
   const navigate = useNavigate();
   const {categoriess,conditions,texts,pages} = useParams();
-  const [SanPham, setSanPham] = useState([]); // Danh sách sản phẩm hiển thị
-  const [filter, setFilter] = useState(""); // Lọc sản phẩm theo hãng
+  const [SanPham, setSanPham] = useState([]);
+  const [filter, setFilter] = useState(""); 
   const [condition, setCondition] = useState(parseInt(conditions, 10));
   const [count,setCount] = useState([]);
   const [text, setText] = useState(texts);
