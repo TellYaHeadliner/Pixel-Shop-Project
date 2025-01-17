@@ -550,4 +550,56 @@ class HoaDonController extends Controller
             ], 500);
         }
     }
+
+    function create_payment(Request $request){
+        try { 
+            // check thanh toan tien mat
+            if(!$request['phuongThucThanhToan']){
+                DB::table('hoadon')
+                    ->insert([
+                        'idNguoiDung'=>$request['idNguoiDung'],
+                        'idDiaChi'=>$request['idDiaChi'],
+                        'tongSoTien'=>$request['tongSoTien'],
+                        'trangThai'=>0,
+                        'phuongThucThanhToan'=>0,
+                        'ngayDat'=> now(),
+                    ]);
+                    
+                
+                return response()->json([
+                    'success'=>true,
+                    'message'=>'Đặt hàng thành công',
+                    'data'=>[]
+                ]);
+
+
+
+
+
+
+            }
+            
+
+
+
+        } catch (\Exception $err) {
+            return response()->json([
+                "success" => false,
+                "message" => $err->getMessage(),
+                "data" => [],
+            ], 500);
+        }
+
+
+
+
+
+
+
+
+
+    }
+
+
+
 }
