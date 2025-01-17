@@ -1,17 +1,20 @@
 import axios from "axios";
+import Cookies from 'js-cookie';
+
 
 const api = axios.create({
     // eslint-disable-next-line no-undef, no-constant-binary-expression
+
     baseURL: "http://127.0.0.1:8000",
     headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
     }
 })
 
 api.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem("token");
+        const token = Cookies.get("token");
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
