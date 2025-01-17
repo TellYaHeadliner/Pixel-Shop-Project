@@ -13,7 +13,7 @@ const DetailOrder = ({ order, open, onClose, onDelete, onConfirm }) => {
             Đóng
           </Button>,
           <Button key="confirm" type="primary" onClick={onConfirm}>
-            Xác nhận đơn hàng
+            Đã nhận hàng
           </Button>,
           <Button key="delete" type="primary" danger onClick={onDelete}>
             Hủy đơn hàng

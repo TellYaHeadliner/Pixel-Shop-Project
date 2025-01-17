@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Card, Row, Col, Spin, Alert, Table } from 'antd';
-import { Bar } from '@ant-design/charts';
+// import { Bar } from '@ant-design/charts';
 import apiService from '../../../api/api';
 import "./AudienceStatistics.scss"
 const AudienceStatistics = () => {
@@ -121,12 +121,12 @@ const AudienceStatistics = () => {
             <Row gutter={16}>
                 <Col span={24}>
                     <Card title="Thống kê Đơn hàng theo Ngày" bordered={false}>
-                        <Bar {...ordersConfig} />
+                        {/* <Bar {...ordersConfig} /> */}
                     </Card>
                 </Col>
                 <Col span={24}>
                     <Card title="Thống kê Doanh thu theo Người dùng" bordered={false}>
-                        <Bar {...revenueByUserConfig} />
+                        {/* <Bar {...revenueByUserConfig} /> */}
                     </Card>
                 </Col>
                 <Col span={24}>

@@ -13,6 +13,7 @@ const OrderStatistics = () => {
     const fetchDataThongKeLuotMua = async () => {
       try {
         const response = await businessStatistic.thongKeDonHangTheoNgay;
+        console.log(response)
         setDataThongKeLuotMua(response.data.data);
       } catch (error) {
         console.error(error);
