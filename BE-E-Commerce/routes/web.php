@@ -29,6 +29,7 @@ Route::controller(UserController::class)->group(function () {
 	Route::post('/api/changeEmail','updateById')->middleware(CheckEmailSignUp::class);
 	Route::post('/api/updateAnhDaiDien','updateAnhDaiDien');
 	Route::post('/api/checkToken','checkToken');
+	Route::get('/api/thongKeDoTuoi','thongKeDoTuoi');
 
 });
 
@@ -51,7 +52,7 @@ Route::controller(DanhGiaController::class)->group(function () {
 
 Route::controller(ThongTinController::class)->group(function () {
 	Route::get('/api/getThongTin', [ThongTinController::class, 'get']);
-	Route::get('/api/updateThongTin', [ThongTinController::class, 'update']);
+	Route::post('/api/updateThongTin', [ThongTinController::class, 'update']);
 });
 
 Route::controller(NhaCungCapController::class)->group(function () {
@@ -84,10 +85,11 @@ Route::controller(SanPhamController::class)->group(function(){
 	Route::get('/api/getListSanPhamNoiBat', [SanPhamController::class, 'getListProductNoiBat']);
 	Route::post('/api/addSanPham','addSanPham');
 	Route::post('/api/getListSanPham','search');
+	Route::post('/api/getProductBySlug','getProductBySlug');
 });
 
 Route::controller(GioHangController::class)->group(function(){
-    Route::get('/api/getListSanPhamGioHang',[GioHangController::class,'getListSanPhamGioHang']);
+    Route::post('/api/getListSanPhamGioHang',[GioHangController::class,'getListSanPhamGioHang'])->middleware(Jwt::class . ':3');
     Route::put('/api/updateSoLuongSanPhamGioHang',[GioHangController::class,'updateSoLuongSanPhamGioHang']);
     Route::delete('/api/deleteSanPhamId',[GioHangController::class,'deleteSanPhamId']);
     Route::delete('/api/deleteSanPhamAll',[GioHangController::class,'deleteSanPhamAll']);
@@ -107,10 +109,12 @@ Route::controller(HoaDonController::class)->group(function(){
 	Route::get('/api/thongKeDoanhThuTheoThangVaNam/{thang}/{nam}','thongKeDoanhThuTheoNgay');
 	Route::get('/api/thongKeDoanhThuTheoNguoiDung/{idNguoiDung}','thongKeDoanhThuTheoNguoDung');
 	Route::get('/api/thongKeSanPhamTheoThangVaNam/{thang}/{nam}','thongKeSanPhamTheoNgay');
+	Route::get('/api/loiNhuanHienTai','loiNhuanHienTai');
+	Route::get('/api/sanPhamDaBanTheoThang','thongKeSanPhamDaBanTheoThang');
 	Route::get('/api/getListHoaDon','getListHoaDon');
 	Route::get('/api/getListHoaDonHidden','getListHoaDonHidden');
 	Route::get('/api/getHoaDonById/{idHoaDon}','getHoaDonById');
-	Route::get('/api/getListHoaDonBySdt/{sdt}','getListHoaDonBySdt');
+	Route::post('/api/getListHoaDonBySdt','getListHoaDonBySdt');
 	Route::get('/api/getListHoaDonByStatusAndDay/{status}/{day}','getListHoaDonByStatusAndDay');
 	Route::post('/api/getListHoaDonByStatus','getListHoaDonByStatus')->middleware(JWT::class.':3');
 	Route::put('/api/updateStatusHoaDon','updateStatusHoaDon');

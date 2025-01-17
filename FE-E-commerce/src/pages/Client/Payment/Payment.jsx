@@ -17,7 +17,7 @@ const PaymentBasic = () => {
   ]);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [newAddress, setNewAddress] = useState("");
-
+  console.log(selectedItems);
   const handleAddAddress = () => {
     if (newAddress.trim()) {
       const newAddressObj = {

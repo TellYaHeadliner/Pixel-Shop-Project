@@ -43,7 +43,7 @@ const Sidebar = () => {
         </div>
         <ul className="sidebar-menu">
           <li className="sidebar-menu-item">
-            <Link to="/admin">
+            <Link to="/admin/websiteInfo">
               <DashboardOutlined /> Quản lý thông tin trang web
             </Link>
           </li>

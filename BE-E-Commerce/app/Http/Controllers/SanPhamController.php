@@ -23,7 +23,7 @@ class SanPhamController extends Controller
 		try {
 			$sanPham = SanPham::where('slug', $slug)->first();
 			$sanPham->soLuotXem = $sanPham->soLuotXem + 1;
-			$sanPham->save()
+			$sanPham->save();
 			$thongSoSanPham = DB::table('thongsosanpham')->where('idSanPham', $sanPham->idSanPham)->first();
 			$danhGia = DB::table('danhgia')
 				->join('nguoidung', 'nguoidung.idNguoiDung', '=', 'danhgia.idNguoiDung')
@@ -350,5 +350,20 @@ class SanPhamController extends Controller
 		}
 	}
 
+	function getProductBySlug(Request $request){
+		try{
+			$data = SanPham::where('slug', '=', $request['slug'])->join('thongsosanpham','thongsosanpham.idSanPham','=','sanpham.idSanPham')->get();
+			return response()->json([
+				'success' => false,
+				'message' => 'Lấy thông tin sản phẩm thành công!',
+				'data' => $data
+			],200);
+		}catch (\Exception $e){
+			return response()->json([
+				'success' => false,
+				'message' => 'Có lỗi xảy ra: '.$e->getMessage(),
+			],500);
+		}
+	}
 	
 }
