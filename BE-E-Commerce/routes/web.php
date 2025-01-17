@@ -30,7 +30,6 @@ Route::controller(UserController::class)->group(function () {
 	Route::post('/api/updateAnhDaiDien','updateAnhDaiDien')->middleware(JWT::class.':3');
 	Route::post('/api/checkToken','checkToken');
 	Route::get('/api/thongKeDoTuoi','thongKeDoTuoi');
-
 });
 
 Route::controller(DanhMucController::class)->group(function () {
