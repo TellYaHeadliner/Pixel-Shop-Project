@@ -6,7 +6,7 @@ import { Spin } from 'antd';
 
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
-    const { role , loading } = useContext(UserContext); 
+    const { role , loading , login } = useContext(UserContext); 
 
     if (loading) {
         return (

@@ -1,6 +1,8 @@
-import React, { useState } from "react";
-import { Layout, Row, Col, Button, Input, Modal, Radio, Typography } from "antd";
+import React, { useEffect, useState, useContext } from "react";
+import { Layout, Row, Col, Button, Modal, Radio, Typography, Input, message, Card } from "antd";
 import { useLocation } from "react-router-dom";
+import { UserContext } from "../../../routes/UserContext";
+import apiService from "../../../api/api";
 import "./Payment.scss";
 
 const { Content } = Layout;
@@ -9,31 +11,158 @@ const { Title, Paragraph } = Typography;
 const PaymentBasic = () => {
   const location = useLocation();
   const { selectedItems } = location.state || { selectedItems: [] };
+  const { idNguoiDung, token } = useContext(UserContext);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
-  const [addresses, setAddresses] = useState([
-    { name: "Trần Thành Logn", phone: "(+84) 0306221140", address: "123/32/14 Thôn/Phường/Thành phố", isDefault: false },
-    { name: "Trần Hạnh Logn", phone: "(+84) 0306221140", address: "123/32/14 Thôn/Phường/Thành phố", isDefault: true },
-  ]);
-  const [selectedAddress, setSelectedAddress] = useState(null);
-  const [newAddress, setNewAddress] = useState("");
+  const [isAddModalVisible, setIsAddModalVisible] = useState(false);
+  const [addresses, setAddresses] = useState([]);
+  const [defaultAddress, setDefaultAddress] = useState(null);
+  const [selectedAddressId, setSelectedAddressId] = useState(null);
+  const [newAddress, setNewAddress] = useState({ hoVaTen: '', diaChi: '', sdt: '', note: '', loaiDiaChi: '1' });
 
-  const handleAddAddress = () => {
-    if (newAddress.trim()) {
-      const newAddressObj = {
-        name: "Người dùng mới",
-        phone: "(+84) 0000000000",
-        address: newAddress,
-        isDefault: false,
-      };
-      setAddresses([...addresses, newAddressObj]);
-      setNewAddress("");
+  useEffect(() => {
+    const fetchAddresses = async () => {
+      if (!idNguoiDung) {
+        message.error("Không tìm thấy ID người dùng.");
+        return;
+      }
+
+      try {
+        const response = await apiService.getDiaChiUser(idNguoiDung, token);
+        if (response.data.success) {
+          const userAddresses = response.data.data;
+          const defaultAddr = userAddresses.find(addr => addr.macDinh === 1);
+          setAddresses(userAddresses);
+          setDefaultAddress(defaultAddr);
+        } else {
+          message.error(response.data.message);
+        }
+      } catch (error) {
+        message.error("Lỗi khi lấy địa chỉ: " + error.message);
+      }
+    };
+
+    fetchAddresses();
+  }, [idNguoiDung, token]);
+
+  
+  const handleConfirmAddress = async () => {
+    if (!selectedAddressId) {
+      message.error("Vui lòng chọn một địa chỉ.");
+      return;
     }
-    setIsModalVisible(false);
+
+    const updateData = {
+      idDiaChi: selectedAddressId,
+      idNguoiDung,
+    };
+    
+    try {
+      const response = await apiService.updateDefaultLocation(updateData, token);
+      if (response.data.success) {
+        const updatedAddress = addresses.find(addr => addr.idDiaChi === selectedAddressId);
+        setDefaultAddress(updatedAddress);
+        message.success("Cập nhật địa chỉ giao hàng thành công!");
+        setIsModalVisible(false);
+      } else {
+        message.error(response.data.message);
+      }
+    } catch (error) {
+      message.error("Lỗi khi cập nhật địa chỉ: " + error.message);
+    }
+  };
+  
+  const validatePhoneNumber = (phone) => {
+    const phoneRegex = /^0\d{0,11}$/; 
+    return phoneRegex.test(phone);
+  };
+  const validateDiaChi = (diachi) => {
+    if (diachi.length <= 10) {
+        return false;
+    }
+    const isAllDigits = /^\d+$/.test(diachi);
+    if (isAllDigits) {
+        return false; 
+    }
+
+    const alphanumericRegex = /[a-zA-Z]/;
+    return alphanumericRegex.test(diachi);
+};
+  const handleAddAddress = async () => {
+    if (!newAddress.hoVaTen || !newAddress.diaChi || !newAddress.sdt) {
+      message.error("Vui lòng điền đầy đủ thông tin địa chỉ.");
+      return;
+    }
+    
+    if (!validatePhoneNumber(newAddress.sdt)) {
+      message.error("Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại bắt đầu bằng 0 và tối đa 12 số.");
+      return;
+    }
+    if(!validateDiaChi(newAddress.diaChi)) {
+      message.error("Địa chỉ không hợp lệ.");
+      return;
+    }
+    const addressData = {
+      idNguoiDung,
+      hoVaTen: newAddress.hoVaTen,
+      diaChi: newAddress.diaChi,
+      sdt: newAddress.sdt,
+      note: newAddress.note,
+      loaiDiaChi: newAddress.loaiDiaChi,
+    };
+
+    try {
+      const response = await apiService.addLocation(addressData, token);
+      if (response.data.success) {
+        message.success("Thêm địa chỉ thành công!");
+        setNewAddress({ hoVaTen: '', diaChi: '', sdt: '', note: '', loaiDiaChi: '1' });
+        setIsAddModalVisible(false);
+        const updatedResponse = await apiService.getDiaChiUser(idNguoiDung, token);
+        setAddresses(updatedResponse.data.data);
+      } else {
+        message.error(response.data.message);
+      }
+    } catch (error) {
+      message.error("Lỗi khi thêm địa chỉ: " + error.message);
+    }
   };
 
-  const handleConfirmPayment = () => {
-    setIsSuccessModalVisible(true);
+  const handleDeleteAddress = async (idDiaChi) => {
+    try {
+      const response = await apiService.deleteLocation({ idDiaChi }, token);
+      if (response.data.success) {
+        message.success("Xóa địa chỉ thành công!");
+        const updatedResponse = await apiService.getDiaChiUser(idNguoiDung, token);
+        setAddresses(updatedResponse.data.data);
+      } else {
+        message.error(response.data.message);
+      }
+    } catch (error) {
+      message.error("Lỗi khi xóa địa chỉ: " + error.message);
+    }
+  };
+
+  const handleConfirmPayment = async () => {
+    if (!defaultAddress) {
+      message.error("Vui lòng chọn địa chỉ giao hàng.");
+      return;
+    }
+
+    const paymentData = {
+      idNguoiDung,
+      idDiaChi: defaultAddress.idDiaChi,
+      items: selectedItems,
+    };
+
+    try {
+      const response = await apiService.confirmPayment(paymentData, token); 
+      if (response.data.success) {
+        message.success("Thanh toán thành công!");
+      } else {
+        message.error(response.data.message);
+      }
+    } catch (error) {
+      message.error("Lỗi khi xác nhận thanh toán: " + error.message);
+    }
   };
 
   const totalAmount = selectedItems.reduce((total, item) => total + item.price * item.quantity, 0);
@@ -42,15 +171,19 @@ const PaymentBasic = () => {
     <Layout className="checkout-layout">
       <Content className="checkout-content">
         <Title className="checkout-title">Thông tin nhận hàng</Title>
-        
+
         <Row gutter={[32, 16]}>
           <Col span={16}>
             <div className="info-section">
               <div className="info-header">
-                <h3>Nguyễn Văn A</h3>
-                <Paragraph>(+84) 916553230</Paragraph>
-                <Paragraph>431/21 Nguyễn Văn Ai, phường 21, quận Bình Thạnh</Paragraph>
-                <Button type="link" onClick={() => setIsModalVisible(true)}>Thay đổi</Button>
+                {defaultAddress && (
+                  <Card style={{ marginBottom: 16 }}>
+                    <h3>{defaultAddress.note}</h3>
+                    <Paragraph>{defaultAddress.sdt}</Paragraph>
+                    <Paragraph>{defaultAddress.diaChi}</Paragraph>
+                    <Button type="link" onClick={() => setIsModalVisible(true)}>Thay đổi</Button>
+                  </Card>
+                )}
               </div>
 
               <div className="product-list">
@@ -84,53 +217,76 @@ const PaymentBasic = () => {
         </Row>
 
         <Modal
-          title="Địa chỉ của tôi"
-          visible={isModalVisible}
+          title="Chọn địa chỉ giao hàng"
+          open={isModalVisible}
           onCancel={() => setIsModalVisible(false)}
           footer={[
             <Button key="cancel" onClick={() => setIsModalVisible(false)}>Hủy</Button>,
-            <Button key="submit" type="primary" onClick={handleAddAddress}>Cập nhật</Button>,
+            <Button key="submit" type="primary" onClick={handleConfirmAddress}>
+              Xác nhận
+            </Button>,
+            <Button key="add" type="default" onClick={() => { setIsAddModalVisible(true); setIsModalVisible(false); }}>
+              Thêm địa chỉ mới
+            </Button>,
           ]}
         >
           <div>
-            {addresses.map((address, index) => (
-              <Radio key={index} value={index} checked={selectedAddress === index} onChange={() => setSelectedAddress(index)}>
-                {address.name} {address.phone} <br />
-                {address.address} <br />
-                {address.isDefault && <span>(Mặc định)</span>}
-              </Radio>
+            <h4>Địa chỉ có sẵn:</h4>
+            {addresses.map((address) => (
+              <Card key={address.idDiaChi} style={{ marginBottom: 16 }}>
+                <Radio
+                  value={address.idDiaChi}
+                  onChange={() => setSelectedAddressId(address.idDiaChi)}
+                  checked={selectedAddressId === address.idDiaChi}
+                >
+                  {address.note} - {address.sdt} <br />
+                  {address.diaChi}
+                </Radio>
+                <Button type="link" danger onClick={() => handleDeleteAddress(address.idDiaChi)}>Xóa</Button>
+              </Card>
             ))}
-            <Input
-              placeholder="Nhập địa chỉ mới"
-              value={newAddress}
-              onChange={(e) => setNewAddress(e.target.value)}
-              style={{ margin: "16px 0" }}
-            />
-            <Button type="link" onClick={handleAddAddress}>+ Thêm địa chỉ</Button>
+            {selectedAddressId === null && (
+              <Paragraph type="warning">Bạn chưa chọn địa chỉ nào!</Paragraph>
+            )}
           </div>
         </Modal>
 
         <Modal
-          title="Thông báo"
-          visible={isSuccessModalVisible}
-          onCancel={() => setIsSuccessModalVisible(false)}
+          title="Thêm địa chỉ mới"
+          open={isAddModalVisible}
+          onCancel={() => setIsAddModalVisible(false)}
           footer={[
-            <Button key="ok" type="primary" onClick={() => setIsSuccessModalVisible(false)}>OK</Button>,
+            <Button key="cancel" onClick={() => setIsAddModalVisible(false)}>Hủy</Button>,
+            <Button key="submit" type="primary" onClick={handleAddAddress}>
+              Thêm
+            </Button>,
           ]}
         >
-          <p>Đơn hàng của bạn đã được thanh toán thành công!</p>
-          <h4>Thông tin đơn hàng:</h4>
-          <div className="product-list">
-            {selectedItems.map(item => (
-              <div style={{width:"100%"}} className="product-item" key={item.id}>
-                <span>{item.name} </span>
-                <span style={{textAlign:"right"}}> {(item.price * item.quantity).toLocaleString()}  đ (Số lượng: {item.quantity})</span>
-              </div>
-            ))}
-          </div>
-          <div className="summary-item">
-            <strong>Tổng tiền: {totalAmount.toLocaleString()} đ</strong>
-          </div>
+          <Input
+            placeholder="Họ và tên"
+            value={newAddress.hoVaTen}
+            required
+            onChange={(e) => setNewAddress({ ...newAddress, hoVaTen: e.target.value })}
+            style={{ marginBottom: 16 }}
+          />
+          <Input
+            placeholder="Địa chỉ (hãy nhập đầy đủ và chính xác nơi bạn muốn giao hàng)"
+            value={newAddress.diaChi}
+            onChange={(e) => setNewAddress({ ...newAddress, diaChi: e.target.value })}
+            style={{ marginBottom: 16 }}
+          />
+          <Input
+            placeholder="Số điện thoại"
+            value={newAddress.sdt}
+            onChange={(e) => setNewAddress({ ...newAddress, sdt: e.target.value })}
+            style={{ marginBottom: 16 }}
+          />
+          <Input
+            placeholder="Ghi chú"
+            value={newAddress.note}
+            onChange={(e) => setNewAddress({ ...newAddress, note: e.target.value })}
+            style={{ marginBottom: 16 }}
+          />
         </Modal>
       </Content>
     </Layout>

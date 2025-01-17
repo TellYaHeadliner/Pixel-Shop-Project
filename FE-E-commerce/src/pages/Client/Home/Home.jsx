@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 
 import SanPhamNav from "../../../components/Client/Button/SanPhamNav";
 import "./Home.scss";
+import apiService from "../../../api/api";
 import WebsiteInfo from "../../../components/Client/WebsiteInfo/WebsiteInfo.jsx";
 import SlideShowKhuyenMai from "../../../components/Client/Slideshow/SlideShowKhuyenMai";
 import SlideShowSanPhamNoiBat from "../../../components/Client/Slideshow/SlideShowSanPhamNoiBat";
@@ -43,7 +44,6 @@ const Home = () => {
         setLoading(false);
       }
     };
-    console.log(newProducts);
     fetchProducts();
   }, [newProducts]);
 
@@ -61,7 +61,6 @@ const Home = () => {
       }
     };
     fetchLaptops();
-    console.log(listLaptop);
   }, [listLaptop]);
 
   useEffect(() => {
@@ -76,7 +75,6 @@ const Home = () => {
       }
     };
     fetchBestProductList();
-    console.log(bestSellerList);
   }, [bestSellerList]);
 
   useEffect(() => {
@@ -92,7 +90,6 @@ const Home = () => {
         }
       };
       fetchNoiBatList();
-      console.log(bestSellerList);
     } catch (error) {
       setError(error);
       setLoading(false);
