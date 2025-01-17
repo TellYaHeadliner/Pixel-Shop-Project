@@ -117,7 +117,7 @@ Route::controller(HoaDonController::class)->group(function(){
 	Route::get('/api/sanPhamDaBanTheoThang','thongKeSanPhamDaBanTheoThang');
 	Route::get('/api/getListHoaDon','getListHoaDon');
 	Route::get('/api/getListHoaDonHidden','getListHoaDonHidden');
-	Route::get('/api/getHoaDonById/{idHoaDon}','getHoaDonById')->middleware(JWT::class.':2');
+	Route::get('/api/getHoaDonById/{idHoaDon}','getHoaDonById')->middleware(JWT::class.':2,3');
 	Route::post('/api/getListHoaDonBySdt','getListHoaDonBySdt');
 	Route::get('/api/getListHoaDonByStatusAndDay/{status}/{day}','getListHoaDonByStatusAndDay');
 	Route::post('/api/getListHoaDonByStatus','getListHoaDonByStatus')->middleware(JWT::class.':2');
