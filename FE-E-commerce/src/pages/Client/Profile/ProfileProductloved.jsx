@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Table, Space, Modal, Flex,message} from "antd";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import axios from 'axios';
+import { UserContext } from '../../../routes/UserContext'; 
 
 
 export default function ProfileProductloved() {
+  const {token} = useContext(UserContext);
   const [ListLoved, setListLoved] = useState([]); 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedRowKey, setSelectedRowKey] = useState(null);
   const navigate = useNavigate(); 
-  const idUser=1;
+
  
   useEffect(() => {
     dataSource();
@@ -22,15 +24,20 @@ export default function ProfileProductloved() {
 
   const handleOk = async () => {
     try {
-    const response = await axios.delete(
-      'http://127.0.0.1:8000/api/deleteYeuThich',
-      {
-        headers: {'Content-Type': 'application/json'},
-        data: { idNguoiDung: idUser, idSanPham: selectedRowKey },
-      }
+      const response = await axios.delete(
+        'http://127.0.0.1:8000/api/deleteYeuThich',
+        {
+          data: {idSanPham: selectedRowKey},
+          headers: {'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+          },
+        }
     )
-    setIsModalVisible(false);
-    dataSource();
+    if(response.data.success) {
+      message.success(response.data.message);
+          setIsModalVisible(false);
+          dataSource();
+        }
     
     } catch (e){
       message.error(e.response.data.message);
@@ -44,15 +51,15 @@ export default function ProfileProductloved() {
     try{
       const reponse = await axios.post(
         "http://127.0.0.1:8000/api/getListYeuThich",
-        {idNguoiDung:idUser},
+          {},
         {
           headers: {
             "Content-Type": "application/json",
+            'Authorization': 'Bearer ' + token,
         }, 
         }
       )
       setListLoved(reponse.data.data)
-      console.log(reponse.data.data)
       
     }catch(e){
       message.error(e.response.data.message);

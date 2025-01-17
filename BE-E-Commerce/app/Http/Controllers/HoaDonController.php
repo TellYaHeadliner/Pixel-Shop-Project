@@ -497,7 +497,6 @@ class HoaDonController extends Controller
                     'ngayXacNhan' => now()
                 ]) : $hoadon->update([
                     'trangThai' => $request['trangThai'],
-
                 ]);
 
             return response()->json([

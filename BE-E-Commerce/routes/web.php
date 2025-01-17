@@ -44,7 +44,7 @@ Route::controller(DanhGiaController::class)->group(function () {
 	Route::get('/api/getDanhGiaByIdSanPham/{id}','getDanhGiaByIdSanPham');
 	Route::get('/api/checkDanhGia/{idNguoiDung}/{idSanPham}','checkDanhGia'); 
 	Route::get('/api/getDanhGiaById/{idNguoiDung}/{idSanPham}','getDanhGiaById'); 
-	Route::get('/api/getListDanhGia', 'getListDanhGia');
+	Route::get('/api/getListDanhGia', 'getListDanhGia')->middleware(JWT::class.':3');
 	Route::post('/api/addDanhGia','addDanhGia');
 	Route::delete('/api/deleteDanhGia','deleteDanhGia');
 	
@@ -116,11 +116,11 @@ Route::controller(HoaDonController::class)->group(function(){
 	Route::get('/api/sanPhamDaBanTheoThang','thongKeSanPhamDaBanTheoThang');
 	Route::get('/api/getListHoaDon','getListHoaDon');
 	Route::get('/api/getListHoaDonHidden','getListHoaDonHidden');
-	Route::get('/api/getHoaDonById/{idHoaDon}','getHoaDonById');
+	Route::get('/api/getHoaDonById/{idHoaDon}','getHoaDonById')->middleware(JWT::class.':3');
 	Route::post('/api/getListHoaDonBySdt','getListHoaDonBySdt');
 	Route::get('/api/getListHoaDonByStatusAndDay/{status}/{day}','getListHoaDonByStatusAndDay');
 	Route::post('/api/getListHoaDonByStatus','getListHoaDonByStatus')->middleware(JWT::class.':3');
-	Route::put('/api/updateStatusHoaDon','updateStatusHoaDon');
+	Route::put('/api/updateStatusHoaDon','updateStatusHoaDon')->middleware(JWT::class.':3');
 	Route::put('/api/updateHiddenHoaDon','updateHiddenHoaDon');
 	Route::get('/api/thongKeDoanhThuTheoTatCaNguoiDung', 'thongKeDoanhThuTheoTatCaNguoiDung');
 	Route::get('/api/thongKeDoanhThuSanPhamTheoNgay','thongKeDoanhThuSanPhamTheoNgay');

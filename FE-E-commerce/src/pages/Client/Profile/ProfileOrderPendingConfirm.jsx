@@ -1,28 +1,51 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect} from "react";
 import { Table, Button, Modal, message, Tag } from "antd";
 import "antd/dist/reset.css";
-import { useNavigate, useParams,axios } from "react-router-dom";
-
-
+import {  useParams } from "react-router-dom";
+import axios from "axios";
+import { UserContext } from '../../../routes/UserContext'; 
+import { useNavigate } from "react-router-dom";
 export default function ProfileOrderPendingConfirm() {
+  const nav=useNavigate();
   const {id} = useParams();
-  const navigate = useNavigate();
+  const {token} = useContext(UserContext);
   const [orderData, setOrderData] = useState([]);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const handleHuyDon = async()=>{
+    try{
+      const response= await axios.put(
+         "http://127.0.0.1:8000/api/updateStatusHoaDon",
+         {idHoaDon:id,trangThai:3},
+         {
+          headers:{
+            'Authorization': 'Bearer ' + token,
+            "Content-Type": "application/json",
+          },
+         } 
+      )
+      if(response.data.success) {
+        message.success(response.data.message);
+      }
+  }catch(e){
 
+    message.error(e.response.data.message);
+    }
+  }
   
   const showModal = () => {
     setIsModalVisible(true);
   };
 
   const handleOk = () => {
-    setOrderData({ ...orderData, status: 3 });
-    setIsModalVisible(false); 
-    message.success("Đơn hàng đã được hủy thành công!"); 
+    handleHuyDon();
+    renderOrderStatus(3);
+    setIsModalVisible(false);
+    nav('/profile/ordercanceled');
+
+   
   };
 
-  // Hủy bỏ hành động
   const handleCancel = () => {
     setIsModalVisible(false);
   };
@@ -42,78 +65,91 @@ export default function ProfileOrderPendingConfirm() {
     }
   };
   
-  const orderDataDetail = async()=>{
+  const handleGetListHoaDon = async()=>{
     try{
-      const response= await axios.post(
-         "http://127.0.0.1:8000/api/getListOrder"
+      const response= await axios.get(
+         "http://127.0.0.1:8000/api/getHoaDonById/"+id,
+{
+          headers:{
+            'Authorization': 'Bearer ' + token,
+            "Content-Type": "application/json",
+          },
+         } 
       )
-    }catch(e){
-      message.error(e.repo)
+      if(response.data.success) {
+        console.log(response.data.data)
+        setOrderData(response.data.data);
+      }
+  }catch(e){
+
+      console.log(e.response.data)
     }
   }
+ 
   
-
-  // const columns = [
-  //   {
-  //     title: "STT",
-  //     dataIndex: "key",
-  //     key: "key",
-  //     render: (text, record, index) => index + 1,
-  //     align: "center",
-  //   },
-  //   {
-  //     title: "Hình ảnh",
-  //     dataIndex: "image",
-  //     key: "image",
-  //     render: (image) => <img src={image} alt="Product" style={{ width: "50px" }} />,
-  //     align: "center",
-  //   },
-  //   {
-  //     title: "Tên sản phẩm",
-  //     dataIndex: "productName",
-  //     key: "productName",
-  //     align: "center",
-  //   },
-  //   {
-  //     title: "Giá",
-  //     dataIndex: "price",
-  //     key: "price",
-  //     align: "center",
-  //   },
-  //   {
-  //     title: "Số lượng",
-  //     dataIndex: "quantity",
-  //     key: "quantity",
-  //     align: "center",
-  //   },
-  // ];
+  useEffect(()=>{
+    handleGetListHoaDon();
+  },[]);
+  const columns = [
+    {
+      title: "STT",
+      dataIndex: "key",
+      key: "key",
+      render: (text, record, index) => index + 1,
+      align: "center",
+    },
+    {
+      title: "Hình ảnh",
+      dataIndex: "img",
+      key: "img",
+      render: (img) => <img src={'http://127.0.0.1:8000/imgs/'+img} alt="Product" style={{ width: "50px" }} />,
+      align: "center",
+    },
+    {
+      title: "Tên sản phẩm",
+      dataIndex: "tenSanPham",
+      key: "tenSanPham",
+      align: "center",
+    },
+    {
+      title: "Giá",
+      dataIndex: "gia",
+      key: "gia",
+      align: "center",
+    },
+    {
+      title: "Số lượng",
+      dataIndex: "soLuong",
+      key: "soLuong",
+      align: "center",
+    },
+  ];
 
   return (
     <div style={{ padding: "20px", maxWidth: "800px", fontFamily: "Arial, sans-serif" }}>
-      <h2 style={{ textAlign: "center" }}>Lịch sử đơn hàng {orderData.orderId}</h2>
+      <h2 style={{ textAlign: "center" }}>Lịch sử đơn hàng {orderData[0]?.idHoaDon??""}</h2>
       <p>
-        <strong>Tên khách hàng:</strong> {orderData.customerName}
+        <strong>Tên khách hàng: {orderData[0]?.hoVaTen ?? ""}</strong> 
       </p>
       <p>
-        <strong>Địa chỉ giao hàng:</strong> {orderData.deliveryAddress}
+        <strong>Địa chỉ giao hàng:</strong> {orderData[0]?.diaChi??""}
       </p>
       <p>
-        <strong>Tổng số tiền:</strong> {orderData.totalAmount}
+        <strong>Tổng số tiền:</strong> {orderData[0]?.tongTien??""}
       </p>
       <p>
-        <strong>Trạng thái:</strong> {renderOrderStatus(orderData.status)}
+        <strong>Trạng thái:</strong> {renderOrderStatus(orderData[0]?.trangThai??"")}
       </p>
       <p>
-        <strong>Phương thức thanh toán:</strong> {orderData.phuongThucThanhToan}
+        <strong>Phương thức thanh toán:</strong> {orderData[0]?.phuongThucThanhToan??""}
       </p>
       <p>
-        <strong>Ngày thanh toán:</strong> {orderData.paymentTime}
+        <strong>Ngày thanh toán:</strong> {orderData[0]?.ngayDat??""}
       </p>
       <p>
-        <strong>Số điện thoại:</strong> {orderData.phoneNumber}
+        <strong>Số điện thoại:</strong> {orderData[0]?.sdt??""}
       </p>
 
-      {orderData.status === 0 && ( 
         <Button
           type="primary"
           danger
@@ -122,15 +158,14 @@ export default function ProfileOrderPendingConfirm() {
         >
           Hủy đơn
         </Button>
-      )}
 
       <h3 style={{ marginTop: "20px" }}>Chi tiết đơn hàng:</h3>
-      <Table dataSource={orderData.orderDetails} columns={columns} pagination={false} bordered />
+      <Table dataSource={orderData} columns={columns} pagination={false} bordered />
 
       {/* Modal xác nhận */}
       <Modal
         title="Xác nhận hủy đơn hàng"
-        visible={isModalVisible}
+        open={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
         okText="Xác nhận"

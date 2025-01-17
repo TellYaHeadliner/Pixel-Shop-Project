@@ -1,62 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect} from "react";
 import { Table, Button, Modal, message, Tag } from "antd";
 import "antd/dist/reset.css";
-import { useNavigate } from "react-router-dom";
+import {  useParams } from "react-router-dom";
+import axios from "axios";
+import { UserContext } from '../../../routes/UserContext'; 
 
-export default function ProfileOrderBeingShip() {
-  const [orderData, setOrderData] = useState({
-    orderId: "VNP14728864",
-    customerName: "Nguyễn Văn A",
-    deliveryAddress: "123 Nguyễn Văn B, phường 26, quận Bình Thạnh, TPHCM",
-    totalAmount: "6,950,000 vnd",
-    status: 1, // Trạng thái: 0 (Chờ xác nhận)
-    phuongThucThanhToan: "Chuyển khoản - VNPAY - NCB",
-    paymentTime: "14:31:23 12/08/2024",
-    phoneNumber: "0919595678",
-    orderDetails: [
-      {
-        key: 1,
-        image: "https://cdn.nguyenkimmall.com/images/detailed/824/dien-thoai-iphone-14-pro-max-256gb-vang-3.jpg",
-        productName: "Xiaomi Redmi Turbo 5",
-        price: "5,690,000 vnd",
-        quantity: 1,
-      },
-      {
-        key: 2,
-        image: "https://genk.mediacdn.vn/139269124445442048/2023/1/15/007gdalpgy1ha1uzzyp9ej30r40tcjun-1673600536636-1673600536858739192051-1673749582485-16737495830061918081220.jpg",
-        productName: "Xiaomi Redmi Turbo 5",
-        price: "5,690,000 vnd",
-        quantity: 1,
-      },
-      {
-        key: 3,
-        image: "https://cdn.nguyenkimmall.com/images/detailed/691/10047356-dien-thoai-xiaomi-redmi-9a-2gb-32gb-xanh-la-1.jpg",
-        productName: "Xiaomi Redmi Turbo 6",
-        price: "5,690,000 vnd",
-        quantity: 1,
-      },
-    ],
-  });
+
+export default function ProfileOrderPendingConfirm() {
+  const {id} = useParams();
+  const {token} = useContext(UserContext);
+  const [orderData, setOrderData] = useState([]);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const handleHuyDon = async()=>{
+    try{
+      const response= await axios.put(
+         "http://127.0.0.1:8000/api/updateStatusHoaDon",
+         {idHoaDon:id},
+         {
+          headers:{
+            'Authorization': 'Bearer ' + token,
+            "Content-Type": "application/json",
+          },
+         } 
+      )
+      if(response.data.success) {
+        message.success(response.data.message);
+      }
+  }catch(e){
 
-  // Hiển thị thông báo xác nhận hủy đơn
-  const showModal = () => {
-    setIsModalVisible(true);
-  };
-
-  const handleOk = () => {
-    setOrderData({ ...orderData, status: 3 });
-    setIsModalVisible(false); 
-    message.success("Đơn hàng đã được hủy thành công!"); 
-   
-  };
-
-  // Hủy bỏ hành động
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
-
+    message.error(e.response.data.message);
+    }
+  }
+  
+  
+ 
   const renderOrderStatus = (status) => {
     switch (status) {
       case 0:
@@ -71,7 +49,32 @@ export default function ProfileOrderBeingShip() {
         return <Tag>Không xác định</Tag>;
     }
   };
+  
+  const handleGetListHoaDon = async()=>{
+    try{
+      const response= await axios.get(
+         "http://127.0.0.1:8000/api/getHoaDonById/"+id,
+{
+          headers:{
+            'Authorization': 'Bearer ' + token,
+            "Content-Type": "application/json",
+          },
+         } 
+      )
+      if(response.data.success) {
+        console.log(response.data.data)
+        setOrderData(response.data.data);
+      }
+  }catch(e){
 
+      console.log(e.response.data)
+    }
+  }
+ 
+  
+  useEffect(()=>{
+    handleGetListHoaDon();
+  },[]);
   const columns = [
     {
       title: "STT",
@@ -82,81 +85,61 @@ export default function ProfileOrderBeingShip() {
     },
     {
       title: "Hình ảnh",
-      dataIndex: "image",
-      key: "image",
-      render: (image) => <img src={image} alt="Product" style={{ width: "50px" }} />,
+      dataIndex: "img",
+      key: "img",
+      render: (img) => <img src={'http://127.0.0.1:8000/imgs/'+img} alt="Product" style={{ width: "50px" }} />,
       align: "center",
     },
     {
       title: "Tên sản phẩm",
-      dataIndex: "productName",
-      key: "productName",
+      dataIndex: "tenSanPham",
+      key: "tenSanPham",
       align: "center",
     },
     {
       title: "Giá",
-      dataIndex: "price",
-      key: "price",
+      dataIndex: "gia",
+      key: "gia",
       align: "center",
     },
     {
       title: "Số lượng",
-      dataIndex: "quantity",
-      key: "quantity",
+      dataIndex: "soLuong",
+      key: "soLuong",
       align: "center",
     },
   ];
 
   return (
     <div style={{ padding: "20px", maxWidth: "800px", fontFamily: "Arial, sans-serif" }}>
-      <h2 style={{ textAlign: "center" }}>Lịch sử đơn hàng {orderData.orderId}</h2>
+      <h2 style={{ textAlign: "center" }}>Lịch sử đơn hàng {orderData[0]?.idHoaDon??""}</h2>
       <p>
-        <strong>Tên khách hàng:</strong> {orderData.customerName}
+        <strong>Tên khách hàng: {orderData[0]?.hoVaTen ?? ""}</strong> 
       </p>
       <p>
-        <strong>Địa chỉ giao hàng:</strong> {orderData.deliveryAddress}
+        <strong>Địa chỉ giao hàng:</strong> {orderData[0]?.diaChi??""}
       </p>
       <p>
-        <strong>Tổng số tiền:</strong> {orderData.totalAmount}
+        <strong>Tổng số tiền:</strong> {orderData[0]?.tongTien??""}
       </p>
       <p>
-        <strong>Trạng thái:</strong> {renderOrderStatus(orderData.status)}
+        <strong>Trạng thái:</strong> {renderOrderStatus(orderData[0]?.trangThai??"")}
       </p>
       <p>
-        <strong>Phương thức thanh toán:</strong> {orderData.phuongThucThanhToan}
+        <strong>Phương thức thanh toán:</strong> {orderData[0]?.phuongThucThanhToan?"COD":"VNPay"}
       </p>
       <p>
-        <strong>Ngày thanh toán:</strong> {orderData.paymentTime}
+        <strong>Ngày đặt hàng:</strong> {orderData[0]?.ngayDat??""}
       </p>
       <p>
-        <strong>Số điện thoại:</strong> {orderData.phoneNumber}
+        <strong>Số điện thoại:</strong> {orderData[0]?.sdt??""}
       </p>
 
-      {orderData.status === 0 && ( 
-        <Button
-          type="primary"
-          danger
-          style={{ marginTop: "20px", marginLeft:'100%'}}
-          onClick={showModal} // Mở modal xác nhận khi nhấn
-        >
-          Hủy đơn
-        </Button>
-      )}
 
       <h3 style={{ marginTop: "20px" }}>Chi tiết đơn hàng:</h3>
-      <Table dataSource={orderData.orderDetails} columns={columns} pagination={false} bordered />
+      <Table dataSource={orderData} columns={columns} pagination={false} bordered />
 
-      {/* Modal xác nhận */}
-      <Modal
-        title="Xác nhận hủy đơn hàng"
-        visible={isModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        okText="Xác nhận"
-        cancelText="Hủy"
-      >
-        <p>Bạn có chắc chắn muốn hủy đơn hàng này không?</p>
-      </Modal>
+     
     </div>
   );
 }
