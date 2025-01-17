@@ -45,8 +45,17 @@ const apiService = {
     listNhaCungCap: async () => {
         return await axios.get(`${API_URL}/listNhaCungCap`);
     },
-    getDiaChiUser: async (userId) => {
-        return await axios.post(`${API_URL}/getDiaChiUser`, { userId });
+    getDiaChiUser: async (idNguoiDung) => {
+        return await axios.post(`${API_URL}/getDiaChiUser`, { idNguoiDung });
+    },
+    addLocation: async (locationData) => {
+        return await axios.post(`${API_URL}/add`, locationData);
+    },
+    updateLocation: async (locationData) => {
+        return await axios.post(`${API_URL}/updateLocation`, locationData);
+    },
+    deleteLocation: async (locationData) => {
+        return await axios.post(`${API_URL}/deleteLocation`, locationData);
     },
     updateDefaultLocation: async (locationData) => {
         return await axios.post(`${API_URL}/updateDefaultLocation`, locationData);
