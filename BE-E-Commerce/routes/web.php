@@ -121,7 +121,7 @@ Route::controller(HoaDonController::class)->group(function(){
 	Route::put('/api/updateHiddenHoaDon','updateHiddenHoaDon');
 	Route::get('/api/thongKeDoanhThuTheoTatCaNguoiDung', 'thongKeDoanhThuTheoTatCaNguoiDung');
 	Route::get('/api/thongKeDoanhThuSanPhamTheoNgay','thongKeDoanhThuSanPhamTheoNgay');
-	Route::get('/api/thongKeDonHangTheoNgay', 'thongKeDonHangTheoNgay');
+	Route::get('/api/thongKeDonHangTheoNgay/', 'thongKeDonHangTheoNgay');
 });
 
 Route::controller(YeuThichController::class)->group(function(){

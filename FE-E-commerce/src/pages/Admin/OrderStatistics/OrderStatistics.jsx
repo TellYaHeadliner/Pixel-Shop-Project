@@ -1,13 +1,13 @@
 import { Col, Row, Typography, } from 'antd';
 import './OrderStatistics.scss'
 import TableOrderStatistic from "../../../components/Admin/Table/TableOrderStatistic";
-import LineChartBusiness from "../../../components/Admin/Charts/LineChartBusiness";
-import BarChartByWeek from '../../../components/Admin/Charts/BarChartByWeek';
+
 import businessStatistic from '../../../services/businessStatisticsService';
 import { useEffect, useState } from 'react';
 const { Title } = Typography; 
 const OrderStatistics = () => {
   const [dataThongKeLuotMua, setDataThongKeLuotMua] = useState([])
+  const [dataThongKeDoanhThuSP, setDataThongKeDoanhThuSP] = useState([])
 
   useEffect(() => {
     const fetchDataThongKeLuotMua = async () => {
@@ -19,8 +19,9 @@ const OrderStatistics = () => {
       }
     }
     fetchDataThongKeLuotMua();
-    console.log(dataThongKeLuotMua);
   },[dataThongKeLuotMua])
+
+
 
     return (
       <Row gutter={[16, 16]} style={{ padding: "40px" }} align="middle">
