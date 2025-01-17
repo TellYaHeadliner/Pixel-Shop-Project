@@ -25,7 +25,7 @@ Route::controller(UserController::class)->group(function () {
 	Route::post('/api/VerificationEmail', [UserController::class, 'sendVerificationEmail']);
 	Route::post('/api/signup', [UserController::class, 'signup'])->middleware(CheckEmailSignUp::class);
 	Route::post('/api/getProfile', 'getById')->middleware(JWT::class.':3');
-	Route::post('/api/updateById', [UserController::class, 'updateById']);
+	Route::post('/api/updateById', [UserController::class, 'updateById'])->middleware(JWT::class.':3');
 	Route::post('/api/changeEmail','updateById')->middleware(CheckEmailSignUp::class);
 	Route::post('/api/updateAnhDaiDien','updateAnhDaiDien')->middleware(JWT::class.':3');
 	Route::post('/api/checkToken','checkToken');
@@ -63,9 +63,9 @@ Route::controller(NhaCungCapController::class)->group(function () {
 Route::controller(DiaChiController::class)->group(function () {
 	Route::post('/api/getDiaChiUser', 'getListByUser')->middleware(JWT::class.':3');
 	Route::post('/api/updateDefaultLocation', 'updateDefaultUser')->middleware(JWT::class.':3');
-	Route::post('/api/deleteLocation','delete');
-	Route::post('/api/updateLocation','update');
-	Route::post('/api/addLocation','add');
+	Route::post('/api/deleteLocation','delete')->middleware(JWT::class.':3');
+	Route::post('/api/updateLocation','update')->middleware(JWT::class.':3');
+	Route::post('/api/addLocation','add')->middleware(JWT::class.':3');
 });
 
 Route::controller(LienHeController::class)->group(function () {
@@ -131,8 +131,8 @@ Route::controller(YeuThichController::class)->group(function(){
 	Route::get('/api/checkYeuThich/{idNguoiDung}/{idSanPham}','checkYeuThich');
 	Route::get('/api/getSoLuongYeuThichByIdSanPham/{idSanPham}','getSoLuongYeuThichByIdSanPham');
 	Route::post('/api/addYeuThich','addYeuThich');
-	Route::delete('/api/deleteYeuThich','deleteYeuThich');
-	Route::post('/api/getListYeuThich','getListByIdUser');
+	Route::delete('/api/deleteYeuThich','deleteYeuThich')->middleware(JWT::class.':3');
+	Route::post('/api/getListYeuThich','getListByIdUser')->middleware(JWT::class.':3');
 
 
 });

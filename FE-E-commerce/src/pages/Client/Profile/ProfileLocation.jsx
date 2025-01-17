@@ -1,30 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useContext } from 'react';
 import { Modal, Button, Input, message, Select, Form, Flex } from 'antd';
 import ButtonProfile from '../../../components/Client/Button/ButtonProfile';
 import axios from 'axios';
 const { Option } = Select;
+import { UserContext } from '../../../routes/UserContext'; 
 
 export default function ProfileLocation() {
+    const {token} = useContext(UserContext);
     const [addresses, setAddresses] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isAddAddressModalVisible, setIsAddAddressModalVisible] = useState(false);
     const [selectedAddressId, setSelectedAddressId] = useState(null);
     const [editedAddress, setEditedAddress] = useState('');
     const [form] = Form.useForm();
-    const IdUser = 1;
     const [listTinhThanh, setListTinhThanh] = useState([]);
     const [listQuanHuyen, setListQuanHuyen] = useState([]);
     const [listXa, setListXa] = useState([]);
     const [formadd]=Form.useForm();
+    
+
+
 
     const handleGetListLocation = async () => {
-        const idNguoiDung = IdUser;
         try {
             const response = await axios.post(
                 "http://127.0.0.1:8000/api/getDiaChiUser",
-                { idNguoiDung },
+                {},
                 {
                     headers: {
+                        'Authorization': 'Bearer ' + token,
                         "Content-Type": "application/json",
                     },
                 }
@@ -91,9 +95,10 @@ export default function ProfileLocation() {
         try{
             const response = await axios.post(
                 "http://127.0.0.1:8000/api/updateDefaultLocation",
-                {idNguoiDung:IdUser, idDiaChi:id},
+                { idDiaChi:id},
                 {
                     headers: {
+                        'Authorization': 'Bearer ' + token,
                         "Content-Type": "application/json",
                     },
                 }
@@ -107,21 +112,6 @@ export default function ProfileLocation() {
         }
     };
 
-
-    // const openEditModal = (id) => {
-    //     const addressToEdit = addresses.find(addr => addr.id === id);
-    //     setSelectedAddressId(id);
-    //     form.setFieldsValue({
-    //         fullName: addressToEdit.fullName,
-    //         phoneNumber: addressToEdit.phoneNumber,
-    //         city: addressToEdit.city,
-    //         specificAddress: addressToEdit.specificAddress,
-    //         isOffice: addressToEdit.isOffice
-    //     });
-    //     setIsModalVisible(true);
-    // };
-
-    
     const handleCancel = () => {
         setIsModalVisible(false);
     };
@@ -133,11 +123,16 @@ export default function ProfileLocation() {
         try{
             const response = await axios.post(
                 "http://127.0.0.1:8000/api/updateLocation",
-                 {idDiaChi,sdt,note,loaiDiaChi,hoVaTen,diaChi,idNguoiDung:IdUser},
-                 {headers: {'Content-Type': 'application/json'}}
+                 {idDiaChi,sdt,note,loaiDiaChi,hoVaTen,diaChi},
+                 {headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                 }}
             )
             message.success(response.data.message);
             handleGetListLocation();    
+            setIsModalVisible(false); 
+            
             
         }catch (e){
             message.error(e.response.data.message);
@@ -149,12 +144,16 @@ export default function ProfileLocation() {
         try{
             const response=await axios.post(
                   "http://127.0.0.1:8000/api/deleteLocation",
-                 {idDiaChi:id, idNguoiDung:IdUser},
-                  {headers: {'Content-Type': 'application/json'}}
+                 {idDiaChi:id},
+                  {headers: {'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+
+                  }}
             )
             if(response.data.success){
                 message.success(response.data.message);
                 handleGetListLocation();
+               
             }
         }catch(e){
             message.error(e.response.data.message);
@@ -167,11 +166,17 @@ export default function ProfileLocation() {
         try{
             const response = await axios.post(
                 "http://127.0.0.1:8000/api/addLocation",
-                 {sdt,note,loaiDiaChi,hoVaTen,diaChi,idNguoiDung:IdUser},
-                 {headers: {'Content-Type': 'application/json'}}
+                 {sdt,note,loaiDiaChi,hoVaTen,diaChi},
+                 {headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+
+                 }}
             )
             message.success(response.data.message);
-            
+            handleGetListLocation();    
+            setIsAddAddressModalVisible(false); 
+            formadd.resetFields(); 
         }catch (e){
             message.error(e.response.data.message);
         }
@@ -319,13 +324,13 @@ export default function ProfileLocation() {
                             <>
                             <li key={address.idDiaChi} className='d-flex' style={{ fontSize: '100%' }}>
                                 <div className='col-7'>
-                                    {address.hoVaTen} | {address.sdt} <br />{address.diaChi}
+                                    {address.hoVaTen} | {address.sdt} | {`(${address.loaiDiaChi})`} <br />{address.diaChi}
                                 </div>
                                 <div className='col-5'>
                                     {address.macDinh == 0?
                                         <Button
                                             type="link"
-                                            onClick={() => setDefaultAddress(address)}
+                                            onClick={() => setDefaultAddress(address.idDiaChi)}
                                         >
                                             Chọn làm mặc định
                                         </Button>

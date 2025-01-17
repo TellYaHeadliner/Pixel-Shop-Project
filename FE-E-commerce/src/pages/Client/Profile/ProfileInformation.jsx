@@ -10,7 +10,7 @@ import { UserContext } from '../../../routes/UserContext';
 
 
 export default function ProfileInformation() {
-    const {token}=useContext(UserContext);
+    const {token} = useContext(UserContext);
     const [form] = Form.useForm();
     const [file, setFile] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
@@ -34,8 +34,10 @@ export default function ProfileInformation() {
 
     const handleGetProfile = async ()=>{
         try{
+            console.log(token);
             const response = await axios.post(
                 "http://127.0.0.1:8000/api/getProfile",
+                {},
                 {
                     headers:{
                         'Authorization': 'Bearer ' + token,
@@ -56,6 +58,7 @@ export default function ProfileInformation() {
         try{
             const response = await axios.post(
                 "http://127.0.0.1:8000/api/getDiaChiUser",
+                {},
                 {
                     headers:{
                         'Authorization': 'Bearer ' + token,
@@ -67,13 +70,11 @@ export default function ProfileInformation() {
                 setListLocation(response.data.data);
             }
         }catch(e){
-            message.error(e.response.data + '2');
-            console.log(e.response.data);
+            message.error(e.response.message);
         }
     }
 
     useEffect(() => {
-        console.log(token)
         handleGetProfile();
         handleGetListLocation();
     }, []);
@@ -156,7 +157,7 @@ try {
                                 message.success("Thông tin đã được cập nhật thành công!");
                             }
                         }catch(e){
-                            message.error(e.response.data.message + '3');
+                            message.error(e.response.data.message);
                         }
                     }
                     else{
@@ -188,7 +189,7 @@ try {
                             }
                         }catch(e) {
                             const data = e.response.data;
-                            message.error(data.message + '4');
+                            message.error(data.message);
                         }
                     }
                     
@@ -255,7 +256,7 @@ try {
             message.success(response.data.message + " qua email:" + email);
           }
         } catch (error) { 
-          message.error(error.response.data.message + '5');
+          message.error(error.response.data.message);
           clearInterval(timer);
           setIsDisabled(false);
           setIsClickM(false);
