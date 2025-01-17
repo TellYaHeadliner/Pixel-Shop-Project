@@ -3,6 +3,20 @@ import { lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute"; // Import ProtectedRoute
 
+
+
+
+const ListBlog = lazy(()=>import ("../pages/Client/Blog/ListBlog"));
+const ProfileRatedProducts = lazy(()=>import ("../pages/Client/Profile/ProfileRatedProduct"));
+const ProfileOrderPendingConfirm = lazy(() => import("../pages/Client/Profile/ProfileOrderPendingConfirm"));
+const ProfileOrderBeingShip = lazy(() => import("../pages/Client/Profile/ProfileOrderBeingShip"));
+const ProfileOrderReceived = lazy(() => import("../pages/Client/Profile/ProfileOrderReceived"));
+const ProfileOrderCanceled = lazy(() => import("../pages/Client/Profile/ProfileOrderCanceled"));
+
+const ListOrder = lazy(() => import("../pages/Client/Profile/ListOrder"));
+const SearchProduct = lazy(() => import("../pages/Client/Search/SearchProduct"));
+
+
 // Client components
 const ClientLayout = lazy(
   () => import("../components/Client/Layouts/ClientLayout")
@@ -77,7 +91,22 @@ const AppRoutes = () => {
           <Route path="locations" element={<ProfileLocation />} />
           <Route path="changepassword" element={<ProfileChangePassWord />} />
           <Route path="productloved" element={<ProfileProductloved />} />
+          <Route path="productrated" element={<ProfileRatedProducts/>}/>
+          <Route path="orderpendingconfirm" element={<ListOrder trangThai={0}/>}/>
+          <Route path="orderbeingship" element={<ListOrder trangThai={1}/>}/>
+          <Route path="orderreceived" element={<ListOrder trangThai={2}/>}/>
+          <Route path="ordercanceled" element={<ListOrder trangThai={3}/>}/>
+          <Route path="orderpendingconfirm/:id" element={<ProfileOrderPendingConfirm/>}/>
+          <Route path="orderbeingship/:id" element={<ProfileOrderBeingShip/>}/>
+          <Route path="orderreceived/:id" element={<ProfileOrderReceived/>}/>
+          <Route path="ordercanceled/:id" element={<ProfileOrderCanceled/>}/>
+
+
+
+
         </Route>
+        <Route path="news" element={<ListBlog/>}/>
+       
         <Route path="contact" element={<ContactInformation />} />
         <Route path="about" element={<ProfileCompanyInformation />} />
         <Route path="product/:slug" element={<DetailProduct />} />
@@ -85,7 +114,15 @@ const AppRoutes = () => {
         <Route path="about" element={<ProfileCompanyInformation />} />
         <Route path="product" element={<DetailProduct />} />
         <Route path="payment" element={<Payment />} />
-        <Route path="shoppingcart" element={<ShoppingCart />} />
+        <Route path="searchproduct/:categoriess?/:texts?/:conditions?/:pages?" element={<SearchProduct />} />
+
+        <Route path="shoppingcart" element={
+           <ProtectedRoute allowedRoles={[3]}>
+            <ShoppingCart />
+         </ProtectedRoute>
+          
+        } 
+          />
       </Route>
 
       <Route

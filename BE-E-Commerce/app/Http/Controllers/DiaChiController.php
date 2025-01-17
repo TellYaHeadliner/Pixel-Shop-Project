@@ -12,7 +12,7 @@ class DiaChiController extends Controller
     function getListByUser(Request $request){
 			$data = $request->all();
 			try {
-        $list = DiaChi::where('idNguoiDung', "=", $data['idNguoiDung'])->get();
+        $list = DiaChi::where('idNguoiDung', "=", $data['idNguoiDung'])->orderBy('macDinh','DESC')->get();
 
         if ($list->isEmpty()) {
             return response()->json([
@@ -78,7 +78,7 @@ class DiaChiController extends Controller
 					'hoVaTen'=> $data['hoVaTen'],
 					'diaChi'=> $data['diaChi'],
 					'sdt'=> $data['sdt'],
-					'note'=> $data['note'],
+					'note'=> $data['note']??null,
 					'loaiDiaChi'=> $data['loaiDiaChi'],
 					'macDinh'=> $count==0?1:0,
 				]);
@@ -124,20 +124,20 @@ class DiaChiController extends Controller
 		function update(Request $request){
 			$data = $request->all();
 			try {
-				$diaChi = $diachi=DiaChi::where('idDiaChi','=',$data['idDiaChi'])
+				$diaChi = DiaChi::where('idDiaChi','=',$data['idDiaChi'])
 											->where('idNguoiDung','=',$data['idNguoiDung'])
 											->first();
-				if($diachi)
+				if(!$diaChi)
 					return response()->json([
 					'success' => false,
 					'message' => 'Không tìm được địa chỉ cần cập nhật',
 					'data' => []
 					],404);
-				$diachi->update([
+				$diaChi->update([
 					'diaChi'=>$data['diaChi'],
 					'hoVaTen'=> $data['hoVaTen'],
 					'sdt'=>$data['sdt'],
-					'note'=>$data['note'],
+					'note'=>$data['note']??null,
 					'loaiDiaChi'=>$data['loaiDiaChi'],
 				]);
 				return response()->json([

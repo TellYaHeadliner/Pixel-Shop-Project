@@ -6,8 +6,11 @@ import { Spin } from 'antd';
 
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
-    const { role , loading } = useContext(UserContext); 
+    const { role , loading , login } = useContext(UserContext); 
 
+    if(!login){
+        return <Navigate to="/" replace />; 
+    }
     if (loading) {
         return (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>

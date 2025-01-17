@@ -10,6 +10,7 @@ import { UserContext } from '../../../routes/UserContext';
 
 
 export default function ProfileInformation() {
+    const {token} = useContext(UserContext);
     const [form] = Form.useForm();
     const [file, setFile] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
@@ -28,20 +29,18 @@ export default function ProfileInformation() {
     const [isDisabled, setIsDisabled] = useState(false);
     const [isClickM, setIsClickM] = useState(false);
     const [countdown, setCountdown] = useState(0); 
-    const {  idNguoiDung } = useContext(UserContext); 
 
-    const IdUser = idNguoiDung;
     let timer = null;
 
     const handleGetProfile = async ()=>{
-        const idNguoiDung = IdUser;
-        console.log(idNguoiDung);
         try{
+            console.log(token);
             const response = await axios.post(
                 "http://127.0.0.1:8000/api/getProfile",
-                {idNguoiDung},
+                {},
                 {
-                    haeders:{
+                    headers:{
+                        'Authorization': 'Bearer ' + token,
                         "Content-Type": "application/json",
                     },
                 }
@@ -52,17 +51,17 @@ export default function ProfileInformation() {
             }
         }catch (e) {
             const data = e.response.data;
-            message.error(data.message);
+            message.error(data + "1");
         }
     }
     const handleGetListLocation = async() =>{
-        const idNguoiDung = IdUser;
         try{
             const response = await axios.post(
                 "http://127.0.0.1:8000/api/getDiaChiUser",
-                {idNguoiDung},
+                {},
                 {
-                    haeders:{
+                    headers:{
+                        'Authorization': 'Bearer ' + token,
                         "Content-Type": "application/json",
                     },
                 },
@@ -71,8 +70,7 @@ export default function ProfileInformation() {
                 setListLocation(response.data.data);
             }
         }catch(e){
-            const data =e.response.data;
-            message.error(data.message);
+            message.error(e.response.message);
         }
     }
 
@@ -92,20 +90,46 @@ export default function ProfileInformation() {
         form.setFieldsValue(updatedInfo);
     }, [userInfo, listLocation]);
 
-    const handleFileChange = async (event) => {
+    const handleFileChange = (event) => {
         const selectedFile = event.target.files[0];
-        if (selectedFile) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImagePreview(reader.result);
-                localStorage.setItem('imagePreview', reader.result);
-                setFile(selectedFile.name);
-                message.success("Ảnh đại diện đã được cập nhật!");
-            };
-            reader.readAsDataURL(selectedFile);
-        }
-    };
 
+if (!selectedFile) {
+return; // Nếu không có tệp nào được chọn, thoát khỏi hàm
+}
+
+Modal.confirm({
+title: "Xác nhận thay đổi ảnh đại diện",
+content: "Bạn có chắc chắn muốn thay đổi ảnh đại diện?",
+okText: "Xác nhận",
+cancelText: "Hủy",
+onOk: async () => {
+try {
+    const formData = new FormData();
+    formData.append("anhDaiDien", selectedFile);
+
+    const response = await axios.post(
+        "http://127.0.0.1:8000/api/updateAnhDaiDien",
+        formData,
+        {
+            headers: {
+                'Authorization': 'Bearer ' + token,
+                "Content-Type": "multipart/form-data",
+
+            },
+        }
+    );
+                    message.success(response.data.message);
+                    handleGetProfile(); // Cập nhật lại thông tin người dùng
+                } catch (e) {
+                    message.error(e.response?.data?.message || "Đã xảy ra lỗi khi cập nhật ảnh đại diện.");
+                }
+            },
+            onCancel: () => {
+                message.info("Thay đổi chưa được lưu.");
+            },
+        });
+    };
+    
     const handleOk = () => {
         form.validateFields().then((values) => {
             Modal.confirm({
@@ -117,13 +141,13 @@ export default function ProfileInformation() {
                     if(editField == "diaChi"){
                         try{
                             const data = {
-                                idNguoiDung: IdUser,
                                 idDiaChi: values[editField+2],
                             };
                             const response=await axios.post(
                                 "http://127.0.0.1:8000/api/updateDefaultLocation",
                                 data,
                                 {
+                                    'Authorization': 'Bearer ' + token,
                                     headers: {'Content-Type': 'application/json'},
                                 },
                             );
@@ -150,6 +174,7 @@ export default function ProfileInformation() {
                                 :"http://127.0.0.1:8000/api/updateById",
                                 updatedInfo,
                                 {
+                                    'Authorization': 'Bearer ' + token,
                                     headers: { 'Content-Type': 'application/json' },
                                 },
                             );
@@ -367,29 +392,38 @@ export default function ProfileInformation() {
                     </Form>
                 </div>
 
-                <div className="col-6">
-                    {imagePreview && (
-                        <div>
+                <div className="col-6" className='d-block'
+                    style={{marginLeft:'15%'}}
+                >
+                        <div >
                             <h3>Ảnh đại diện:</h3>
                             <img
-                                src={imagePreview}
+                                src={"http://127.0.0.1:8000/imgs/"+ userInfo.anhDaiDien}
                                 alt="Preview"
                                 style={{
-                                    width: '100px',
-                                    height: '100px',
-                                    marginLeft: '170px',
+                                    width:'100%',
+                                    height:'150px',
                                     borderRadius: '50%',
                                 }}
                             />
                         </div>
-                    )}
-                    <label>
+                    <label
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            backgroundColor: '#53CCED',
+                            color: '#fff',
+                            cursor: 'pointer',
+                            marginTop:'20%'
+                        }}
+                    >
+                        Chọn ảnh
                         <input
                             type="file"
                             accept="image/*"
-														name="anhDaiDien"
+							name="anhDaiDien"
                             onChange={handleFileChange}
-                            style={{ width: '500px', height: '40px', marginTop: 20 }}
+                            style={{ display:'none' }}
                         />
                     </label>
                 </div>
