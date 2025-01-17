@@ -851,7 +851,7 @@ const ProductManagement = () => {
 												htmlType='submit'
 												type='primary'
 											>
-												thêm
+												Cập nhật
 											</Button>
 										</div>
 									</div>
