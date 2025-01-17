@@ -121,7 +121,7 @@ Route::controller(HoaDonController::class)->group(function(){
 	Route::post('/api/getListHoaDonBySdt','getListHoaDonBySdt');
 	Route::get('/api/getListHoaDonByStatusAndDay/{status}/{day}','getListHoaDonByStatusAndDay');
 	Route::post('/api/getListHoaDonByStatus','getListHoaDonByStatus')->middleware(JWT::class.':3');
-	Route::put('/api/updateStatusHoaDon','updateStatusHoaDon')->middleware(JWT::class.':3');
+	Route::put('/api/updateStatusHoaDon','updateStatusHoaDon')->middleware(JWT::class.':1');
 	Route::put('/api/updateHiddenHoaDon','updateHiddenHoaDon');
 	Route::get('/api/thongKeDoanhThuTheoTatCaNguoiDung', 'thongKeDoanhThuTheoTatCaNguoiDung');
 	Route::get('/api/thongKeDoanhThuSanPhamTheoNgay','thongKeDoanhThuSanPhamTheoNgay');

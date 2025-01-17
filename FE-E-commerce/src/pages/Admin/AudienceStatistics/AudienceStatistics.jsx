@@ -33,7 +33,7 @@ const AudienceStatistics = () => {
                 const productRevenueResponse = await apiService.thongKeDoanhThuSanPhamTheoNgay();
                 const productRevenueData = productRevenueResponse.data.data.map(item => ({
                     TenSanPham: item.TenSanPham,
-                    Ngay: item.Ngay.substring(0, 10), // Extract date only
+                    Ngay: item.Ngay?.substring(0, 10), // Extract date only
                     TongSoLuong: item.TongSoLuong,
                     TongTien: item.TongTien,
                 }));
