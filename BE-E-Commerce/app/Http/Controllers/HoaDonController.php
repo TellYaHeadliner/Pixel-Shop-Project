@@ -178,6 +178,8 @@ class HoaDonController extends Controller
                     DB::raw('SUM(c.tongTien) AS DoanhThu')
                 )
                 ->where('hoadon.trangThai', 2)
+                ->whereDate('hoadon.ngayXacNhan', '>=', now()->startOfDay())
+                ->whereDate('hoadon.ngayXacNhan', '<=', now()->endOfDay())
                 ->groupBy(DB::raw('DATE(hoadon.ngayXacNhan)'))
                 ->orderBy('Ngay')
                 ->get();
@@ -317,7 +319,7 @@ class HoaDonController extends Controller
         try {
             $data = DB::table('hoadon')
                 ->join('diachi', 'hoadon.idDiaChi', '=', 'diachi.idDiaChi')
-                ->select('hoadon.idHoaDon', 'hoadon.tongSoTien', 'diachi.sdt', 'diachi.diaChi', 'hoadon.phuongThucThanhToan')
+                ->select('hoadon.idHoaDon', 'hoadon.tongSoTien', 'diachi.sdt', 'diachi.diaChi', 'hoadon.phuongThucThanhToan', 'hoadon.trangThai')
                 ->whereNull('hoadon.thoiGianKhoa')
                 ->orWhere('hoadon.thoiGianKhoa', '<', time())
                 ->orderByRaw("
@@ -382,7 +384,7 @@ class HoaDonController extends Controller
                 ->join('diachi', 'diachi.idDiaChi', '=', 'hoadon.idDiaChi')
                 ->join('chitiethoadon', 'chitiethoadon.idHoaDon', '=', 'hoadon.idHoaDon')
                 ->join('sanpham', 'chitiethoadon.idSanPham', '=', 'sanpham.idSanPham')
-                ->select('hoadon.*', 'chitiethoadon.*', 'sanpham.img', 'sanpham.tenSanPham', 'sanpham.gia', 'nguoidung.hoVaTen', 'diachi.diaChi', 'diachi.sdt', 'diachi.note')
+                ->select('hoadon.*', 'nguoiDung.hoVaTen', 'chitiethoadon.*', 'sanpham.img', 'sanpham.tenSanPham', 'sanpham.gia', 'nguoidung.hoVaTen', 'diachi.diaChi', 'diachi.sdt', 'diachi.note')
                 ->where('hoadon.idHoaDon', $idHoaDon)
                 ->get();
 
