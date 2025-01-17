@@ -87,6 +87,7 @@ Route::controller(SanPhamController::class)->group(function(){
 	Route::post('/api/addSanPham','addSanPham');
 	Route::post('/api/getListSanPham','search');
 	Route::post('/api/getProductBySlug','getProductBySlug');
+	Route::post('api/updateSanPham','update');
 });
 
 Route::controller(GioHangController::class)->group(function(){
