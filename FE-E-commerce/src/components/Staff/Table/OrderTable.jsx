@@ -85,11 +85,11 @@ const OrderTable = ({ data }) => {
     setSelectedOrder(order);
     const handleConfirm = async () => {
       try {
-        const updateTrangThai = order.trangThai + 1;
         const response = await donhangService.updateStatusHoaDon(
           order.idHoaDon,
-          updateTrangThai
+          order.trangThai
         );
+        console.log(response)
         if (response.status === 200) {
           message.success(
             "Đã xác nhận sản phẩm ! Trang web sẽ reload lại trong 5s"
