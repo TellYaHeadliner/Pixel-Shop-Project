@@ -1,4 +1,6 @@
+import React, { useContext } from "react";
 import axios from 'axios';
+import { UserContext } from '../routes/UserContext';
 
 const API_URL = 'http://127.0.0.1:8000/api';
 
@@ -45,22 +47,31 @@ const apiService = {
     listNhaCungCap: async () => {
         return await axios.get(`${API_URL}/listNhaCungCap`);
     },
-    getDiaChiUser: async (idNguoiDung) => {
-        return await axios.post(`${API_URL}/getDiaChiUser`, { idNguoiDung });
+    getDiaChiUser: async (idNguoiDung, token) => {
+        return await axios.post(`${API_URL}/getDiaChiUser`, { idNguoiDung }, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
     },
-    addLocation: async (locationData) => {
-        return await axios.post(`${API_URL}/add`, locationData);
+    addLocation: async (locationData, token) => {
+        return await axios.post(`${API_URL}/addLocation`, locationData, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
     },
-    updateLocation: async (locationData) => {
-        return await axios.post(`${API_URL}/updateLocation`, locationData);
+    updateLocation: async (locationData, token) => {
+        return await axios.post(`${API_URL}/updateLocation`, locationData, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
     },
-    deleteLocation: async (locationData) => {
-        return await axios.post(`${API_URL}/deleteLocation`, locationData);
+    deleteLocation: async (locationData, token) => {
+        return await axios.post(`${API_URL}/deleteLocation`, locationData, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
     },
-    updateDefaultLocation: async (locationData) => {
-        return await axios.post(`${API_URL}/updateDefaultLocation`, locationData);
+    updateDefaultLocation: async (locationData, token) => {
+        return await axios.post(`${API_URL}/updateDefaultLocation`, locationData, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
     },
-    // Thêm các phương thức mới
     getListSanPham: async () => {
         return await axios.get(`${API_URL}/getListSanPham`);
     },

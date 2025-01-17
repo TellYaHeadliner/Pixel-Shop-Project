@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Layout, Row, Col, Button, Modal, Radio, Typography, Input, message } from "antd";
+import { Layout, Row, Col, Button, Modal, Radio, Typography, Input, message, Card } from "antd";
 import { useLocation } from "react-router-dom";
 import { UserContext } from "../../../routes/UserContext";
 import apiService from "../../../api/api";
@@ -11,7 +11,7 @@ const { Title, Paragraph } = Typography;
 const PaymentBasic = () => {
   const location = useLocation();
   const { selectedItems } = location.state || { selectedItems: [] };
-  const { idNguoiDung } = useContext(UserContext);
+  const { idNguoiDung, token } = useContext(UserContext);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [addresses, setAddresses] = useState([]);
@@ -27,7 +27,7 @@ const PaymentBasic = () => {
       }
 
       try {
-        const response = await apiService.getDiaChiUser(idNguoiDung);
+        const response = await apiService.getDiaChiUser(idNguoiDung, token);
         if (response.data.success) {
           const userAddresses = response.data.data;
           const defaultAddr = userAddresses.find(addr => addr.macDinh === 1);
@@ -42,8 +42,9 @@ const PaymentBasic = () => {
     };
 
     fetchAddresses();
-  }, [idNguoiDung]);
+  }, [idNguoiDung, token]);
 
+  
   const handleConfirmAddress = async () => {
     if (!selectedAddressId) {
       message.error("Vui lòng chọn một địa chỉ.");
@@ -54,9 +55,9 @@ const PaymentBasic = () => {
       idDiaChi: selectedAddressId,
       idNguoiDung,
     };
-
+    
     try {
-      const response = await apiService.updateDefaultLocation(updateData);
+      const response = await apiService.updateDefaultLocation(updateData, token);
       if (response.data.success) {
         const updatedAddress = addresses.find(addr => addr.idDiaChi === selectedAddressId);
         setDefaultAddress(updatedAddress);
@@ -69,13 +70,37 @@ const PaymentBasic = () => {
       message.error("Lỗi khi cập nhật địa chỉ: " + error.message);
     }
   };
+  
+  const validatePhoneNumber = (phone) => {
+    const phoneRegex = /^0\d{0,11}$/; 
+    return phoneRegex.test(phone);
+  };
+  const validateDiaChi = (diachi) => {
+    if (diachi.length <= 10) {
+        return false;
+    }
+    const isAllDigits = /^\d+$/.test(diachi);
+    if (isAllDigits) {
+        return false; 
+    }
 
+    const alphanumericRegex = /[a-zA-Z]/;
+    return alphanumericRegex.test(diachi);
+};
   const handleAddAddress = async () => {
     if (!newAddress.hoVaTen || !newAddress.diaChi || !newAddress.sdt) {
       message.error("Vui lòng điền đầy đủ thông tin địa chỉ.");
       return;
     }
-
+    
+    if (!validatePhoneNumber(newAddress.sdt)) {
+      message.error("Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại bắt đầu bằng 0 và tối đa 12 số.");
+      return;
+    }
+    if(!validateDiaChi(newAddress.diaChi)) {
+      message.error("Địa chỉ không hợp lệ.");
+      return;
+    }
     const addressData = {
       idNguoiDung,
       hoVaTen: newAddress.hoVaTen,
@@ -86,13 +111,12 @@ const PaymentBasic = () => {
     };
 
     try {
-      const response = await apiService.addLocation(addressData);
+      const response = await apiService.addLocation(addressData, token);
       if (response.data.success) {
         message.success("Thêm địa chỉ thành công!");
         setNewAddress({ hoVaTen: '', diaChi: '', sdt: '', note: '', loaiDiaChi: '1' });
         setIsAddModalVisible(false);
-        // Refresh address list
-        const updatedResponse = await apiService.getDiaChiUser(idNguoiDung);
+        const updatedResponse = await apiService.getDiaChiUser(idNguoiDung, token);
         setAddresses(updatedResponse.data.data);
       } else {
         message.error(response.data.message);
@@ -102,12 +126,43 @@ const PaymentBasic = () => {
     }
   };
 
-  const handleConfirmPayment = () => {
+  const handleDeleteAddress = async (idDiaChi) => {
+    try {
+      const response = await apiService.deleteLocation({ idDiaChi }, token);
+      if (response.data.success) {
+        message.success("Xóa địa chỉ thành công!");
+        const updatedResponse = await apiService.getDiaChiUser(idNguoiDung, token);
+        setAddresses(updatedResponse.data.data);
+      } else {
+        message.error(response.data.message);
+      }
+    } catch (error) {
+      message.error("Lỗi khi xóa địa chỉ: " + error.message);
+    }
+  };
+
+  const handleConfirmPayment = async () => {
     if (!defaultAddress) {
       message.error("Vui lòng chọn địa chỉ giao hàng.");
       return;
     }
-    // Logic để xác nhận thanh toán
+
+    const paymentData = {
+      idNguoiDung,
+      idDiaChi: defaultAddress.idDiaChi,
+      items: selectedItems,
+    };
+
+    try {
+      const response = await apiService.confirmPayment(paymentData, token); 
+      if (response.data.success) {
+        message.success("Thanh toán thành công!");
+      } else {
+        message.error(response.data.message);
+      }
+    } catch (error) {
+      message.error("Lỗi khi xác nhận thanh toán: " + error.message);
+    }
   };
 
   const totalAmount = selectedItems.reduce((total, item) => total + item.price * item.quantity, 0);
@@ -122,12 +177,12 @@ const PaymentBasic = () => {
             <div className="info-section">
               <div className="info-header">
                 {defaultAddress && (
-                  <div>
+                  <Card style={{ marginBottom: 16 }}>
                     <h3>{defaultAddress.note}</h3>
                     <Paragraph>{defaultAddress.sdt}</Paragraph>
                     <Paragraph>{defaultAddress.diaChi}</Paragraph>
                     <Button type="link" onClick={() => setIsModalVisible(true)}>Thay đổi</Button>
-                  </div>
+                  </Card>
                 )}
               </div>
 
@@ -178,15 +233,17 @@ const PaymentBasic = () => {
           <div>
             <h4>Địa chỉ có sẵn:</h4>
             {addresses.map((address) => (
-              <Radio
-                key={address.idDiaChi}
-                value={address.idDiaChi}
-                onChange={() => setSelectedAddressId(address.idDiaChi)}
-                checked={selectedAddressId === address.idDiaChi}
-              >
-                {address.note} - {address.sdt} <br />
-                {address.diaChi}
-              </Radio>
+              <Card key={address.idDiaChi} style={{ marginBottom: 16 }}>
+                <Radio
+                  value={address.idDiaChi}
+                  onChange={() => setSelectedAddressId(address.idDiaChi)}
+                  checked={selectedAddressId === address.idDiaChi}
+                >
+                  {address.note} - {address.sdt} <br />
+                  {address.diaChi}
+                </Radio>
+                <Button type="link" danger onClick={() => handleDeleteAddress(address.idDiaChi)}>Xóa</Button>
+              </Card>
             ))}
             {selectedAddressId === null && (
               <Paragraph type="warning">Bạn chưa chọn địa chỉ nào!</Paragraph>
@@ -208,11 +265,12 @@ const PaymentBasic = () => {
           <Input
             placeholder="Họ và tên"
             value={newAddress.hoVaTen}
+            required
             onChange={(e) => setNewAddress({ ...newAddress, hoVaTen: e.target.value })}
             style={{ marginBottom: 16 }}
           />
           <Input
-            placeholder="Địa chỉ"
+            placeholder="Địa chỉ (hãy nhập đầy đủ và chính xác nơi bạn muốn giao hàng)"
             value={newAddress.diaChi}
             onChange={(e) => setNewAddress({ ...newAddress, diaChi: e.target.value })}
             style={{ marginBottom: 16 }}
