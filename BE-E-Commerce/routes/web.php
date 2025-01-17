@@ -125,7 +125,10 @@ Route::controller(HoaDonController::class)->group(function(){
 	Route::put('/api/updateHiddenHoaDon','updateHiddenHoaDon');
 	Route::get('/api/thongKeDoanhThuTheoTatCaNguoiDung', 'thongKeDoanhThuTheoTatCaNguoiDung');
 	Route::get('/api/thongKeDoanhThuSanPhamTheoNgay','thongKeDoanhThuSanPhamTheoNgay');
-	Route::get('/api/thongKeDonHangTheoNgay/', 'thongKeDonHangTheoNgay');
+	Route::get('/api/thongKeDonHangTheoNgay', 'thongKeDonHangTheoNgay');
+	Route::post('/api/create-payment','create_payment')->middleware(Jwt::class.':3');
+	Route::get('/api/callback-vnpay','callback_vnpay');
+
 });
 
 Route::controller(YeuThichController::class)->group(function(){

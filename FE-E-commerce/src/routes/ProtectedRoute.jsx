@@ -1,13 +1,14 @@
 // src/ProtectedRoute.jsx
-import React, { useContext } from 'react';
+import React, { useContext ,useLocation } from 'react';
 import { Navigate } from 'react-router-dom';
 import { UserContext } from './UserContext'; 
 import { Spin } from 'antd';
 
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
-    const { role , loading , login } = useContext(UserContext); 
-
+    const { role , loading , login } = useContext(UserContext);
+ 
+    
     if (loading) {
         return (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>

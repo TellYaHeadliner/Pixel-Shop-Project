@@ -133,6 +133,7 @@ const UserProvider = ({ children }) => {
         loading,
 				setLoading,
         idNguoiDung,
+        getCookie
       }}
     >
       {children}
