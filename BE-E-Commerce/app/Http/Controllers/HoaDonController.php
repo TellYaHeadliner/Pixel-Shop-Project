@@ -385,7 +385,7 @@ class HoaDonController extends Controller
                 ->join('diachi', 'diachi.idDiaChi', '=', 'hoadon.idDiaChi')
                 ->join('chitiethoadon', 'chitiethoadon.idHoaDon', '=', 'hoadon.idHoaDon')
                 ->join('sanpham', 'chitiethoadon.idSanPham', '=', 'sanpham.idSanPham')
-                ->select('hoadon.*', 'nguoiDung.hoVaTen', 'chitiethoadon.*', 'sanpham.img', 'sanpham.tenSanPham', 'sanpham.gia', 'nguoidung.hoVaTen', 'diachi.diaChi', 'diachi.sdt', 'diachi.note')
+                ->select('hoadon.*', 'chitiethoadon.*', 'sanpham.img', 'sanpham.tenSanPham', 'sanpham.gia', 'nguoidung.hoVaTen', 'diachi.diaChi', 'diachi.sdt', 'diachi.note','diachi.hoVaTen as hoVaTenDC' )
                 ->where('hoadon.idHoaDon', $idHoaDon)
                 ->get();
 

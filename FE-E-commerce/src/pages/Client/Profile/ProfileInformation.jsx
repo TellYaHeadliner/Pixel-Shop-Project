@@ -6,6 +6,7 @@ import axios from 'axios';
 import { format, parseISO } from "date-fns";
 import moment from 'moment';
 import { UserContext } from '../../../routes/UserContext'; 
+import Cookies from 'js-cookie';
 
 
 
@@ -147,8 +148,10 @@ try {
                                 "http://127.0.0.1:8000/api/updateDefaultLocation",
                                 data,
                                 {
-                                    'Authorization': 'Bearer ' + token,
-                                    headers: {'Content-Type': 'application/json'},
+                                   
+                                    headers: {'Content-Type': 'application/json',
+                                        'Authorization': 'Bearer ' + token,
+                                    },
                                 },
                             );
                             if(response.data.success){
@@ -157,7 +160,7 @@ try {
                                 message.success("Thông tin đã được cập nhật thành công!");
                             }
                         }catch(e){
-                            message.error(e.response.data.message);
+                            message.error(e.response.data.message + '3');
                         }
                     }
                     else{
@@ -174,8 +177,10 @@ try {
                                 :"http://127.0.0.1:8000/api/updateById",
                                 updatedInfo,
                                 {
-                                    'Authorization': 'Bearer ' + token,
-                                    headers: { 'Content-Type': 'application/json' },
+                                    
+                                    headers: { 'Content-Type': 'application/json' ,
+                                        'Authorization': 'Bearer ' + token,
+                                    },
                                 },
                             );
                             if(response.data.success) {
@@ -188,6 +193,7 @@ try {
                                 form.setFieldsValue({captcha: ""});
                             }
                         }catch(e) {
+                            console.log(e);
                             const data = e.response.data;
                             message.error(data.message);
                         }
@@ -203,7 +209,6 @@ try {
 
     const handleCancel = () => {
         message.info("Thay đổi chưa được lưu");
-        // form.setFieldsValue({ [editField]: userInfo[editField] });
         setIsModalVisible(false);
         form.setFieldsValue({captcha: ""});
     };
@@ -248,7 +253,9 @@ try {
             { email,tenDangNhap,name },
             {
               headers: {
+               
                 "Content-Type": "application/json",
+                
               },
             }
           );
@@ -262,10 +269,15 @@ try {
           setIsClickM(false);
         }
     };
-
+    const handleLogout = () => {
+        Cookies.remove("token");
+        window.location.href = "/";
+    };
+    
     return (
         <div>
             <h1>Thông tin cá nhân</h1>
+            <Button style={{marginLeft:"90%"}} onClick={handleLogout}   >Đăng xuất</Button>
             <hr />
             <div className="d-flex w-100">
                 <div className="col-6 mt-3">
@@ -366,7 +378,6 @@ try {
                                     wrapperCol={{ span: 16 }}
                                     backgroundColor={'whit !important'}
                                 >
-                                    {/* Sử dụng Select để chọn địa chỉ */}
                                     <Select
                                         value={userInfo.diaChi}
                                         onChange={(value) => form.setFieldsValue({ diaChi: value })}

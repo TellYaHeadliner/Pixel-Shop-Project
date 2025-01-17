@@ -67,20 +67,20 @@ export default function ProfileOrderPendingConfirm() {
   
   const handleGetListHoaDon = async()=>{
     try{
-      const response= await axios.get(
-         "http://127.0.0.1:8000/api/getHoaDonById/"+id,
-{
-          headers:{
-            'Authorization': 'Bearer ' + token,
-            "Content-Type": "application/json",
-          },
-         } 
-      )
-      if(response.data.success) {
-        console.log(response.data.data)
-        setOrderData(response.data.data);
-      }
-  }catch(e){
+        const response= await axios.get(
+          "http://127.0.0.1:8000/api/getHoaDonById/"+id,
+  {
+            headers:{
+              'Authorization': 'Bearer ' + token,
+              "Content-Type": "application/json",
+            },
+          } 
+        )
+        if(response.data.success) {
+          console.log(response.data.data)
+          setOrderData(response.data.data);
+        }
+    }catch(e){
 
       console.log(e.response.data)
     }
@@ -129,7 +129,7 @@ export default function ProfileOrderPendingConfirm() {
     <div style={{ padding: "20px", maxWidth: "800px", fontFamily: "Arial, sans-serif" }}>
       <h2 style={{ textAlign: "center" }}>Lịch sử đơn hàng {orderData[0]?.idHoaDon??""}</h2>
       <p>
-        <strong>Tên khách hàng: {orderData[0]?.hoVaTen ?? ""}</strong> 
+        <strong>Tên khách hàng: {orderData[0]?.hoVaTenDC ?? ""}</strong> 
       </p>
       <p>
         <strong>Địa chỉ giao hàng:</strong> {orderData[0]?.diaChi??""}
