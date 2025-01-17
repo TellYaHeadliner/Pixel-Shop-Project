@@ -1,12 +1,17 @@
 import { Table, Button, message, Popconfirm } from "antd";
-import { useState } from "react";
+import { useState , useContext } from "react";
 
 import DetailOrder from "../Modal/DetailOrder";
 import donhangService from "../../../services/donHangService";
 import Cookies from "js-cookie";
+import { UserContext } from "../../../routes/UserContext";
+import axios from 'axios';
+
 
 const OrderTable = ({ data }) => {
   const [selectedOrder, setSelectedOrder] = useState([]);
+  const { token } =useContext(UserContext);
+  axios.defaults.withCredentials=true;
 
   const columns = [
     {
@@ -85,10 +90,13 @@ const OrderTable = ({ data }) => {
     setSelectedOrder(order);
     const handleConfirm = async () => {
       try {
-        const response = await donhangService.updateStatusHoaDon(
-          order.idHoaDon,
-          order.trangThai
+        console.log(order.idHoaDon);
+        const response = await axios.put(
+          '/api/updateStatusHoaDon/', 
+          { idHoaDon: order.idHoaDon, trangThai: 1 }, 
+          { headers: { "Content-Type": "application/json", 'Authorization': `Bearer ${token}` } }
         );
+
         console.log(response)
         if (response.status === 200) {
           message.success(
@@ -111,10 +119,13 @@ const OrderTable = ({ data }) => {
     setSelectedOrder(order);
     const handleHidden = async () => {
       try {
-        const response = await donhangService.updateHiddenHoaDon(
+        const response = await donhangService.updateStatusHoaDon(
           selectedOrder.idHoaDon,
-          selectedOrder.trangThai
+          3
         );
+
+
+
         if (response.status === 401) {
           message.error("Không tìm thấy hóa đơn này");
           return;

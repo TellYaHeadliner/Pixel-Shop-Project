@@ -181,7 +181,7 @@ const PaymentBasic = () => {
         message.error(response.data.message);
       }
     } catch (error) {
-      console.log("Lỗi khi xác nhận thanh toán: " + error);
+      console.log(error.response);
     }
   };
 
