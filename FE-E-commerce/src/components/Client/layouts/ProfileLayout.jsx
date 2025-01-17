@@ -59,6 +59,10 @@ export default function ProfileLayout() {
   const [stateOpenKeys, setStateOpenKeys] = useState([]);
   const [userName, setUserName] = useState("");
 
+  const Username=async()=>{
+    
+  }
+
   useEffect(() => {
     const userData = {
       name: "John Doe", // Thay bằng dữ liệu thực tế từ API

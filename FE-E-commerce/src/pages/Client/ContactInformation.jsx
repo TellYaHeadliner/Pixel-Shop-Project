@@ -1,15 +1,28 @@
 import React from "react";
 import { Form, Input, Button, message } from "antd";
+import axios from "axios"
 
 const { TextArea } = Input;
 
 export default function ContactForm() {
   const [form] = Form.useForm();
 
-  const handleSubmit = (values) => {
-    console.log("Thông tin liên hệ:", values);
-    message.success("Thông tin của bạn đã được gửi!");
-    form.resetFields(); // Reset form sau khi gửi
+  const handleSubmit = async (values) => {
+    console.log(values);
+    const data = {...values}
+    try{
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/addLienHe",
+        data,
+        {
+          headers: { 'Content-Type': 'application/json' },
+        },
+      );
+      message.success(response.data.message);
+      form.resetFields();
+    }catch(e){
+      message.error(e.response.data.message);
+    }
   };
 
   const handleError = (errorInfo) => {
@@ -26,15 +39,6 @@ export default function ContactForm() {
         onFinish={handleSubmit}
         onFinishFailed={handleError}
       >
-        <Form.Item
-          label="Tiêu đề"
-          name="title"
-          rules={[
-            { required: true, message: "Vui lòng nhập tiêu đề!" },
-          ]}
-        >
-          <Input placeholder="Nhập tiêu đề" />
-        </Form.Item>
 
         <Form.Item
           label="Email"
@@ -49,7 +53,7 @@ export default function ContactForm() {
 
         <Form.Item
           label="Họ và tên"
-          name="name"
+          name="hoVaTen"
           rules={[
             { required: true, message: "Vui lòng nhập họ và tên!" },
           ]}
@@ -59,7 +63,7 @@ export default function ContactForm() {
 
         <Form.Item
           label="Số điện thoại"
-          name="phone"
+          name="sdt"
           rules={[
             { required: true, message: "Vui lòng nhập số điện thoại!" },
             { pattern: /^\d{10}$/, message: "Số điện thoại phải có 10 chữ số!" },
@@ -70,7 +74,7 @@ export default function ContactForm() {
 
         <Form.Item
           label="Nội dung"
-          name="content"
+          name="noiDung"
           rules={[
             { required: true, message: "Vui lòng nhập nội dung!" },
           ]}

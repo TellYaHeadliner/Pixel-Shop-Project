@@ -1,76 +1,98 @@
-import React, { useState, useEffect } from "react";
-import { Table, Tag } from "antd";
+import React, { useState, useEffect, useContext } from "react";
+import { message, Table, Tag } from "antd";
+import axios from "axios";
+import { UserContext } from '../../../routes/UserContext'; 
 
 export default function ProfileRatedProducts() {
-  // Dữ liệu tĩnh (giả sử lấy từ API)
   const [data, setData] = useState([]);
+  const [products, setProducts] = useState([]);
+  const {token} = useContext(UserContext);
 
-  useEffect(() => {
-    // Dữ liệu tĩnh thay cho API
-    const staticData = [
-      {
-        key: "1",
-        productName: "Laptop Dell XPS 13",
-        rating: 4,
-        date: "2025-01-07 14:30",
-      },
-      {
-        key: "2",
-        productName: "Điện thoại iPhone 15 Pro",
-        rating: 5,
-        date: "2025-01-06 10:15",
-      },
-      {
-        key: "3",
-        productName: "Tai nghe Sony WH-1000XM5",
-        rating: 3,
-        date: "2025-01-05 17:00",
-      },
-      {
-        key: "4",
-        productName: "Đồng hồ thông minh Garmin Fenix 7",
-        rating: 4,
-        date: "2025-01-04 08:45",
-      },
-    ];
+  // useEffect(() => {
+  //   // Giả sử bạn có API lấy tất cả sản phẩm
+  //   const fetchProducts = async () => {
+  //     try {
+  //       const response = await fetch("/api/products");
+  //       const result = await response.json();
+  //       setProducts(result); // Lưu danh sách sản phẩm
+  //     } catch (error) {
+  //       console.error("Error fetching products:", error);
+  //     }
+  //   };
 
-    // Giả lập API call bằng cách set dữ liệu
-    setData(staticData);
-  }, []);
+  //   // Giả sử bạn có API lấy các đánh giá
+  //   const fetchRatings = async () => {
+  //     try {
+  //       const response = await fetch("/api/ratings");
+  //       const result = await response.json();
+  //       setData(result); // Lưu danh sách đánh giá
+  //     } catch (error) {
+  //       console.error("Error fetching ratings:", error);
+  //     }
+  //   };
 
-  // Cột hiển thị cho bảng
+  //   fetchProducts();
+  //   fetchRatings();
+  // }, []);
+
+  // const getProductNameById = (id) => {
+  //   const product = products.find((prod) => prod.id === id);
+  //   return product ? product.name : "Không có tên sản phẩm";
+  // };
+
+  const handleGetProduct=async()=>{
+    try{
+      const response=await axios.get(
+      "http://127.0.0.1:8000/api/getListDanhGia",
+      {
+        headers:{
+          'Authorization': 'Bearer ' + token,
+          "Content-Type": "application/json",
+        },
+      }
+      )
+      setData(response.data.data)
+    }catch(e){
+    message.error(e.response.data.err);
+  }}
+  useEffect(()=>{
+    handleGetProduct();
+  },[])
   const columns = [
     {
       title: "Tên sản phẩm",
-      dataIndex: "productName",
-      key: "productName",
+      dataIndex: "tenSanPham", // Giả sử dữ liệu trả về từ API có trường 'productId'
+      key: "tenSanPham",
     },
     {
       title: "Số sao",
-      dataIndex: "rating",
-      key: "rating",
-      render: (rating) => (
-        <Tag color={rating >= 4 ? "green" : rating === 3 ? "orange" : "red"}>
-          {rating} ★
+      dataIndex: "soSao",
+      key: "soSao",
+      render: (soSao) => (
+        <Tag color={soSao >= 4 ? "green" : soSao === 3 ? "orange" : "red"}>
+          {soSao} ★
         </Tag>
       ),
     },
     {
       title: "Ngày đánh giá",
-      dataIndex: "date",
+      dataIndex: "ngayGio",
       key: "date",
     },
   ];
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2 style={{ textAlign: "center" }}>Sản phẩm đã đánh giá</h2>
-      <Table
-        columns={columns}
-        dataSource={data}
-        pagination={{ pageSize: 5 }}
-        bordered
-      />
+    <div>
+      <h2>Sản phẩm đã đánh giá</h2>
+      <hr />
+      <div style={{ padding: "20px" }}>
+        <Table
+          columns={columns}
+          dataSource={data}
+          pagination={{ pageSize: 5 }}
+          bordered
+        />
+      </div>
     </div>
   );
 }

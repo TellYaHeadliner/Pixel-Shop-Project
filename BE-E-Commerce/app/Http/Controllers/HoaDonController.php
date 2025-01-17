@@ -39,6 +39,26 @@ class HoaDonController extends Controller
             ], 500);
         }
     }
+    function getListOrder(Request $request){
+        $data = $request->all();
+        try{
+            $list = HoaDon::where('hoadon.idNguoiDung','=',$data['idNguoiDung'])
+                            ->where('hoadon.trangThai','=',$data['trangThai'])
+                            ->join('diachi','diachi.idDiaChi','=','hoadon.idDiaChi')
+                            ->get();
+            return response()->json([
+                'success' => true,
+                'message' => 'Lấy danh sách hóa đơn thành công!',
+                'data' => $list,
+            ],200);
+        }
+        catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra '. $e->getMessage(),
+            ],500);
+        }
+    }
 
     function thongKeDoanhThuTheoNgay($thang = null, $nam = null)
     {
@@ -323,6 +343,7 @@ class HoaDonController extends Controller
             ], 500);
         }
     }
+    
     function getListHoaDonHidden()
     {
         try {
@@ -476,7 +497,6 @@ class HoaDonController extends Controller
                     'ngayXacNhan' => now()
                 ]) : $hoadon->update([
                     'trangThai' => $request['trangThai'],
-
                 ]);
 
             return response()->json([
