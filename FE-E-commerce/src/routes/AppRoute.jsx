@@ -112,7 +112,7 @@ const AppRoutes = () => {
         <Route path="payment" element={<Payment />} />
         <Route path="searchproduct/:categoriess?/:texts?/:conditions?/:pages?" element={<SearchProduct />} />
 
-        <Route path="shoppingcart" element={
+        <Route path="shoppingcart/:message?" element={
            <ProtectedRoute allowedRoles={[3]}>
             <ShoppingCart />
          </ProtectedRoute>

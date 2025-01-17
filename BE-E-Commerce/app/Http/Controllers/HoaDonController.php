@@ -39,24 +39,25 @@ class HoaDonController extends Controller
             ], 500);
         }
     }
-    function getListOrder(Request $request){
+    function getListOrder(Request $request)
+    {
         $data = $request->all();
-        try{
-            $list = HoaDon::where('hoadon.idNguoiDung','=',$data['idNguoiDung'])
-                            ->where('hoadon.trangThai','=',$data['trangThai'])
-                            ->join('diachi','diachi.idDiaChi','=','hoadon.idDiaChi')
-                            ->get();
+        try {
+            $list = HoaDon::where('hoadon.idNguoiDung', '=', $data['idNguoiDung'])
+                ->where('hoadon.trangThai', '=', $data['trangThai'])
+                ->join('diachi', 'diachi.idDiaChi', '=', 'hoadon.idDiaChi')
+                ->orderByDesc('hoadon.ngayDat')
+                ->get();
             return response()->json([
                 'success' => true,
                 'message' => 'Lấy danh sách hóa đơn thành công!',
                 'data' => $list,
-            ],200);
-        }
-        catch (\Exception $e) {
+            ], 200);
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Có lỗi xảy ra '. $e->getMessage(),
-            ],500);
+                'message' => 'Có lỗi xảy ra ' . $e->getMessage(),
+            ], 500);
         }
     }
 
@@ -345,7 +346,7 @@ class HoaDonController extends Controller
             ], 500);
         }
     }
-    
+
     function getListHoaDonHidden()
     {
         try {
@@ -459,6 +460,7 @@ class HoaDonController extends Controller
                 ->select('hoadon.*', 'nguoidung.*', 'diachi.*')
                 ->where('hoadon.trangThai', $request['trangThai'])
                 ->Where('hoadon.idNguoiDung', $request['idNguoiDung'])
+                ->orderByDesc('hoadon.ngayDat')
                 ->get();
             return response()->json([
                 'success' => true,
@@ -575,10 +577,13 @@ class HoaDonController extends Controller
                     ]);
             }
             if (!$request['phuongThucThanhToan']) {
+                DB::table('giohang')
+                    ->where('idNguoiDung', $request['idNguoiDung'])
+                    ->delete();
                 return response()->json([
                     'success' => true,
                     'message' => 'Đặt hàng thành công',
-                    'data' => '/'
+                    'data' => 'http://127.0.0.1:5173/profile/orderpendingconfirm'
                 ]);
             } else {
                 $vnp_TxnRef = $idHoaDon; //Mã giao dịch thanh toán tham chiếu của merchant
@@ -648,22 +653,25 @@ class HoaDonController extends Controller
         $data = $request->all();
         if ($data['vnp_ResponseCode'] == '00') {
             DB::table('hoadon')
-            ->where('idHoaDon', $data['vnp_TxnRef'])
-            ->update([
-                'trangThai' => 1,
-                'ngayXacNhan' => now()
-            ]);
-            return response()->json([
-                'message' => 'Thanh toán thành công!'
-            ],200);
+                ->where('idHoaDon', $data['vnp_TxnRef'])
+                ->update([
+                    'trangThai' => 1,
+                    'ngayXacNhan' => now()
+                ]);
+            DB::table('giohang')
+                ->where('idNguoiDung', $request['idNguoiDung'])
+                ->delete();
+            header('Location: http://127.0.0.1:5173/profile/orderbeingship');
+            exit();
         } else {
             DB::table('chitiethoadon')
                 ->where('idHoaDon', $data['vnp_TxnRef'])
                 ->delete();
-             DB::table('hoadon')
+            DB::table('hoadon')
                 ->where('idHoaDon', $data['vnp_TxnRef'])
                 ->delete();
-            return response()->json(['message' => 'Thanh toán không thành công!'], 400);
+            header('Location: http://127.0.0.1:5173/shoppingcart?message=' . urlencode('Thanh Toán không thành công'));
+            exit();
         }
     }
 }
