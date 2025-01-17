@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Symfony\Component\VarDumper\VarDumper;
+use Illuminate\Support\Collection;
 
 class SanPhamController extends Controller
 {
@@ -179,7 +180,14 @@ class SanPhamController extends Controller
 				'data' => []
 			], 422);
 		}
-
+		$dm = new DanhMuc();
+		$listChildren = collect($dm->getChildrenList($data['loai']+1));
+		if(!$listChildren->contains($data['idDanhMuc'])){
+			return response()->json([
+				'success' => false,
+				'message' => "Danh mục không hợp lệ với loại sản phẩm!"
+			],402);
+		}
 		if (strlen($data['moTa']) == 0) {
 			return response()->json([
 				'success' => false,
@@ -203,7 +211,7 @@ class SanPhamController extends Controller
 			$slug = $originalSlug . '-' . $counter;
 			$counter++;
 		}
-		$newFileName = "";
+		$newFileName = null;
 		$file = null;
 		try {
 			$file = $request->file('img');
@@ -270,6 +278,98 @@ class SanPhamController extends Controller
 				'message' => "Lỗi không xác định" . $e->getMessage(),
 				'data' => []
 			], 500);
+		}
+	}
+
+	function update(Request $request){
+		$data = $request->all();
+		try{
+			$oData = SanPham::where('idSanPham','=',$data['idSanPham'])->first();
+			$newFileName = "";
+			$file = null;
+			$slug = null;
+			if($data['tenSanPham'] != $oData->tenSanPham){
+					if(SanPham::where('tenSanPham','=',$data['tenSanPham'])->where('idSanPham','!=',$data['idSanPham'])->exists())
+						return response()->json([
+							'success' => false,
+							'message' => 'Đã có sản phẩm sở hữu tên này!'
+						],402);
+					$slug = Str::slug($data['tenSanPham']);
+					$originalSlug = $slug;
+					$counter = 1;
+
+					while (SanPham::where('slug', $slug)->exists()) {
+						$slug = $originalSlug . '-' . $counter;
+						$counter++;
+					}
+			}
+			if($request->hasFile('img')){
+				$file = $request->file('img');
+				$newFileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+			}
+			if (strlen($data['moTa']) == 0) {
+				return response()->json([
+					'success' => false,
+					'message' => "Mô tả sản phẩm không được để trống!",
+					'data' => []
+				], 422);
+			}
+			if($data['idDanhMuc'] != $oData->idDanhMuc){
+				$dm = new DanhMuc();
+				$listChildren = collect($dm->getChildrenList($data['loai']+1));
+				if(!$listChildren->contains($data['idDanhMuc'])){
+					return response()->json([
+						'success' => false,
+						'message' => "Danh mục không hợp lệ với loại sản phẩm!"
+					],402);
+				}
+			}
+			$oData->update([
+				'tenSanPham' => $data['tenSanPham'],
+				'moTa' => $data['moTa'],
+				'gia' => $data['gia'],
+				'img' => $newFileName?:$oData->img,
+				'hang' => $data['hang'],
+				'slug' => $slug??$oData->slug,
+				'idDanhMuc' => $data['idDanhMuc'],
+			]);
+			$oChiTiet = ThongSoSanPham::where('idSanPham', '=', $data['idSanPham'])->first();
+			$oChiTiet->update([
+				'heDieuHanh' => $data['heDieuHanh'],
+				'CPU' => $data['CPU'],
+				'RAM' => $data['RAM'],
+				'RAMToiDa' => $data['RAMToiDa'] ?? $oChiTiet->RAMToiDa,
+				'loaiRAM' => $data['loaiRAM'] ?? $oChiTiet->loaiRAM,
+				'busRAM' => $data['busRAM'] ?? $oChiTiet->busRAM,
+				'soLuongKheRAM' => $data['soLuongKheRAM'] ?? $oChiTiet->soLuongKheRAM,
+				'dungLuongROM' => $data['dungLuongROM'],
+				'loaiROM' => $data['loaiROM'] ?? $oChiTiet->loaiROM,
+				'soKheROM' => $data['soKheROM'] ?? $oChiTiet->soKheROM,
+				'GPU' => $data['GPU'] ?? $oChiTiet->GPU,
+				'cameraTruoc' => $data['cameraTruoc'],
+				'cameraSau' => $data['cameraSau'] ?? $oChiTiet->cameraSau,
+				'pin' => $data['pin'],
+				'sac' => $data['sac'],
+				'loa' => $data['loa'],
+				'SIM' => $data['SIM'] ?? $oChiTiet->SIM,
+				'manHinh' => $data['manHinh'],
+				'kichThuoc' => $data['kichThuoc'],
+				'trongLuong' => $data['trongLuong'],
+				'mauSac' => $data['mauSac'] ?? $oChiTiet->mauSac,
+				'congKetNoi' => $data['congKetNoi'] ?? $oChiTiet->congKetNoi,
+			]);
+			if($newFileName){
+				$file->move(public_path('imgs'), $newFileName);
+			}
+			return response()->json([
+				'success' => true,
+				'message' => "Cập nhật sản phẩm thành công!"
+			],200);
+		}catch(\Exception $e){
+			return response()->json([
+						'success' => false,
+						'message' => $e->getMessage(),
+					],500);
 		}
 	}
 

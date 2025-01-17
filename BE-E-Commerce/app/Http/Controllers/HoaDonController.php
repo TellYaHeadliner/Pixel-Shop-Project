@@ -39,24 +39,25 @@ class HoaDonController extends Controller
             ], 500);
         }
     }
-    function getListOrder(Request $request){
+    function getListOrder(Request $request)
+    {
         $data = $request->all();
-        try{
-            $list = HoaDon::where('hoadon.idNguoiDung','=',$data['idNguoiDung'])
-                            ->where('hoadon.trangThai','=',$data['trangThai'])
-                            ->join('diachi','diachi.idDiaChi','=','hoadon.idDiaChi')
-                            ->get();
+        try {
+            $list = HoaDon::where('hoadon.idNguoiDung', '=', $data['idNguoiDung'])
+                ->where('hoadon.trangThai', '=', $data['trangThai'])
+                ->join('diachi', 'diachi.idDiaChi', '=', 'hoadon.idDiaChi')
+                ->orderByDesc('hoadon.ngayDat')
+                ->get();
             return response()->json([
                 'success' => true,
                 'message' => 'Lấy danh sách hóa đơn thành công!',
                 'data' => $list,
-            ],200);
-        }
-        catch (\Exception $e) {
+            ], 200);
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Có lỗi xảy ra '. $e->getMessage(),
-            ],500);
+                'message' => 'Có lỗi xảy ra ' . $e->getMessage(),
+            ], 500);
         }
     }
 
@@ -178,6 +179,8 @@ class HoaDonController extends Controller
                     DB::raw('SUM(c.tongTien) AS DoanhThu')
                 )
                 ->where('hoadon.trangThai', 2)
+                ->whereDate('hoadon.ngayXacNhan', '>=', now()->startOfDay())
+                ->whereDate('hoadon.ngayXacNhan', '<=', now()->endOfDay())
                 ->groupBy(DB::raw('DATE(hoadon.ngayXacNhan)'))
                 ->orderBy('Ngay')
                 ->get();
@@ -317,7 +320,7 @@ class HoaDonController extends Controller
         try {
             $data = DB::table('hoadon')
                 ->join('diachi', 'hoadon.idDiaChi', '=', 'diachi.idDiaChi')
-                ->select('hoadon.idHoaDon', 'hoadon.tongSoTien', 'diachi.sdt', 'diachi.diaChi', 'hoadon.phuongThucThanhToan')
+                ->select('hoadon.idHoaDon', 'hoadon.tongSoTien', 'diachi.sdt', 'diachi.diaChi', 'hoadon.phuongThucThanhToan', 'hoadon.trangThai')
                 ->whereNull('hoadon.thoiGianKhoa')
                 ->orWhere('hoadon.thoiGianKhoa', '<', time())
                 ->orderByRaw("
@@ -343,7 +346,7 @@ class HoaDonController extends Controller
             ], 500);
         }
     }
-    
+
     function getListHoaDonHidden()
     {
         try {
@@ -457,6 +460,7 @@ class HoaDonController extends Controller
                 ->select('hoadon.*', 'nguoidung.*', 'diachi.*')
                 ->where('hoadon.trangThai', $request['trangThai'])
                 ->Where('hoadon.idNguoiDung', $request['idNguoiDung'])
+                ->orderByDesc('hoadon.ngayDat')
                 ->get();
             return response()->json([
                 'success' => true,
@@ -550,37 +554,91 @@ class HoaDonController extends Controller
         }
     }
 
-    function create_payment(Request $request){
-        try { 
+    function create_payment(Request $request)
+    {
+        try {
             // check thanh toan tien mat
-            if(!$request['phuongThucThanhToan']){
-                DB::table('hoadon')
-                    ->insert([
-                        'idNguoiDung'=>$request['idNguoiDung'],
-                        'idDiaChi'=>$request['idDiaChi'],
-                        'tongSoTien'=>$request['tongSoTien'],
-                        'trangThai'=>0,
-                        'phuongThucThanhToan'=>0,
-                        'ngayDat'=> now(),
-                    ]);
-                    
-                
-                return response()->json([
-                    'success'=>true,
-                    'message'=>'Đặt hàng thành công',
-                    'data'=>[]
+            $idHoaDon = DB::table('hoadon')
+                ->insertGetId([
+                    'idNguoiDung' => $request['idNguoiDung'],
+                    'idDiaChi' => $request['idDiaChi'],
+                    'tongSoTien' => $request['tongSoTien'],
+                    'trangThai' => $request['phuongThucThanhToan'] ?  4 : 0,
+                    'phuongThucThanhToan' => $request['phuongThucThanhToan'] ?  1 : 0,
+                    'ngayDat' => now(),
                 ]);
-
-
-
-
-
-
+            foreach ($request['listSanPham'] as $item) {
+                DB::table('chitiethoadon')
+                    ->insert([
+                        'idHoaDon' => $idHoaDon,
+                        'idSanPham' => $item['id'],
+                        'tongTien' => $item['price'],
+                        'soLuong' => $item['quantity']
+                    ]);
             }
-            
+            if (!$request['phuongThucThanhToan']) {
+                DB::table('giohang')
+                    ->where('idNguoiDung', $request['idNguoiDung'])
+                    ->delete();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Đặt hàng thành công',
+                    'data' => 'http://127.0.0.1:5173/profile/orderpendingconfirm'
+                ]);
+            } else {
+                $vnp_TxnRef = $idHoaDon; //Mã giao dịch thanh toán tham chiếu của merchant
+                $vnp_Amount = $request['tongSoTien']; // Số tiền thanh toán
+                $vnp_Locale = "vn"; //Ngôn ngữ chuyển hướng thanh toán
+                $vnp_BankCode = ""; //Mã phương thức thanh toán
+                $vnp_IpAddr = $_SERVER['REMOTE_ADDR']; //IP Khách hàng thanh toán
+                $startTime = date("YmdHis");
+                $expire = date('YmdHis', strtotime('+5 minutes', strtotime($startTime)));
 
+                $inputData = array(
+                    "vnp_Version" => "2.1.0",
+                    "vnp_TmnCode" => env('vnp_TmnCode'),
+                    "vnp_Amount" => $vnp_Amount * 100,
+                    "vnp_Command" => "pay",
+                    "vnp_CreateDate" => date('YmdHis'),
+                    "vnp_CurrCode" => "VND",
+                    "vnp_IpAddr" => $vnp_IpAddr,
+                    "vnp_Locale" => $vnp_Locale,
+                    "vnp_OrderInfo" => "Thanh toan GD:" . $vnp_TxnRef,
+                    "vnp_OrderType" => "other",
+                    "vnp_ReturnUrl" => env('vnp_Returnurl'),
+                    "vnp_TxnRef" => $vnp_TxnRef,
+                    "vnp_ExpireDate" => $expire
+                );
 
+                if (isset($vnp_BankCode) && $vnp_BankCode != "") {
+                    $inputData['vnp_BankCode'] = $vnp_BankCode;
+                }
 
+                ksort($inputData);
+                $query = "";
+                $i = 0;
+                $hashdata = "";
+                foreach ($inputData as $key => $value) {
+                    if ($i == 1) {
+                        $hashdata .= '&' . urlencode($key) . "=" . urlencode($value);
+                    } else {
+                        $hashdata .= urlencode($key) . "=" . urlencode($value);
+                        $i = 1;
+                    }
+                    $query .= urlencode($key) . "=" . urlencode($value) . '&';
+                }
+
+                $vnp_Url = env('vnp_Url') . "?" . $query;
+                if (env('vnp_HashSecret')) {
+                    $vnpSecureHash =   hash_hmac('sha512', $hashdata, env('vnp_HashSecret')); //  
+                    $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
+                }
+                return response()->json([
+                    'success' => true,
+                    'message' => 'chuyển trang thanh toán',
+                    'data' => $vnp_Url,
+                ]);
+            }
         } catch (\Exception $err) {
             return response()->json([
                 "success" => false,
@@ -588,17 +646,32 @@ class HoaDonController extends Controller
                 "data" => [],
             ], 500);
         }
-
-
-
-
-
-
-
-
-
     }
 
-
-
+    function callback_vnpay(Request $request)
+    {
+        $data = $request->all();
+        if ($data['vnp_ResponseCode'] == '00') {
+            DB::table('hoadon')
+                ->where('idHoaDon', $data['vnp_TxnRef'])
+                ->update([
+                    'trangThai' => 1,
+                    'ngayXacNhan' => now()
+                ]);
+            DB::table('giohang')
+                ->where('idNguoiDung', $request['idNguoiDung'])
+                ->delete();
+            header('Location: http://127.0.0.1:5173/profile/orderbeingship');
+            exit();
+        } else {
+            DB::table('chitiethoadon')
+                ->where('idHoaDon', $data['vnp_TxnRef'])
+                ->delete();
+            DB::table('hoadon')
+                ->where('idHoaDon', $data['vnp_TxnRef'])
+                ->delete();
+            header('Location: http://127.0.0.1:5173/shoppingcart?message=' . urlencode('Thanh Toán không thành công'));
+            exit();
+        }
+    }
 }

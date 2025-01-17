@@ -41,7 +41,7 @@ const UserProvider = ({ children }) => {
           {
             headers: {
               "Content-Type": "application/json",
-              'Authorization':`Brearer ${token}`
+              'Authorization':`Bearer ${token}`
             },
           }
         );
@@ -133,6 +133,7 @@ const UserProvider = ({ children }) => {
         loading,
 				setLoading,
         idNguoiDung,
+        getCookie
       }}
     >
       {children}

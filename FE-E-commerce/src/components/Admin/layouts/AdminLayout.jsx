@@ -8,10 +8,6 @@ import { useEffect } from 'react';
 
 
 export default function AdminLayout() {
-
-    useEffect(() => {
-        document.title = 'Quản trị';
-    }, []);
     
     return (
         <Layout style={{ minHeight: '100vh' }}>

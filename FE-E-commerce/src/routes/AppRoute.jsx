@@ -67,7 +67,7 @@ const WebsiteInfo = lazy(
 const BusinessStatistics = lazy(
   () => import("../pages/Admin/BusinessStatistics/BusinessStatistics")
 );
-const OrderManagement = lazy(() => import("../pages/OrderManagement"));
+const OrderManagement = lazy(() => import("../pages/Staff/Contact/OrderManagement"));
 // Staff components
 const StaffLayout = lazy(
   () => import("../components/Staff/Layouts/StafffLayout.jsx")
@@ -100,10 +100,6 @@ const AppRoutes = () => {
           <Route path="orderbeingship/:id" element={<ProfileOrderBeingShip/>}/>
           <Route path="orderreceived/:id" element={<ProfileOrderReceived/>}/>
           <Route path="ordercanceled/:id" element={<ProfileOrderCanceled/>}/>
-
-
-
-
         </Route>
         <Route path="news" element={<ListBlog/>}/>
        
@@ -116,7 +112,7 @@ const AppRoutes = () => {
         <Route path="payment" element={<Payment />} />
         <Route path="searchproduct/:categoriess?/:texts?/:conditions?/:pages?" element={<SearchProduct />} />
 
-        <Route path="shoppingcart" element={
+        <Route path="shoppingcart/:message?" element={
            <ProtectedRoute allowedRoles={[3]}>
             <ShoppingCart />
          </ProtectedRoute>
