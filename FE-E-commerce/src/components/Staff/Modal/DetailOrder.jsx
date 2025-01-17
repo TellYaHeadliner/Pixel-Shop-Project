@@ -3,9 +3,10 @@ import { Modal, Descriptions, Table, Button } from 'antd'
 import DetailOrderTable from '../Table/DetailOrderTable'
 
 const DetailOrder = ({ order, open, onClose, onDelete, onConfirm }) => {
+  
     return (
       <Modal
-        title={`Chi tiết đơn hàng #${order?.idHoaDon || ""}`}
+        title={`Chi tiết đơn hàng #${order.idHoaDon || ""}`}
         open={open}
         onCancel={onClose}
         footer={[

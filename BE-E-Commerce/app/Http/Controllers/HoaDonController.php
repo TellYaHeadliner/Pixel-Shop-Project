@@ -158,6 +158,7 @@ class HoaDonController extends Controller
                     DB::raw('SUM(c.tongTien) AS DoanhThu')
                 )
                 ->where('hoadon.trangThai', 2)
+                ->whereDate('hoadon.NgayXacNhan')
                 ->groupBy(DB::raw('DATE(hoadon.ngayXacNhan)'))
                 ->orderBy('Ngay')
                 ->get();
@@ -358,13 +359,24 @@ class HoaDonController extends Controller
     {
         try {
             $data = DB::table('hoadon')
-                ->join('nguoidung', 'hoadon.idNguoiDung', '=', 'nguoidung.idNguoiDung')
-                ->join('diachi', 'diachi.idDiaChi', '=', 'hoadon.idDiaChi')
-                ->join('chitiethoadon', 'chitiethoadon.idHoaDon', '=', 'hoadon.idHoaDon')
-                ->join('sanpham', 'chitiethoadon.idSanPham', '=', 'sanpham.idSanPham')
-                ->select('hoadon.*', 'chitiethoadon.*', 'sanpham.img', 'sanpham.tenSanPham', 'sanpham.gia', 'nguoidung.hoVaTen', 'diachi.diaChi', 'diachi.sdt', 'diachi.note')
-                ->where('hoadon.idHoaDon', $idHoaDon)
-                ->get();
+    ->join('nguoidung', 'hoadon.idNguoiDung', '=', 'nguoidung.idNguoiDung')
+    ->join('diachi', 'diachi.idDiaChi', '=', 'hoadon.idDiaChi')
+    ->join('chitiethoadon', 'chitiethoadon.idHoaDon', '=', 'hoadon.idHoaDon')
+    ->join('sanpham', 'chitiethoadon.idSanPham', '=', 'sanpham.idSanPham')
+    ->select(
+        'nguoidung.hoVaTen', 
+        'hoadon.idHoaDon', 
+        'hoadon.trangThai', 
+        'hoadon.phuongThucThanhToan', 
+        'hoadon.ngayXacNhan', 
+        'diachi.sdt',
+        'chitiethoadon.*', 
+        'sanpham.img', 
+        'sanpham.tenSanPham', 
+        'sanpham.gia'
+    )
+    ->where('hoadon.idHoaDon', $idHoaDon)
+    ->get();
 
             return response()->json([
                 'success' => true,

@@ -2,9 +2,9 @@ import { Table, Button, message, Popconfirm } from "antd";
 import { useState } from "react";
 
 import DetailOrder from "../Modal/DetailOrder";
+import donhangService from "../../../services/donHangService";
 
 const OrderTable = ({ data }) => {
-  const [orders, setOrders] = useState(data);
   const [selectedOrder, setSelectedOrder] = useState(null);
 
   const columns = [
@@ -14,55 +14,26 @@ const OrderTable = ({ data }) => {
       key: "idHoaDon",
     },
     {
-      title: "Người đặt hàng",
-      dataIndex: "nguoiDatHang",
-      key: "nguoiDatHang",
-    },
-    {
-      title: "Ngày đặt hàng",
-      dataIndex: "ngayDat",
-      key: "ngayDat",
-    },
-    {
-      title: "Tổng tiền",
+      title: "Tổng số tiền",
       dataIndex: "tongSoTien",
       key: "tongSoTien",
+      render: (text) => <span>{Number(text).toLocaleString()} VNĐ</span>, // Format currency
     },
     {
-      title: "Trạng thái",
-      dataIndex: "trangThai",
-      key: "trangThai",
-      render: (trangThai) =>
-        trangThai === 1 ? "Đã xác nhận" : "Chưa xác nhận",
+      title: "Số điện thoại",
+      dataIndex: "sdt",
+      key: "sdt",
+    },
+    {
+      title: "Địa chỉ",
+      dataIndex: "diaChi",
+      key: "diaChi",
     },
     {
       title: "Phương thức thanh toán",
       dataIndex: "phuongThucThanhToan",
       key: "phuongThucThanhToan",
-      render: (phuongThucThanhToan) =>
-        phuongThucThanhToan ? "Tiền mặt" : "Ngân hàng",
-    },
-    {
-      title: "Người xác nhận",
-      dataIndex: "nhanVienXacNhan",
-      key: "nhanVienXacNhan",
-      render: (nhanVienXacNhan) =>
-        nhanVienXacNhan ? nhanVienXacNhan : "Chưa xác nhận",
-    },
-    {
-      title: "Ngày xác nhận",
-      dataIndex: "ngayXacNhan",
-      key: "ngayXacNhan",
-    },
-    {
-      title: "Số lần",
-      dataIndex: "soLan",
-      key: "soLan",
-    },
-    {
-      title: "Thời gian khóa",
-      dataIndex: "thoiGianKhoa",
-      key: "thoiGianKhoa",
+      render: (phuongThucThanhToan) => { return phuongThucThanhToan === 0 ? "Ngân hàng" : "Tiền mặt" }
     },
     {
       title: "Hành động",
@@ -72,14 +43,22 @@ const OrderTable = ({ data }) => {
           Xem chi tiết
         </Button>
       ),
-    },
+    }
   ];
   const [isShowDetail, setIsShowDetail] = useState(false);
-
+  
   const handleShowDetail = (order) => {
-    console.log(order);
-    setSelectedOrder(order);
+    const findDetailOrder = async () => {
+      try {
+        const response = await donhangService.getHoaDonById(order?.idHoaDon)
+        console.log(response);
+        setSelectedOrder(response.data.data)
+      } catch (error) {
+        console.error(error)
+      }
+    }
     setIsShowDetail(true);
+    findDetailOrder();
   };
 
   const handleClose = () => {
@@ -90,34 +69,20 @@ const OrderTable = ({ data }) => {
 
   const handleConfirm = (order) => {
     setSelectedOrder(order);
-    if (selectedOrder?.trangThai == 1) {
-      message.error("Sản phẩm đã được xác nhận");
-      setIsShowDetail(false);
-    } else {
-      const updatedOrder = { ...selectedOrder, trangThai: 1 };
-      setOrders(
-        orders.map((o) =>
-          o.idHoaDon === selectedOrder.idHoaDon ? updatedOrder : o
-        )
-      );
-      message.success("Đã xác nhận sản phẩm");
-      setSelectedOrder(updatedOrder);
-      setIsShowDetail(false);
-    }
-    
+    message.success("Đã xác nhận sản phẩm");
+    setSelectedOrder(updatedOrder);
+    setIsShowDetail(false);
   };
 
   const handleDelete = (order) => {
     setSelectedOrder(order);
-    const updatedContact = orders.filter((o) => o.idHoaDon !== selectedOrder.idHoaDon)
-    setOrders(updatedContact);
     message.success("Xóa thành công hóa đơn");
     setIsShowDetail(false);
   }
 
   return (
     <>
-      <Table columns={columns} dataSource={orders} rowKey="idHoaDon" />
+      <Table columns={columns} dataSource={data} rowKey="idHoaDon" />
       {selectedOrder && (
         <DetailOrder
           order={selectedOrder}
