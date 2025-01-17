@@ -580,6 +580,18 @@ class HoaDonController extends Controller
                 DB::table('giohang')
                     ->where('idNguoiDung', $request['idNguoiDung'])
                     ->delete();
+                $chitiethoadon=DB::table('chitiethoadon')
+                                ->join('sanpham','sanpham.idSanPham','=','chitiethoadon.idSanPham')
+                                ->where('idHoaDon',$idHoaDon)
+                                ->select('chitiethoadon.idSanPham','chitiethoadon.soLuong as cthdSoLuong','sanpham.soLuong as spSoLuong')
+                                ->get();
+                foreach($chitiethoadon as $item){
+                    DB::table('sanpham')
+                      ->where('idSanPham',$item->idSanPham)
+                      ->update([
+                        'soLuong'=>$item->spSoLuong - $item->cthdSoLuong
+                      ]);
+                }
                 return response()->json([
                     'success' => true,
                     'message' => 'Đặt hàng thành công',
@@ -661,6 +673,19 @@ class HoaDonController extends Controller
             DB::table('giohang')
                 ->where('idNguoiDung', $request['idNguoiDung'])
                 ->delete();
+            $chitiethoadon=DB::table('chitiethoadon')
+                ->join('sanpham','sanpham.idSanPham','=','chitiethoadon.idSanPham')
+                ->where('idHoaDon',$data['vnp_TxnRef'])
+                ->select('chitiethoadon.idSanPham','chitiethoadon.soLuong as cthdSoLuong','sanpham.soLuong as spSoLuong')
+                ->get();
+            foreach($chitiethoadon as $item){
+                DB::table('sanpham')
+                ->where('idSanPham',$item->idSanPham)
+                ->update([
+                    'soLuong'=>$item->spSoLuong - $item->cthdSoLuong
+                ]);
+            }
+
             header('Location: http://127.0.0.1:5173/profile/orderbeingship');
             exit();
         } else {
