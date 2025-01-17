@@ -23,7 +23,7 @@ class SanPhamController extends Controller
 		try {
 			$sanPham = SanPham::where('slug', $slug)->first();
 			$sanPham->soLuotXem = $sanPham->soLuotXem + 1;
-			$sanPham->save();
+			$sanPham->save()
 			$thongSoSanPham = DB::table('thongsosanpham')->where('idSanPham', $sanPham->idSanPham)->first();
 			$danhGia = DB::table('danhgia')
 				->join('nguoidung', 'nguoidung.idNguoiDung', '=', 'danhgia.idNguoiDung')

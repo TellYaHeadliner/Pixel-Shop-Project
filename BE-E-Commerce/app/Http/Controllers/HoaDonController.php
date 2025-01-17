@@ -210,10 +210,8 @@ public function getListHoaDon()
         $data = DB::table('hoadon')
             ->join('diachi', 'hoadon.idDiaChi', '=', 'diachi.idDiaChi')
             ->select('hoadon.idHoaDon', 'hoadon.tongSoTien', 'diachi.sdt', 'diachi.diaChi', 'hoadon.phuongThucThanhToan')
-            ->where(function($query) {
-                $query->whereNotNull('hoadon.thoiGianKhoa')
-                      ->orWhere('hoadon.thoiGianKhoa', '<', now()); // Sử dụng `now()` để lấy thời gian hiện tại
-            })
+            ->whereNull('hoadon.thoiGianKhoa')
+            ->orWhere('hoadon.thoiGianKhoa', '<', time())
             ->orderByRaw("
                 CASE 
                     WHEN hoadon.trangThai = 0 THEN 1
