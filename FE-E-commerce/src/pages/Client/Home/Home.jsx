@@ -44,7 +44,6 @@ const Home = () => {
         setLoading(false);
       }
     };
-    console.log(newProducts);
     fetchProducts();
   }, [newProducts]);
 
@@ -62,7 +61,6 @@ const Home = () => {
       }
     };
     fetchLaptops();
-    console.log(listLaptop);
   }, [listLaptop]);
 
   useEffect(() => {
@@ -77,7 +75,6 @@ const Home = () => {
       }
     };
     fetchBestProductList();
-    console.log(bestSellerList);
   }, [bestSellerList]);
 
   useEffect(() => {
@@ -93,7 +90,6 @@ const Home = () => {
         }
       };
       fetchNoiBatList();
-      console.log(bestSellerList);
     } catch (error) {
       setError(error);
       setLoading(false);
