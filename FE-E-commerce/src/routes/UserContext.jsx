@@ -89,7 +89,7 @@ const UserProvider = ({ children }) => {
 
 
   useEffect(() => {
-    if (loading || !token) return;  // Nếu chưa tải xong hoặc token là null thì không làm gì
+    if (loading || !token) return; 
     const fetchCartItemCount = async () => {
       try {
         const response = await axios.post(
@@ -111,7 +111,6 @@ const UserProvider = ({ children }) => {
     fetchCartItemCount();
   }, [token, loading , trigger]);
 
-  console.log(token);
 
   return (
     <UserContext.Provider
