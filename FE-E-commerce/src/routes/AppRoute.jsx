@@ -50,33 +50,16 @@ const ContactInformation = lazy(
 );
 
 // Admin components
-const AdminLayout = lazy(
-  () => import("../components/Admin/Layouts/AdminLayout")
-);
-const SupplierManagement = lazy(
-  () => import("../pages/Admin/SupplierManagement/SupplierManagement")
-);
-const CategoryManagement = lazy(
-  () => import("../pages/Admin/CategoryManagement/CategoryManagement")
-);
-const ProductManagement = lazy(
-  () => import("../pages/Admin/ProductManagement/ProductManagement")
-);
-const ProductManagementAdd = lazy(
-  () => import("../pages/Admin/ProductManagement/ProductManagementAdd")
-);
-const BatchManagement = lazy(
-  () => import("../pages/Admin/BatchManagement/BatchManagement")
-);
-const CommentManagement = lazy(
-  () => import("../pages/Admin/CommentManagement/CommentManagement")
-);
-const AudienceStatistics = lazy(
-  () => import("../pages/Admin/AudienceStatistics/AudienceStatistics")
-);
-const OrderStatistics = lazy(
-  () => import("../pages/Admin/OrderStatistics/OrderStatistics")
-);
+const AdminLayout = lazy(() => import("../components/Admin/Layouts/AdminLayout"));
+const SupplierManagement = lazy(() => import("../pages/Admin/SupplierManagement/SupplierManagement"));
+const CategoryManagement = lazy(() => import("../pages/Admin/CategoryManagement/CategoryManagement"));
+const ProductManagement = lazy(() => import("../pages/Admin/ProductManagement/ProductManagement"));
+const ProductManagementUpdate = lazy(() => import("../pages/Admin/ProductManagement/ProductManagementUpdate"));
+const ProductManagementAdd = lazy(() => import("../pages/Admin/ProductManagement/ProductManagementAdd"));
+const BatchManagement = lazy(() => import("../pages/Admin/BatchManagement/BatchManagement"));
+const CommentManagement = lazy(() => import("../pages/Admin/CommentManagement/CommentManagement"));
+const AudienceStatistics = lazy(() => import("../pages/Admin/AudienceStatistics/AudienceStatistics"));
+const OrderStatistics = lazy(() => import("../pages/Admin/OrderStatistics/OrderStatistics"));
 const Contact = lazy(() => import("../pages/Admin/Contact/Contact"));
 const WebsiteInfo = lazy(
   () => import("../pages/Admin/WebsiteInfo/WebsiteInfo")
@@ -131,9 +114,15 @@ const AppRoutes = () => {
         <Route path="about" element={<ProfileCompanyInformation />} />
         <Route path="product" element={<DetailProduct />} />
         <Route path="payment" element={<Payment />} />
-        <Route path="shoppingcart" element={<ShoppingCart />} />
         <Route path="searchproduct/:categoriess?/:texts?/:conditions?/:pages?" element={<SearchProduct />} />
 
+        <Route path="shoppingcart" element={
+           <ProtectedRoute allowedRoles={[3]}>
+            <ShoppingCart />
+         </ProtectedRoute>
+          
+        } 
+          />
       </Route>
 
       <Route
@@ -148,10 +137,12 @@ const AppRoutes = () => {
       >
         <Route index element={<BusinessStatistics />} />
         <Route path="suppliers" element={<SupplierManagement />} />
+        <Route path="websiteInfo" element={<WebsiteInfo />} />
         <Route path="categories" element={<CategoryManagement />} />
         <Route path="products">
           <Route index element={<ProductManagement />} />
           <Route path="add" element={<ProductManagementAdd />} />
+          <Route path="update/:slug" element={<ProductManagementUpdate/>} />
         </Route>
         <Route path="batches" element={<BatchManagement />} />
         <Route path="comments" element={<CommentManagement />} />

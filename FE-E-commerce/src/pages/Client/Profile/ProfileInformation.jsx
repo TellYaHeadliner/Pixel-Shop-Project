@@ -37,7 +37,7 @@ export default function ProfileInformation() {
             const response = await axios.post(
                 "http://127.0.0.1:8000/api/getProfile",
                 {
-                    haeders:{
+                    headers:{
                         'Authorization': 'Bearer ' + token,
                         "Content-Type": "application/json",
                     },
@@ -49,17 +49,16 @@ export default function ProfileInformation() {
             }
         }catch (e) {
             const data = e.response.data;
-            message.error(data.message);
+            message.error(data + "1");
         }
     }
     const handleGetListLocation = async() =>{
-        const idNguoiDung = IdUser;
         try{
             const response = await axios.post(
                 "http://127.0.0.1:8000/api/getDiaChiUser",
-                {idNguoiDung},
                 {
-                    haeders:{
+                    headers:{
+                        'Authorization': 'Bearer ' + token,
                         "Content-Type": "application/json",
                     },
                 },
@@ -68,12 +67,13 @@ export default function ProfileInformation() {
                 setListLocation(response.data.data);
             }
         }catch(e){
-            const data =e.response.data;
-            message.error(data.message);
+            message.error(e.response.data + '2');
+            console.log(e.response.data);
         }
     }
 
     useEffect(() => {
+        console.log(token)
         handleGetProfile();
         handleGetListLocation();
     }, []);
@@ -105,14 +105,15 @@ onOk: async () => {
 try {
     const formData = new FormData();
     formData.append("anhDaiDien", selectedFile);
-    formData.append("idNguoiDung", IdUser);
 
     const response = await axios.post(
         "http://127.0.0.1:8000/api/updateAnhDaiDien",
         formData,
         {
             headers: {
+                'Authorization': 'Bearer ' + token,
                 "Content-Type": "multipart/form-data",
+
             },
         }
     );
@@ -139,13 +140,13 @@ try {
                     if(editField == "diaChi"){
                         try{
                             const data = {
-                                idNguoiDung: IdUser,
                                 idDiaChi: values[editField+2],
                             };
                             const response=await axios.post(
                                 "http://127.0.0.1:8000/api/updateDefaultLocation",
                                 data,
                                 {
+                                    'Authorization': 'Bearer ' + token,
                                     headers: {'Content-Type': 'application/json'},
                                 },
                             );
@@ -155,7 +156,7 @@ try {
                                 message.success("Thông tin đã được cập nhật thành công!");
                             }
                         }catch(e){
-                            message.error(e.response.data.message);
+                            message.error(e.response.data.message + '3');
                         }
                     }
                     else{
@@ -172,6 +173,7 @@ try {
                                 :"http://127.0.0.1:8000/api/updateById",
                                 updatedInfo,
                                 {
+                                    'Authorization': 'Bearer ' + token,
                                     headers: { 'Content-Type': 'application/json' },
                                 },
                             );
@@ -186,7 +188,7 @@ try {
                             }
                         }catch(e) {
                             const data = e.response.data;
-                            message.error(data.message);
+                            message.error(data.message + '4');
                         }
                     }
                     
@@ -253,7 +255,7 @@ try {
             message.success(response.data.message + " qua email:" + email);
           }
         } catch (error) { 
-          message.error(error.response.data.message);
+          message.error(error.response.data.message + '5');
           clearInterval(timer);
           setIsDisabled(false);
           setIsClickM(false);

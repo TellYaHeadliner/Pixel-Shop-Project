@@ -9,6 +9,7 @@ class HoaDon extends Model
 {
     use HasFactory;
     protected $table='hoadon';
+		public $timestamp=false;
 
     protected $fillable = [
         'idHoaDon',

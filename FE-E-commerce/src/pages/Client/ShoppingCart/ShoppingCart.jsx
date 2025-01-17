@@ -13,7 +13,7 @@ const ShoppingCart = () => {
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { setTrigger } = useContext(UserContext);
+  const { setTrigger , token } = useContext(UserContext);
   const [currentPage, setCurrentPage] = useState(1);
 
   const itemsPerPage = 5;
@@ -29,8 +29,15 @@ const ShoppingCart = () => {
   useEffect(() => {
     const fetchCartItems = async () => {
       try {
-        const response = await axios.get(
-          "http://127.0.0.1:8000/api/getListSanPhamGioHang"
+        console.log(token);
+        const response = await axios.post(
+          "http://127.0.0.1:8000/api/getListSanPhamGioHang",
+          {},
+          {
+            headers:{
+              'Authorization':`Bearer ${token}`
+            }
+          }
         );
         const listSanPham = response.data.data.listSanPham;
 

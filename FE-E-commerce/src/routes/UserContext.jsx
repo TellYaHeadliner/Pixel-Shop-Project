@@ -30,14 +30,18 @@ const UserProvider = ({ children }) => {
     return null;
   };
 
+
+
   useEffect(() => {
     const fetchCartItemCount = async () => {
       try {
-        const response = await axios.get(
+        const response = await axios.post(
           "http://127.0.0.1:8000/api/getListSanPhamGioHang",
+          {},
           {
             headers: {
               "Content-Type": "application/json",
+              'Authorization':`Brearer ${token}`
             },
           }
         );
@@ -55,6 +59,7 @@ const UserProvider = ({ children }) => {
     const checkToken = async () => {
       try {
         const token = getCookie("token");
+        if (!token) return; 
         const response = await axios.post(
           "http://127.0.0.1:8000/api/checkToken",
           {
@@ -84,13 +89,15 @@ const UserProvider = ({ children }) => {
 
 
   useEffect(() => {
+    if (loading || !token) return;  // Nếu chưa tải xong hoặc token là null thì không làm gì
     const fetchCartItemCount = async () => {
       try {
-        const response = await axios.get(
+        const response = await axios.post(
           "http://127.0.0.1:8000/api/getListSanPhamGioHang",
+          {},
           {
             headers: {
-              'Authorization': 'Bearer ' + token,
+              "Authorization": `Bearer ${token}`,
               "Content-Type": "application/json",
             },
           }
@@ -102,7 +109,9 @@ const UserProvider = ({ children }) => {
       }
     };
     fetchCartItemCount();
-  }, [trigger]);
+  }, [token, loading , trigger]);
+
+  console.log(token);
 
   return (
     <UserContext.Provider
@@ -123,6 +132,7 @@ const UserProvider = ({ children }) => {
         login,
         setLogin,
         loading,
+				setLoading,
         idNguoiDung,
       }}
     >

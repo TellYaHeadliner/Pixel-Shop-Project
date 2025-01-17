@@ -36,8 +36,8 @@ const apiService = {
     getThongTin: async () => {
         return await axios.get(`${API_URL}/getThongTin`);
     },
-    updateThongTin: async () => {
-        return await axios.get(`${API_URL}/updateThongTin`);
+    updateThongTin: async (data) => {
+        return await axios.post(`${API_URL}/updateThongTin`, data);
     },
     addNhaCungCap: async (supplierData) => {
         return await axios.post(`${API_URL}/addNhaCungCap`, supplierData);
@@ -63,6 +63,21 @@ const apiService = {
     },
     getListQuangCao: async () => {
         return await axios.get(`${API_URL}/getListQuangCao`);
+    },
+    loiNhuanHienTai: async () => {
+        return await axios.get(`${API_URL}/loiNhuanHienTai`);
+    },
+    sanPhamDaBanTheoThang: async () => {
+        return await axios.get(`${API_URL}/sanPhamDaBanTheoThang`);
+    },
+    thongKeDoanhThuTheoTatCaNguoiDung: async () => {
+        return await axios.get(`${API_URL}/thongKeDoanhThuTheoTatCaNguoiDung`);
+    },
+    thongKeDoanhThuSanPhamTheoNgay: async () => {
+        return await axios.get(`${API_URL}/thongKeDoanhThuSanPhamTheoNgay`);
+    },
+    thongKeDonHangTheoNgay: async () => {
+        return await axios.get(`${API_URL}/thongKeDonHangTheoNgay`);
     },
 };
 
