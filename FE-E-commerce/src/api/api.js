@@ -36,6 +36,9 @@ const apiService = {
     getThongTin: async () => {
         return await axios.get(`${API_URL}/getThongTin`);
     },
+    updateThongTin: async () => {
+        return await axios.get(`${API_URL}/updateThongTin`);
+    },
     addNhaCungCap: async (supplierData) => {
         return await axios.post(`${API_URL}/addNhaCungCap`, supplierData);
     },
@@ -47,6 +50,19 @@ const apiService = {
     },
     updateDefaultLocation: async (locationData) => {
         return await axios.post(`${API_URL}/updateDefaultLocation`, locationData);
+    },
+    // Thêm các phương thức mới
+    getListSanPham: async () => {
+        return await axios.get(`${API_URL}/getListSanPham`);
+    },
+    getChiTietSanPham: async (id) => {
+        return await axios.get(`${API_URL}/product/${id}`);
+    },
+    getListBaiViet: async () => {
+        return await axios.get(`${API_URL}/listBaiViet`);
+    },
+    getListQuangCao: async () => {
+        return await axios.get(`${API_URL}/getListQuangCao`);
     },
 };
 

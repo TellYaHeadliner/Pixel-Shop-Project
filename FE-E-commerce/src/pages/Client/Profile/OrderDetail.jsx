@@ -6,4 +6,3 @@ import ProtectedRoute from './ProtectedRoute'; // Import ProtectedRoute
 
 export default function OrderDetail(){
 
-}

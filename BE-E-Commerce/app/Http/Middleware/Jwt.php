@@ -33,7 +33,8 @@ class Jwt
              if($role && (!isset($decode->role))|| !in_array($decode->role,$role)){
                 return response()->json(['error' => 'Bạn không có quyền truy cập'], 403);
             }
-           $request->attributes->set('token',$decode);
+           $request->merge(['idNguoiDung'=>$decode->idNguoiDung]);
+           
         } catch(\Firebase\JWT\ExpiredException $err){
             return response()->json(['error' => 'Token het han' . $err->getMessage()], 401);
         }

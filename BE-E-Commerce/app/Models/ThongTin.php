@@ -17,7 +17,7 @@ class ThongTin extends Model
         'youtube',
         'tiktok'
     ];
-
+    public $timestamps=false;
 		static function Add(){
 			
 		}

@@ -10,6 +10,7 @@ import { UserContext } from '../../../routes/UserContext';
 
 
 export default function ProfileInformation() {
+    const {token}=useContext(UserContext);
     const [form] = Form.useForm();
     const [file, setFile] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
@@ -28,20 +29,16 @@ export default function ProfileInformation() {
     const [isDisabled, setIsDisabled] = useState(false);
     const [isClickM, setIsClickM] = useState(false);
     const [countdown, setCountdown] = useState(0); 
-    const {  idNguoiDung } = useContext(UserContext); 
 
-    const IdUser = idNguoiDung;
     let timer = null;
 
     const handleGetProfile = async ()=>{
-        const idNguoiDung = IdUser;
-        console.log(idNguoiDung);
         try{
             const response = await axios.post(
                 "http://127.0.0.1:8000/api/getProfile",
-                {idNguoiDung},
                 {
                     haeders:{
+                        'Authorization': 'Bearer ' + token,
                         "Content-Type": "application/json",
                     },
                 }
