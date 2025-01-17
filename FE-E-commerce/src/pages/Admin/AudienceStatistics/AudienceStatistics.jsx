@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, Row, Col, Spin, Alert, Table } from 'antd';
 import { Bar } from '@ant-design/charts';
 import apiService from '../../../api/api';

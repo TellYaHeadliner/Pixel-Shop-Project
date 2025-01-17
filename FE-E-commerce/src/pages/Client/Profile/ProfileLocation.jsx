@@ -1,99 +1,215 @@
-import React, { useState, useEffect } from 'react';
-import { Modal, Button, Input, message, Select, Form } from 'antd';
+import React, { useState, useEffect,useContext } from 'react';
+import { Modal, Button, Input, message, Select, Form, Flex } from 'antd';
 import ButtonProfile from '../../../components/Client/Button/ButtonProfile';
 import axios from 'axios';
 const { Option } = Select;
+import { UserContext } from '../../../routes/UserContext'; 
 
 export default function ProfileLocation() {
+    const {token} = useContext(UserContext);
     const [addresses, setAddresses] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isAddAddressModalVisible, setIsAddAddressModalVisible] = useState(false);
     const [selectedAddressId, setSelectedAddressId] = useState(null);
     const [editedAddress, setEditedAddress] = useState('');
     const [form] = Form.useForm();
-    const IdUser = 1;
+    const [listTinhThanh, setListTinhThanh] = useState([]);
+    const [listQuanHuyen, setListQuanHuyen] = useState([]);
+    const [listXa, setListXa] = useState([]);
+    const [formadd]=Form.useForm();
     
-    
-    const handleGetListLocation = async() =>{
-        const idNguoiDung = IdUser;
-        try{
+
+
+
+    const handleGetListLocation = async () => {
+        try {
             const response = await axios.post(
                 "http://127.0.0.1:8000/api/getDiaChiUser",
-                {idNguoiDung},
+                {},
                 {
-                    headers:{
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
                         "Content-Type": "application/json",
                     },
-                },
-            )
-            if(response.data.success) {
+                }
+            );
+            if (response.data.success) {
                 setAddresses(response.data.data);
             }
-        }catch(e){
-            const data =e.response.data;
+        } catch (e) {
+            const data = e.response.data;
             message.error(data.message);
         }
-    }
-    useEffect(()=>{
-        handleGetListLocation();
-    },[])
-
-
-    // const addAddress = async (value) => {
-    //     try{
-    //         const response= await axios.post(
-    //         "http://127.0.0.1:8000/api/getDiaChiUser",
-    //         )
-    //     }catch(e) {
-    //         message.error(e.response.data.message);
-    //     }
-
-    // }
-    const setDefaultAddress = (id) => {
-        const updatedAddresses = addresses.map(addr =>
-            addr.id === id ? { ...addr, isDefault: true } : { ...addr, isDefault: false }
-        );
-        setAddresses(updatedAddresses);
-        localStorage.setItem('addresses', JSON.stringify(updatedAddresses));
-        setSelectedAddressId(id);
     };
+    const handleGetTinhTP = async () => {
+        try {
+            const response = await axios.get('https://provinces.open-api.vn/api/p/',
+                {
+                    withCredentials: false,
+                }
+            );
+            setListTinhThanh(response.data);
+        } catch (e) {
+            console.error('Lỗi:', e);
+            message.error('Lấy danh sách tỉnh thành thất bại! Vui lòng thử lại sau');
+        }
+    };
+    const handleGetQuanHuyen = async (key) => {
+        try {
+            const response = await axios.get('https://provinces.open-api.vn/api/p/'+key,
+                {
+                    withCredentials: false,
+                    params: {'depth':2},
+                }
+            );
+            setListQuanHuyen(response.data.districts);
+            formadd.setFieldsValue({district:null,ward:null});
+            form.setFieldsValue({district:null,ward:null});
+        } catch (e) {
+            console.error('Lỗi:', e);
+            message.error('Lấy danh sách quận huyện thất bại! Vui lòng thử lại sau');
+        }
+    };
+    const handleGetXa = async (key) => {
+        try {
+            const response = await axios.get('https://provinces.open-api.vn/api/d/'+key,
+                {
+                    withCredentials: false,
+                    params: {'depth':2},
+                }
+            );
+            setListXa(response.data.wards);
+            formadd.setFieldsValue({ward:null});
+            form.setFieldsValue({ward:null});
+        } catch (e) {
+            console.error('Lỗi:', e);
+            message.error('Lấy danh sách quận huyện thất bại! Vui lòng thử lại sau');
+        }
+    };
+    useEffect(() => {
+        handleGetListLocation();
+        handleGetTinhTP();
+    }, []);
 
-    const openEditModal = (id) => {
-        const addressToEdit = addresses.find(addr => addr.id === id);
-        setSelectedAddressId(id);
-        setEditedAddress(addressToEdit.specificAddress);
-        setIsModalVisible(true);
+    const setDefaultAddress = async (id) => {
+        try{
+            const response = await axios.post(
+                "http://127.0.0.1:8000/api/updateDefaultLocation",
+                { idDiaChi:id},
+                {
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+                if(response.data.success) {
+                    message.success(response.data.message);
+                    handleGetListLocation();
+                }
+        }catch(e){
+            message.error(e.response.data.message)
+        }
     };
 
     const handleCancel = () => {
         setIsModalVisible(false);
     };
 
-    const handleEditSubmit = () => {
-        if (editedAddress === '') {
-            message.error('Vui lòng nhập địa chỉ mới!');
-            return;
+    const handleEditSubmit = async (values) => {
+        const {idDiaChi,sdt,note,loaiDiaChi,hoVaTen,province,district,ward,specificAddress} = values;
+        const diaChi = specificAddress+', '+ward+', '+district+', '+province;
+        console.log(values);
+        try{
+            const response = await axios.post(
+                "http://127.0.0.1:8000/api/updateLocation",
+                 {idDiaChi,sdt,note,loaiDiaChi,hoVaTen,diaChi},
+                 {headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                 }}
+            )
+            message.success(response.data.message);
+            handleGetListLocation();    
+            setIsModalVisible(false); 
+            
+            
+        }catch (e){
+            message.error(e.response.data.message);
         }
-
-        const updatedAddresses = addresses.map(addr =>
-            addr.id === selectedAddressId ? { ...addr, specificAddress: editedAddress } : addr
-        );
-        setAddresses(updatedAddresses);
-        localStorage.setItem('addresses', JSON.stringify(updatedAddresses));
-        setIsModalVisible(false);
     };
 
-    const deleteAddress = (id) => {
-        const updatedAddresses = addresses.filter(addr => addr.id !== id);
-        setAddresses(updatedAddresses);
-        localStorage.setItem('addresses', JSON.stringify(updatedAddresses));
-        message.success('Địa chỉ đã được xóa!');
+    const deleteAddress = async(id) => {
+        console.log(id);
+        try{
+            const response=await axios.post(
+                  "http://127.0.0.1:8000/api/deleteLocation",
+                 {idDiaChi:id},
+                  {headers: {'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+
+                  }}
+            )
+            if(response.data.success){
+                message.success(response.data.message);
+                handleGetListLocation();
+               
+            }
+        }catch(e){
+            message.error(e.response.data.message);
+        }
+       
     };
+    const addAddress = async (values) => {
+        const {sdt,note,loaiDiaChi,hoVaTen,province,district,ward,specificAddress} = values;
+        const diaChi = specificAddress+', '+ward+', '+district+', '+province;
+        try{
+            const response = await axios.post(
+                "http://127.0.0.1:8000/api/addLocation",
+                 {sdt,note,loaiDiaChi,hoVaTen,diaChi},
+                 {headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+
+                 }}
+            )
+            message.success(response.data.message);
+            handleGetListLocation();    
+            setIsAddAddressModalVisible(false); 
+            formadd.resetFields(); 
+        }catch (e){
+            message.error(e.response.data.message);
+        }
+    }
+    
+    const openEditModal = (diaChi) => {
+        var diaChiS = diaChi.diaChi;
+        var diaChiC = [];
+        for (var i = 0; i < 3; i++) {
+            var index = diaChiS.lastIndexOf(', ');
+            diaChiC = [...diaChiC,diaChiS.slice(index+2)];
+            diaChiS = diaChiS.slice(0, index);
+        }
+        diaChiC = [...diaChiC,diaChiS];
+            form.setFieldsValue({
+                idDiaChi: diaChi.idDiaChi,
+                hoVaTen: diaChi.hoVaTen,
+                sdt: diaChi.sdt,
+                province: diaChiC[0],
+                district: diaChiC[1],
+                ward: diaChiC[2],
+                specificAddress:diaChiC[3],
+                loaiDiaChi: diaChi.loaiDiaChi,
+            });
+            setIsModalVisible(true); 
+    };
+    
 
     return (
         <div style={{ marginLeft: 10 }}>
             <div>
-                <h2>Địa chỉ</h2>
+                <h1>Địa chỉ</h1>
+                <hr />
                 <ButtonProfile
                     type="primary"
                     onClick={() => setIsAddAddressModalVisible(true)}
@@ -103,19 +219,19 @@ export default function ProfileLocation() {
                 </ButtonProfile>
             </div>
 
-            {/* Modal thêm địa chỉ */}
             <Modal
                 title="Thêm địa chỉ mới"
                 visible={isAddAddressModalVisible}
                 onCancel={() => setIsAddAddressModalVisible(false)}
                 footer={null}
-                width={800}
+                width={'70%'}
             >
-                <Form form={form} layout="vertical" onFinish={{}}>
+                <Form form={formadd} layout="vertical" 
+                    onFinish={addAddress}>
                     <div style={{ display: 'flex' }}>
                         <Form.Item
                             label="Họ và tên"
-                            name="fullName"
+                            name="hoVaTen"
                             rules={[{ required: true, message: 'Vui lòng nhập họ và tên!' }]}
                         >
                             <Input type="text" style={{ width: '300px', height: '40px' }} />
@@ -123,22 +239,52 @@ export default function ProfileLocation() {
 
                         <Form.Item
                             label="Số điện thoại"
-                            name="phoneNumber"
+                            name="sdt"
                             rules={[{ required: true, message: 'Vui lòng nhập số điện thoại!' }]}
                             style={{ marginLeft: 50 }}
                         >
                             <Input type="text" style={{ width: '300px', height: '40px' }} />
                         </Form.Item>
                     </div>
-
-                    <Form.Item
-                        label="Tỉnh/Thành phố"
-                        name="city"
-                        rules={[{ required: true, message: 'Vui lòng nhập tỉnh thành!' }]}
-                    >
-                        <Input type="text" style={{ width: '100%', height: '40px' }} />
-                    </Form.Item>
-
+                    <div className='d-flex w-100'>
+                        <Form.Item
+                            className='col-4'
+                            label="Tỉnh/Thành phố"
+                            name="province"
+                            rules={[{ required: true, message: 'Vui lòng nhập tỉnh thành!' }]}
+                        >
+                            <Select style={{ width: '90%', height: '15%' }} onChange={(value,option)=>handleGetQuanHuyen(option.key)}>
+                            {listTinhThanh.map(i => {
+                                return <Option key={i.code} value={i.name}>{i.name}</Option>;
+                            })}
+                            </Select>
+                        </Form.Item>
+                        <Form.Item
+                            className='col-4'
+                            label="Quận/Huyện"
+                            name="district"
+                            rules={[{ required: true, message: 'Vui lòng nhập tỉnh thành!' }]}
+                        >
+                            <Select style={{ width: '90%', height: '15%' }} onChange={(value,option)=>handleGetXa(option.key)}>
+                            {listQuanHuyen.map(i => {
+                                return <Option key={i.code} value={i.name}>{i.name}</Option>;
+                            })}
+                            </Select>
+                        </Form.Item>
+                        <Form.Item
+                            className='col-4'
+                            label="Quận/Huyện"
+                            name="ward"
+                            rules={[{ required: true, message: 'Vui lòng nhập tỉnh thành!' }]}
+                        >
+                            <Select style={{ width: '90%', height: '15%' }}>
+                            {listXa.map(i => {
+                                return <Option key={i.code} value={i.name}>{i.name}</Option>;
+                            })}
+                            </Select>
+                        </Form.Item>
+                    </div>
+                    
                     <Form.Item
                         label="Địa chỉ cụ thể"
                         name="specificAddress"
@@ -149,15 +295,21 @@ export default function ProfileLocation() {
 
                     <Form.Item
                         label="Loại địa chỉ"
-                        name="isOffice"
+                        name="loaiDiaChi"
                         rules={[{ required: true, message: 'Vui lòng chọn loại địa chỉ!' }]}
                     >
                         <Select style={{ width: '15%', height: '15%' }}>
-                            <Option value={false}>Nhà riêng</Option>
-                            <Option value={true}>Văn phòng</Option>
+                            <Option value="Nhà riêng">Nhà riêng</Option>
+                            <Option value="Văn phòng">Văn phòng</Option>
                         </Select>
                     </Form.Item>
-
+                    <Form.Item
+                        label="Ghi chú"
+                        name="note"
+                        
+                    >
+                        <Input/>
+                    </Form.Item>
                     <ButtonProfile htmlType="submit">Thêm địa chỉ</ButtonProfile>
                 </Form>
             </Modal>
@@ -167,44 +319,46 @@ export default function ProfileLocation() {
                 {addresses.length === 0 ? (
                     <p>Chưa có địa chỉ nào</p>
                 ) : (
-                    <ul>
+                    <ul >
                         {addresses.map((address) => (
                             <>
-                            <li key={address.id} className='d-flex' style={{fontSize:'120%'}}>
-                                {address.sdt} <br />{address.diaChi}
-                                <div style={{marginLeft:'30%'}}>
-                                    
-                                    <Button
-                                        style={{ }}
-                                        type="link"
-                                        onClick={() => setDefaultAddress(address.id)}
-                                    >
-                                        Chọn làm mặc định
-                                    </Button>
+                            <li key={address.idDiaChi} className='d-flex' style={{ fontSize: '100%' }}>
+                                <div className='col-7'>
+                                    {address.hoVaTen} | {address.sdt} | {`(${address.loaiDiaChi})`} <br />{address.diaChi}
+                                </div>
+                                <div className='col-5'>
+                                    {address.macDinh == 0?
+                                        <Button
+                                            type="link"
+                                            onClick={() => setDefaultAddress(address.idDiaChi)}
+                                        >
+                                            Chọn làm mặc định
+                                        </Button>
+                                    :
+                                        <Button
+                                            type="link"
+                                        >
+                                            <span style={{color:"red"}}>Đã chọn là mặc định</span>
+                                        </Button>
+                                    }
                                     <Button
                                         style={{  }}
                                         type="link"
-                                        onClick={() => openEditModal(address.id)}
+                                        onClick={() => openEditModal(address)}
                                     >
                                         Chỉnh sửa
                                     </Button>
                                     <Button
-                                        style={{    }}
                                         type="link"
-                                        onClick={() => deleteAddress(address.id)}
+                                        onClick={() => deleteAddress(address.idDiaChi)}
                                     >
                                         Xóa
-                                    </Button>   
-                                    <div style={{marginLeft:'10%', fontSize:'70%'}}>
-                                        {address.isOffice && <span style={{ color: 'blue', marginLeft: 5 }}>(Văn phòng)</span>}
-                                        {!address.isOffice && <span style={{ color: 'brown', marginLeft: 5 }}>(Nhà riêng)</span>}
-                                        {address.isDefault && <span style={{ color: 'green', marginLeft: 5 }}>(Mặc định)</span>}
-                                    </div>
+                                    </Button>
+                                   
                                 </div>
                             </li>
                             <hr/>
                             </>
-
                         ))}
                     </ul>
                 )}
@@ -215,18 +369,76 @@ export default function ProfileLocation() {
                 visible={isModalVisible}
                 onCancel={handleCancel}
                 footer={null}
+                width={'70%'}
             >
-                <div>
-                    <label>Địa chỉ mới:</label>
-                    <Input
-                        type="text"
-                        value={editedAddress}
-                        onChange={(e) => setEditedAddress(e.target.value)}
-                    />
-                    <ButtonProfile type="primary" onClick={handleEditSubmit}>
-                        Lưu thay đổi
-                    </ButtonProfile>
-                </div>
+                <Form form={form} layout="vertical" onFinish={handleEditSubmit}>
+                <Form.Item name="idDiaChi" style={{display:'none'}}>
+                    <Input />
+                </Form.Item>
+                    <Form.Item label="Họ và tên" name="hoVaTen">
+                        <Input type="text" />
+                    </Form.Item>
+
+                    <Form.Item label="Số điện thoại" name="sdt">
+                        <Input type="text" />
+                    </Form.Item>
+
+                    <div className='d-flex w-100'>
+                        <Form.Item
+                            className='col-4'
+                            label="Tỉnh/Thành phố"
+                            name="province"
+                            rules={[{ required: true, message: 'Vui lòng nhập tỉnh thành!' }]}
+                        >
+                            <Select style={{ width: '90%', height: '15%' }} onChange={(value,option)=>handleGetQuanHuyen(option.key)}>
+                            {listTinhThanh.map(i => {
+                                return <Option key={i.code} value={i.name}>{i.name}</Option>;
+                            })}
+                            </Select>
+                        </Form.Item>
+                        <Form.Item
+                            className='col-4'
+                            label="Quận/Huyện"
+                            name="district"
+                            rules={[{ required: true, message: 'Vui lòng nhập quận/huyện!' }]}
+                        >
+                            <Select style={{ width: '90%', height: '15%' }} onChange={(value,option)=>handleGetXa(option.key)}>
+                            {listQuanHuyen.map(i => {
+                                return <Option key={i.code} value={i.name}>{i.name}</Option>;
+                            })}
+                            </Select>
+                        </Form.Item>
+                        <Form.Item
+                            className='col-4'
+                            label="Xã/ Phường"
+                            name="ward"
+                            rules={[{ required: true, message: 'Vui lòng nhập tỉnh thành!' }]}
+                        >
+                            <Select style={{ width: '90%', height: '15%' }}>
+                            {listXa.map(i => {
+                                return <Option key={i.code} value={i.name}>{i.name}</Option>;
+                            })}
+                            </Select>
+                        </Form.Item>
+                    </div>
+
+                    <Form.Item label="Địa chỉ cụ thể" name="specificAddress">
+                        <Input type="text" />
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Loại địa chỉ"
+                        name="loaiDiaChi"
+                        rules={[{ required: true, message: 'Vui lòng chọn loại địa chỉ!' }]}
+                    >
+                        <Select style={{ width: '15%', height: '15%' }}>
+                            <Option value="Nhà riêng">Nhà riêng</Option>
+                            <Option value="Văn phòng">Văn phòng</Option>
+                        </Select>
+                    </Form.Item>
+
+                    <ButtonProfile htmlType="submit">Lưu thay đổi</ButtonProfile>
+                </Form>
             </Modal>
         </div>
     );

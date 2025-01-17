@@ -8,10 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class YeuThich extends Model
 {
     use HasFactory;
-
+    protected $table = 'yeuthich';
+    protected $primaryKey = null;
+    public $timestamp = false;
     protected $fillable = [
         'idSanPham',
-        'idKhachHang',
+        'idNguoiDung',
     ];
 
     public function sanPham(){
@@ -19,6 +21,6 @@ class YeuThich extends Model
     }
 
     public function nguoiDung(){
-        return $this->belongsTo(NguoiDung::class, 'idKhachHang', 'idKhachHang');
+        return $this->belongsTo(NguoiDung::class, 'idNguoiDung', 'idNguoiDung');
     }
 }

@@ -39,6 +39,26 @@ class HoaDonController extends Controller
             ], 500);
         }
     }
+    function getListOrder(Request $request){
+        $data = $request->all();
+        try{
+            $list = HoaDon::where('hoadon.idNguoiDung','=',$data['idNguoiDung'])
+                            ->where('hoadon.trangThai','=',$data['trangThai'])
+                            ->join('diachi','diachi.idDiaChi','=','hoadon.idDiaChi')
+                            ->get();
+            return response()->json([
+                'success' => true,
+                'message' => 'Lấy danh sách hóa đơn thành công!',
+                'data' => $list,
+            ],200);
+        }
+        catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra '. $e->getMessage(),
+            ],500);
+        }
+    }
 
     function thongKeDoanhThuTheoNgay($thang = null, $nam = null)
     {
@@ -158,7 +178,8 @@ class HoaDonController extends Controller
                     DB::raw('SUM(c.tongTien) AS DoanhThu')
                 )
                 ->where('hoadon.trangThai', 2)
-                ->whereDate('hoadon.NgayXacNhan')
+                ->whereDate('hoadon.ngayXacNhan', '>=', now()->startOfDay())
+                ->whereDate('hoadon.ngayXacNhan', '<=', now()->endOfDay())
                 ->groupBy(DB::raw('DATE(hoadon.ngayXacNhan)'))
                 ->orderBy('Ngay')
                 ->get();
@@ -298,7 +319,7 @@ class HoaDonController extends Controller
         try {
             $data = DB::table('hoadon')
                 ->join('diachi', 'hoadon.idDiaChi', '=', 'diachi.idDiaChi')
-                ->select('hoadon.idHoaDon', 'hoadon.tongSoTien', 'diachi.sdt', 'diachi.diaChi', 'hoadon.phuongThucThanhToan')
+                ->select('hoadon.idHoaDon', 'hoadon.tongSoTien', 'diachi.sdt', 'diachi.diaChi', 'hoadon.phuongThucThanhToan', 'hoadon.trangThai')
                 ->whereNull('hoadon.thoiGianKhoa')
                 ->orWhere('hoadon.thoiGianKhoa', '<', time())
                 ->orderByRaw("
@@ -359,24 +380,13 @@ class HoaDonController extends Controller
     {
         try {
             $data = DB::table('hoadon')
-    ->join('nguoidung', 'hoadon.idNguoiDung', '=', 'nguoidung.idNguoiDung')
-    ->join('diachi', 'diachi.idDiaChi', '=', 'hoadon.idDiaChi')
-    ->join('chitiethoadon', 'chitiethoadon.idHoaDon', '=', 'hoadon.idHoaDon')
-    ->join('sanpham', 'chitiethoadon.idSanPham', '=', 'sanpham.idSanPham')
-    ->select(
-        'nguoidung.hoVaTen', 
-        'hoadon.idHoaDon', 
-        'hoadon.trangThai', 
-        'hoadon.phuongThucThanhToan', 
-        'hoadon.ngayXacNhan', 
-        'diachi.sdt',
-        'chitiethoadon.*', 
-        'sanpham.img', 
-        'sanpham.tenSanPham', 
-        'sanpham.gia'
-    )
-    ->where('hoadon.idHoaDon', $idHoaDon)
-    ->get();
+                ->join('nguoidung', 'hoadon.idNguoiDung', '=', 'nguoidung.idNguoiDung')
+                ->join('diachi', 'diachi.idDiaChi', '=', 'hoadon.idDiaChi')
+                ->join('chitiethoadon', 'chitiethoadon.idHoaDon', '=', 'hoadon.idHoaDon')
+                ->join('sanpham', 'chitiethoadon.idSanPham', '=', 'sanpham.idSanPham')
+                ->select('hoadon.*', 'nguoiDung.hoVaTen', 'chitiethoadon.*', 'sanpham.img', 'sanpham.tenSanPham', 'sanpham.gia', 'nguoidung.hoVaTen', 'diachi.diaChi', 'diachi.sdt', 'diachi.note')
+                ->where('hoadon.idHoaDon', $idHoaDon)
+                ->get();
 
             return response()->json([
                 'success' => true,
@@ -489,7 +499,6 @@ class HoaDonController extends Controller
                     'ngayXacNhan' => now()
                 ]) : $hoadon->update([
                     'trangThai' => $request['trangThai'],
-
                 ]);
 
             return response()->json([

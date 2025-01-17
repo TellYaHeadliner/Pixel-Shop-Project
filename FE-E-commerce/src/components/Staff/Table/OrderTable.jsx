@@ -3,9 +3,10 @@ import { useState } from "react";
 
 import DetailOrder from "../Modal/DetailOrder";
 import donhangService from "../../../services/donHangService";
+import Cookies from "js-cookie";
 
 const OrderTable = ({ data }) => {
-  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState([]);
 
   const columns = [
     {
@@ -33,7 +34,14 @@ const OrderTable = ({ data }) => {
       title: "Phương thức thanh toán",
       dataIndex: "phuongThucThanhToan",
       key: "phuongThucThanhToan",
-      render: (phuongThucThanhToan) => { return phuongThucThanhToan === 0 ? "Ngân hàng" : "Tiền mặt" }
+      render: (phuongThucThanhToan) => {
+        return phuongThucThanhToan === 0 ? "Tiền mặt" : "VNPAY";
+      },
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "trangThai",
+      key: "trangThai",
     },
     {
       title: "Hành động",
@@ -43,42 +51,88 @@ const OrderTable = ({ data }) => {
           Xem chi tiết
         </Button>
       ),
-    }
+    },
   ];
   const [isShowDetail, setIsShowDetail] = useState(false);
-  
+
   const handleShowDetail = (order) => {
     const findDetailOrder = async () => {
       try {
-        const response = await donhangService.getHoaDonById(order?.idHoaDon)
-        console.log(response);
-        setSelectedOrder(response.data.data)
+        const token = Cookies.get("token");
+        const response = await donhangService.getHoaDonById(order.idHoaDon, {
+          headers: {
+            Authorization: `Bearer ${token}`, 
+          },
+        });
+        if (response.data.data == null) {
+          message.error("Không tìm thấy hóa đơn");
+          return;
+        }
+        setSelectedOrder(response.data.data);
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
-    }
-    setIsShowDetail(true);
+    };
     findDetailOrder();
+    setIsShowDetail(true);
   };
 
   const handleClose = () => {
-    console.log(`Sẽ đóng`);
     setIsShowDetail(false);
-    setSelectedOrder(null);
   };
 
   const handleConfirm = (order) => {
     setSelectedOrder(order);
-    message.success("Đã xác nhận sản phẩm");
-    setSelectedOrder(updatedOrder);
+    const handleConfirm = async () => {
+      try {
+        const updateTrangThai = order.trangThai + 1;
+        const response = await donhangService.updateStatusHoaDon(
+          order.idHoaDon,
+          updateTrangThai
+        );
+        if (response.status === 200) {
+          message.success(
+            "Đã xác nhận sản phẩm ! Trang web sẽ reload lại trong 5s"
+          );
+          setInterval(() => {
+            window.location.reload();
+          }, 5000);
+        }
+      } catch (error) {
+        message.error("Có lỗi trong quá trình xác nhận", error);
+      }
+    };
+    handleConfirm();
+    setSelectedOrder([]);
     setIsShowDetail(false);
   };
 
   const handleDelete = (order) => {
     setSelectedOrder(order);
-    message.success("Xóa thành công hóa đơn");
+    const handleHidden = async () => {
+      try {
+        const response = await donhangService.updateHiddenHoaDon(
+          selectedOrder.idHoaDon,
+          selectedOrder.trangThai
+        );
+        if (response.status === 401) {
+          message.error("Không tìm thấy hóa đơn này");
+          return;
+        }
+        if (response.status === 200) {
+          message.success("Đã hủy hóa đơn! Trang web reload 5s");
+          setInterval(() => {
+            window.location.reload();
+          }, 5000);
+        }
+      } catch (error) {
+        message.error(`Có lỗi trong quá trình xóa`, error);
+      }
+    };
+    handleHidden();
+    setSelectedOrder([]);
     setIsShowDetail(false);
-  }
+  };
 
   return (
     <>
@@ -89,7 +143,7 @@ const OrderTable = ({ data }) => {
           open={isShowDetail}
           onClose={handleClose}
           onConfirm={handleConfirm}
-          onDelete={handleDelete} 
+          onDelete={handleDelete}
         />
       )}
     </>

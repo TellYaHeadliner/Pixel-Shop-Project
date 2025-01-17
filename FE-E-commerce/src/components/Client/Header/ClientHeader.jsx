@@ -4,10 +4,11 @@ import { BsFillTelephoneFill } from "react-icons/bs";
 import { FaUser, FaBars } from "react-icons/fa";
 import { FiShoppingCart } from "react-icons/fi";
 import apiService from "../../../api/api";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useParams } from "react-router-dom";
 import { UserContext } from '../../../routes/UserContext.jsx'; 
 import ModalLoginAndRegister from "../Modals/ModalLoginAndRegister";
 import styles from "./ClientHeader.module.scss";
+
 
 const { Header } = Layout;
 
@@ -39,6 +40,7 @@ const IconButtonNavHeader = ({ name, onClick, className }) => {
 };
 
 export const ClientHeader = () => {
+  const {categoriess,conditions,texts} = useParams();
   const navigate = useNavigate();
   const [showModalLogin, setShowModalLogin] = useState(false);
   const [titleLogin, setTitleLogin] = useState(false);
@@ -46,6 +48,7 @@ export const ClientHeader = () => {
   const [treeData, setTreeData] = useState([]);
   const [loading, setLoading] = useState(true);
   const { cartItemCount, login, role } = useContext(UserContext); 
+  const [searchText, setSearchText] = useState(texts);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -89,7 +92,7 @@ export const ClientHeader = () => {
 
   const onSelect = (selectedKeys, info) => {
     console.log('Selected:', selectedKeys, info);
-    navigate(`/category/${selectedKeys[0]}`);
+    navigate(`/searchproduct/${selectedKeys[0]}`);
   };
 
   const handleLoginClick = () => {
@@ -99,7 +102,12 @@ export const ClientHeader = () => {
       handleShowModalLogin(true);
     }
   };
-
+  const handleSearch = (event) => {
+    if (event.key === 'Enter') {
+      navigate(`/searchproduct/${categoriess ?? 0}/${searchText==""?" ":searchText??" "}/${conditions??0}/1`)
+    }
+    return event ;
+  };
   return (
     <Header className={styles.header}>
       <div className={styles.searchAndButtons}>
@@ -108,6 +116,9 @@ export const ClientHeader = () => {
             className={styles.searchInput}
             type="text"
             placeholder="Tìm kiếm"
+            defaultValue={texts}
+            onChange={(e) => setSearchText(e.target.value)}
+            onKeyDown={handleSearch}
           />
         </div>
         <Badge>

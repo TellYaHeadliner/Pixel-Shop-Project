@@ -54,11 +54,10 @@ const LICENSE_KEY =
 const CLOUD_SERVICES_TOKEN_URL =
 	'https://k8z19oz07ax0.cke-cs.com/token/dev/48b40e28b7705094cd4e51f9a287a75f5fd70394d1537140baba3533db95?limit=10';
 
-export default function App({setData, data=""}) {
+export default function App({setData, data}) {
 	const editorContainerRef = useRef(null);
 	const editorRef = useRef(null);
 	const [isLayoutReady, setIsLayoutReady] = useState(false);
-
 	useEffect(() => {
 		setIsLayoutReady(true);
 
@@ -199,8 +198,7 @@ export default function App({setData, data=""}) {
 						'ckboxImageEdit'
 					]
 				},
-				initialData:
-					data,
+				initialData: data,
 				licenseKey: LICENSE_KEY,
 				link: {
 					addTargetToExternalLinks: true,
@@ -241,7 +239,8 @@ export default function App({setData, data=""}) {
 			<div className="editor-container editor-container_classic-editor" ref={editorContainerRef}>
 				<div className="editor-container__editor">
 					<div ref={editorRef} >{editorConfig && 
-					<CKEditor editor={ClassicEditor} config={editorConfig} 
+					<CKEditor editor={ClassicEditor} config={editorConfig}
+							data = {data}
 							onChange={(event, editor) => {
 									const data = editor.getData();
 									setData(data);

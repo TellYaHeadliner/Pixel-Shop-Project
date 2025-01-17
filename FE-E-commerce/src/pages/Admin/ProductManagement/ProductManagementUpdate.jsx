@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Upload, Button, Input,  Form,  Select, Tree, message } from 'antd';
+import { Upload, Button, Input,  Form,  Select, Tree, message, Spin } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { EllipsisOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -17,7 +17,9 @@ const ProductManagement = () => {
 		const [treeVisible, setTreeVisible] = useState(true);
 		const [selectedDanhMuc, setSelectedDanhMuc] = useState(null);
 		const treeRef = useRef(null);
-
+		const [product, setProduct] = useState({});
+		const [imageSrc, setImageSrc] = useState(null);
+		const [loading, setLoading] = useState(false);
 		///AN
 		const [categories, setCategories] = useState([]);
 		const [searchTerm, setSearchTerm] = useState('');
@@ -42,6 +44,7 @@ const ProductManagement = () => {
 		////
 
 		const handleGetProduct = async () => {
+			setLoading(true);
 			try{
 				const response = await axios.post(
 					'http://127.0.0.1:8000/api/getProductBySlug',
@@ -50,12 +53,13 @@ const ProductManagement = () => {
 						headers: { 'Content-Type': 'application/json'},
 					}
 				)
-				console.log(response.data.data);
+				setProduct(response.data.data[0]);
+				setCkeData(response.data.data[0]['moTa']);
 			}
 			catch(e){
 				message.error(e.response.data.message);
 			}
-
+			setLoading(false);
 		}
 
 		useEffect(() => {
@@ -82,12 +86,15 @@ const ProductManagement = () => {
 		};
 
 		const getListDanhMuc = async () => {
+			setLoading(true);
 			try {
 				const response = await axios.get('http://127.0.0.1:8000/api/listDanhMuc');
 				setCategories(response.data.data);
+
 			} catch (e) {
 				message.error("Lấy danh mục không thành công");
 			}
+			setLoading(false);
 		};
 
 		useEffect(() => {
@@ -98,7 +105,22 @@ const ProductManagement = () => {
 				document.removeEventListener('mousedown', handleClickOutside);
 			};
 		}, []);
-
+		useEffect(() => {
+			console.log(product)
+			form.setFieldsValue(product);
+			form.setFieldsValue({loai:  String(product['loai'])});
+			const selected = selectDanhMuc(categories,product['idDanhMuc']);
+			setSelectedDanhMuc(selected);
+			setImageSrc(`http://127.0.0.1:8000/imgs/${product['img']}`);
+			setLoaiSanPham(product.loai);
+		},[product]);
+		useEffect(() => {
+    if (file && file.originFileObj) {
+				const objectUrl = URL.createObjectURL(file.originFileObj);
+				setImageSrc(objectUrl);
+				return () => URL.revokeObjectURL(objectUrl);
+			}
+		}, [file]);
 		const changeFile = ({ fileList: newFileList }) => {
 			setFile(newFileList[0]);
 			if (previewUrl) {
@@ -613,7 +635,7 @@ const ProductManagement = () => {
 			console.log(data);
 			try {
 				const response = await axios.post(
-					'http://127.0.0.1:8000/api/addSanPham',
+					'http://127.0.0.1:8000/api/updateSanPham',
 					data,
 					{
 						headers: { 'Content-Type': 'multipart/form-data'},
@@ -624,6 +646,14 @@ const ProductManagement = () => {
 				message.error(e.response.data.message);
 			}
 		}
+
+		if (loading) {
+        return (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <Spin size="large" />
+            </div>
+        );
+    }
 
     return (
         <div style={{ padding: '20px' }}>
@@ -643,6 +673,17 @@ const ProductManagement = () => {
 								>
 									<div className='d-flex'>
 										<div className='col-6'>
+											<Form.Item 
+												name="idSanPham"
+												labelCol={{span: 5}}
+												wrapperCol={{span: 7}}
+												rules={
+														[{ required: true}]
+													}
+												style={{display: 'none'}}
+											>
+												<Input/>
+											</Form.Item>
 											<Form.Item 
 												name="tenSanPham"
 												label="Tên sản phẩm:"
@@ -732,6 +773,7 @@ const ProductManagement = () => {
 												wrapperCol={{span: 7}}
 											>
 												<Select
+													disabled
 													showSearch
 													optionFilterProp="label"
 													filterSort={(optionA, optionB) =>
@@ -766,11 +808,11 @@ const ProductManagement = () => {
 												</Upload>
 											</Form.Item>
 											<div>
-												{file !== null ? (
+												{imageSrc !== null ? (
 													<img
-														src={URL.createObjectURL(file.originFileObj)} // Tạo URL tạm thời cho file
+														src={imageSrc}
 														alt="Preview"
-														style={{ maxWidth: '100%', maxHeight: '170px' }} // Thêm style để hình ảnh không bị phóng đại
+														style={{ maxWidth: '100%', maxHeight: '170px' }}
 													/>
 												) : null}
 											</div>
@@ -796,6 +838,7 @@ const ProductManagement = () => {
 										>
 												<CkeditorInsert
 													setData={setCkeData}
+													data = {product.moTa}
 												/>
 
 										</Form.Item>
@@ -808,7 +851,7 @@ const ProductManagement = () => {
 												htmlType='submit'
 												type='primary'
 											>
-												thêm
+												Cập nhật
 											</Button>
 										</div>
 									</div>

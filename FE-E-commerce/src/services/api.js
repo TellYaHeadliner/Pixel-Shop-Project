@@ -1,11 +1,14 @@
 import axios from "axios";
 
+
+
 const api = axios.create({
     // eslint-disable-next-line no-undef, no-constant-binary-expression
+
     baseURL: "http://127.0.0.1:8000",
     headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
     }
 })
 

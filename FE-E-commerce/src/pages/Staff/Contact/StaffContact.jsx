@@ -42,7 +42,7 @@ const StaffContact = () => {
       <Col span={24}>
         <Title level={2}>Tìm kiếm liên hệ</Title>
       </Col>
-      <Flex horizontal align="center" gap="middle" justify="flex-start">
+      <Flex align="center" gap="middle" justify="flex-start">
         <Col span={24}>
           <SearchContact searchContact={searchContact} onSearchChange={setSearchContact}/>
           <ButtonSearchContact onClick={handleSearchContact}  />
