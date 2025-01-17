@@ -276,6 +276,7 @@ class SanPhamController extends Controller
 	function search(Request $request)
 	{
 		$data = $request->all();
+
 		//Tìm kiếm theo tên sản phẩm
 		$data['text'] = $data['text'] ?? "";
 		//Tìm kiếm theo danh mục, lấy cả những danh mục con
@@ -285,7 +286,7 @@ class SanPhamController extends Controller
 		//trạng thái của sản phẩm 0(chưa bán),1(đang bán),2(ngưng bán)
 		$data["trangThai"] = $data["trangThai"] ?? null;
 		//Kiểu sắp xếp 1 giá tăng dần, 2 giá giảm dần, 3 mới nhất, 4 cũ nhất, 5 bán chạy nhất, 6 ít mua nhất.
-		$data["condition"] = $data["Condition"] ?? null;
+		$data["condition"] = $data["condition"] ?? null;
 		//Sản phẩm có giảm giá không: 0 những sản phẩm không giảm giá hoặc hết hạn giảm giá, 1 những sản phẩm đang giảm giá hoặc sẽ giảm giá
 		$data["discount"] = $data["discount"] ?? null;
 		$dm = new DanhMuc;
@@ -295,7 +296,7 @@ class SanPhamController extends Controller
 					return $query->whereIn('idDanhMuc', $dm->getChildrenList($data['idDanhMuc']));
 				})
 				->when($data['trangThai'] !== null, function ($query) use ($data) {
-					return $query->where('trangThai', $data['trangThai']);
+					return $query->where('sanpham.trangThai', $data['trangThai']);
 				})
 				->when($data['discount'] !== null, function ($query) use ($data) {
 					if ($data['discount'] == 1)
@@ -309,11 +310,49 @@ class SanPhamController extends Controller
 					if ($data['condition'] == 4)
 						return $query->orderBy('ngayThem', 'ASC');
 					if ($data['condition'] == 5 || $data['condition'] == 6)
-						return $query->join('chitiethoadon', 'sanpham.idSanPham', '=', 'chitiethoadon.idSanPham')
-							->join('hoadon', 'hoadon.idHoaDon', '=', 'chitiethoadon.idHoaDon')
-							->select('sanpham.*', DB::raw('SUM(chitiethoadon.soLuong) as soDaBan'))
-							->where('hoadon.trangThai', 1)
-							->groupBy('sanpham.idSanPham')
+						return $query
+							->select(
+								'sanpham.idSanPham',
+								'sanpham.tenSanPham',
+								'sanpham.moTa',
+								'sanpham.gia',
+								'sanpham.soLuong',
+								'sanpham.ngayThem',
+								'sanpham.img',
+								'sanpham.soLuotXem',
+								'sanpham.loai',
+								'sanpham.hang',
+								'sanpham.noiBat',
+								'sanpham.trangThai',
+								'sanpham.slug',
+								'sanpham.idDanhMuc',
+								'sanpham.idKhuyenMai',
+								DB::raw('COALESCE(SUM(chitiethoadon.soLuong), 0) as soDaBan')
+							)
+							->leftJoin('chitiethoadon', 'sanpham.idSanPham', '=', 'chitiethoadon.idSanPham')
+							->leftJoin('hoadon', 'hoadon.idHoaDon', '=', 'chitiethoadon.idHoaDon')
+							->where('sanpham.trangThai', 1)
+							->where(function ($query) {
+								$query->whereIn('hoadon.trangThai', [1,2])
+									->orWhereNull('hoadon.idHoaDon');
+							})
+							->groupBy(
+						'sanpham.idSanPham',
+								'sanpham.tenSanPham',
+								'sanpham.moTa',
+								'sanpham.gia',
+								'sanpham.soLuong',
+								'sanpham.ngayThem',
+								'sanpham.img',
+								'sanpham.soLuotXem',
+								'sanpham.loai',
+								'sanpham.hang',
+								'sanpham.noiBat',
+								'sanpham.trangThai',
+								'sanpham.slug',
+								'sanpham.idDanhMuc',
+								'sanpham.idKhuyenMai',
+							)
 							->when($data['condition'] == 5, function ($q) {
 								$q->orderBy('soDaBan', 'DESC');
 							})
@@ -321,20 +360,25 @@ class SanPhamController extends Controller
 								$q->orderBy('soDaBan', 'ASC');
 							});
 					if ($data['condition'] == 1 || $data['condition'] == 2)
-						return $query->join('khuyenmai', 'sanpham.idKhuyenMai', '=', 'khuyenmai.idKhuyenMai')
-							->where('khuyenmai.ngayBatDau', '>', now())
-							->where('khuyenmai.ngayKetThuc', '<', now())
-							->when($data['condition'] == 1, function ($q) {
-								return $q->orderByRaw('(sanpham.gia * (1 - khuyenmai.phantram / 100)) ASC');
+						return $query->leftJoin('khuyenmai', 'sanpham.idKhuyenMai', '=', 'khuyenmai.idKhuyenMai')
+						->where(function ($query) {
+							$query->where(function ($q) {
+								$q->where('khuyenmai.ngayBatDau', '<=', now())
+								->where('khuyenmai.ngayKetThuc', '>=', now());
 							})
-							->when($data['condition'] == 2, function ($q) {
-								return $q->orderByRaw('(sanpham.gia * (1 - khuyenmai.phantram / 100)) DESC');
-							});
+							->orWhereNull('sanpham.idKhuyenMai');
+						})
+						->when($data['condition'] == 1, function ($q) {
+							return $q->orderByRaw('(sanpham.gia * (1 - COALESCE(khuyenmai.phantram, 0) / 100)) ASC');
+						})
+						->when($data['condition'] == 2, function ($q) {
+							return $q->orderByRaw('(sanpham.gia * (1 - COALESCE(khuyenmai.phantram, 0) / 100)) DESC');
+						});
 				})->get();
 
 			$count = $result->count();
 			if ($data["page"])
-				$result = $result->slice(($data["page"] - 1) * 12, 12);
+				$result = $result->slice(($data["page"] - 1) * 12, 12)->values()->toArray();
 			return response()->json([
 				'success' => true,
 				'message' => 'Lấy danh sách sản phẩm thành công',

@@ -2,52 +2,51 @@ import React, { useState, useEffect } from "react";
 import { Table, Tag } from "antd";
 
 export default function ProfileRatedProducts() {
-  // Dữ liệu tĩnh (giả sử lấy từ API)
   const [data, setData] = useState([]);
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    // Dữ liệu tĩnh thay cho API
-    const staticData = [
-      {
-        key: "1",
-        productName: "Laptop Dell XPS 13",
-        rating: 4,
-        date: "2025-01-07 14:30",
-      },
-      {
-        key: "2",
-        productName: "Điện thoại iPhone 15 Pro",
-        rating: 5,
-        date: "2025-01-06 10:15",
-      },
-      {
-        key: "3",
-        productName: "Tai nghe Sony WH-1000XM5",
-        rating: 3,
-        date: "2025-01-05 17:00",
-      },
-      {
-        key: "4",
-        productName: "Đồng hồ thông minh Garmin Fenix 7",
-        rating: 4,
-        date: "2025-01-04 08:45",
-      },
-    ];
+    // Giả sử bạn có API lấy tất cả sản phẩm
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("/api/products");
+        const result = await response.json();
+        setProducts(result); // Lưu danh sách sản phẩm
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
 
-    // Giả lập API call bằng cách set dữ liệu
-    setData(staticData);
+    // Giả sử bạn có API lấy các đánh giá
+    const fetchRatings = async () => {
+      try {
+        const response = await fetch("/api/ratings");
+        const result = await response.json();
+        setData(result); // Lưu danh sách đánh giá
+      } catch (error) {
+        console.error("Error fetching ratings:", error);
+      }
+    };
+
+    fetchProducts();
+    fetchRatings();
   }, []);
 
-  // Cột hiển thị cho bảng
+  const getProductNameById = (id) => {
+    const product = products.find((prod) => prod.id === id);
+    return product ? product.name : "Không có tên sản phẩm";
+  };
+
   const columns = [
     {
       title: "Tên sản phẩm",
-      dataIndex: "productName",
+      dataIndex: "productId", // Giả sử dữ liệu trả về từ API có trường 'productId'
       key: "productName",
+      render: (productId) => getProductNameById(productId), // Lấy tên sản phẩm từ ID
     },
     {
       title: "Số sao",
-      dataIndex: "rating",
+      dataIndex: "soSao",
       key: "rating",
       render: (rating) => (
         <Tag color={rating >= 4 ? "green" : rating === 3 ? "orange" : "red"}>
@@ -57,20 +56,23 @@ export default function ProfileRatedProducts() {
     },
     {
       title: "Ngày đánh giá",
-      dataIndex: "date",
+      dataIndex: "ngayGio",
       key: "date",
     },
   ];
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2 style={{ textAlign: "center" }}>Sản phẩm đã đánh giá</h2>
-      <Table
-        columns={columns}
-        dataSource={data}
-        pagination={{ pageSize: 5 }}
-        bordered
-      />
+    <div>
+      <h2>Sản phẩm đã đánh giá</h2>
+      <hr />
+      <div style={{ padding: "20px" }}>
+        <Table
+          columns={columns}
+          dataSource={data}
+          pagination={{ pageSize: 5 }}
+          bordered
+        />
+      </div>
     </div>
   );
 }

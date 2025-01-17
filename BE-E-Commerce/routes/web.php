@@ -24,10 +24,10 @@ Route::controller(UserController::class)->group(function () {
 	Route::post('/api/login', [UserController::class, 'login']);
 	Route::post('/api/VerificationEmail', [UserController::class, 'sendVerificationEmail']);
 	Route::post('/api/signup', [UserController::class, 'signup'])->middleware(CheckEmailSignUp::class);
-	Route::post('/api/getProfile', [UserController::class, 'getById']);
-	Route::post('/api/updateById', [UserController::class, 'updateById']);
+	Route::post('/api/getProfile', 'getById')->middleware(JWT::class.':3');
+	Route::post('/api/updateById', [UserController::class, 'updateById'])->middleware(JWT::class.':3');
 	Route::post('/api/changeEmail','updateById')->middleware(CheckEmailSignUp::class);
-	Route::post('/api/updateAnhDaiDien','updateAnhDaiDien');
+	Route::post('/api/updateAnhDaiDien','updateAnhDaiDien')->middleware(JWT::class.':3');
 	Route::post('/api/checkToken','checkToken');
 	Route::get('/api/thongKeDoTuoi','thongKeDoTuoi');
 
@@ -61,10 +61,11 @@ Route::controller(NhaCungCapController::class)->group(function () {
 });
 
 Route::controller(DiaChiController::class)->group(function () {
-	Route::post('/api/getDiaChiUser', 'getListByUser');
-	Route::post('/api/updateDefaultLocation', 'updateDefaultUser');
-	Route::post('/api/deleteLocation','delete');
-	Route::post('/api/updateLocation','update');
+	Route::post('/api/getDiaChiUser', 'getListByUser')->middleware(JWT::class.':3');
+	Route::post('/api/updateDefaultLocation', 'updateDefaultUser')->middleware(JWT::class.':3');
+	Route::post('/api/deleteLocation','delete')->middleware(JWT::class.':3');
+	Route::post('/api/updateLocation','update')->middleware(JWT::class.':3');
+	Route::post('/api/addLocation','add')->middleware(JWT::class.':3');
 });
 
 Route::controller(LienHeController::class)->group(function () {
@@ -98,7 +99,8 @@ Route::controller(GioHangController::class)->group(function(){
 });
 
 Route::controller(BaiVietController::class)->group(function(){
-    Route::get('/api/listBaiViet',[BaiVietController::class,'getList']);
+	Route::post('/api/getBaiViet','get');
+	Route::post('/api/getListBaiViet','getList');
     Route::get('/api/getDetailBaiViet/{id}',[BaiVietController::class,'get']);
 	Route::get('/api/getListBaiVietKhuyenMai', [BaiVietController::class, 'getListKhuyenMai']);
 	Route::get('/api/getListQuangCao', [BaiVietController::class, 'getListQuangCao']);
@@ -106,6 +108,7 @@ Route::controller(BaiVietController::class)->group(function(){
 
 Route::controller(HoaDonController::class)->group(function(){
 	Route::get('/api/checkHoaDonById/{idNguoiDung}/{idSanPham}','checkHoaDonById');
+	Route::post('/api/getListOrder','getListOrder');
 	Route::get('/api/thongKeDoanhThuTheoThangVaNam/{thang}/{nam}','thongKeDoanhThuTheoNgay');
 	Route::get('/api/thongKeDoanhThuTheoNguoiDung/{idNguoiDung}','thongKeDoanhThuTheoNguoDung');
 	Route::get('/api/thongKeSanPhamTheoThangVaNam/{thang}/{nam}','thongKeSanPhamTheoNgay');
@@ -128,7 +131,10 @@ Route::controller(YeuThichController::class)->group(function(){
 	Route::get('/api/checkYeuThich/{idNguoiDung}/{idSanPham}','checkYeuThich');
 	Route::get('/api/getSoLuongYeuThichByIdSanPham/{idSanPham}','getSoLuongYeuThichByIdSanPham');
 	Route::post('/api/addYeuThich','addYeuThich');
-	Route::delete('/api/deleteYeuThich','deleteYeuThich');
+	Route::delete('/api/deleteYeuThich','deleteYeuThich')->middleware(JWT::class.':3');
+	Route::post('/api/getListYeuThich','getListByIdUser')->middleware(JWT::class.':3');
+
+
 });
 
 

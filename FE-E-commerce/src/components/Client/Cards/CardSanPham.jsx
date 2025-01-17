@@ -12,7 +12,7 @@ function SanPhamCard({ tenSanPham, hang, gia, img, slug }) {
         margin: "0 20px 0 30px"
       }}
     >
-      <img src={linkImg} alt={linkImg} style={{ width: "100%", height:"300px", objectFit: "contain" }} />
+      <img src={linkImg} alt={linkImg} style={{ width: "100%",height:"100px", objectFit: "contain" }} />
       <Flex justify="space-between" align="flex-end" style={{ marginTop: "2rem" }}>
         <h3>{formattedPrice}</h3>
         <Button>

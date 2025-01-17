@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
+use App\Models\YeuThich;
 class YeuThichController extends Controller
 {
 
@@ -90,5 +90,23 @@ class YeuThichController extends Controller
 			],500);
 		}
     }
-
+	function getListByIdUser(Request $request){
+		$data = $request->all();
+		try{
+			$list = YeuThich::where('yeuthich.idNguoiDung','=',$data['idNguoiDung'])
+			->join('sanpham','sanpham.idSanPham','=','yeuthich.idSanPham')
+			->get();
+			return response()->json([
+				'success'=>true,
+				'message'=>'Lấy danh sách yêu thích thành công!',
+				'data'=>$list
+			],200);
+		}catch(\Exception $e){
+			return response()->json([
+				'success'=>false,
+				'message'=>'Có lỗi xảy ra: '.$e->getMessage(),
+				'data'=>[]
+			],500);
+		}
+	}
 }
