@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom";
 import { UserContext } from "../../../routes/UserContext";
 import apiService from "../../../api/api";
 import "./Payment.scss";
+import axios from "axios";
 
 const { Content } = Layout;
 const { Title, Paragraph } = Typography;
@@ -18,6 +19,14 @@ const PaymentBasic = () => {
   const [defaultAddress, setDefaultAddress] = useState(null);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [newAddress, setNewAddress] = useState({ hoVaTen: '', diaChi: '', sdt: '', note: '', loaiDiaChi: '1' });
+  const [paymentMethod, setPaymentMethod] = useState("0");
+
+  const handleChange = (e) => {
+    setPaymentMethod(e.target.value); 
+  };
+  console.log(paymentMethod);
+
+  axios.defaults.withCredentials=true;
 
   useEffect(() => {
     const fetchAddresses = async () => {
@@ -43,7 +52,6 @@ const PaymentBasic = () => {
 
     fetchAddresses();
   }, [idNguoiDung, token]);
-
   
   const handleConfirmAddress = async () => {
     if (!selectedAddressId) {
@@ -56,6 +64,7 @@ const PaymentBasic = () => {
       idNguoiDung,
     };
     
+
     try {
       const response = await apiService.updateDefaultLocation(updateData, token);
       if (response.data.success) {
@@ -141,31 +150,41 @@ const PaymentBasic = () => {
     }
   };
 
+  const totalAmount = selectedItems.reduce((total, item) => total + item.price * item.quantity, 0); // tongtien
+
   const handleConfirmPayment = async () => {
     if (!defaultAddress) {
       message.error("Vui lòng chọn địa chỉ giao hàng.");
       return;
     }
-
-    const paymentData = {
-      idNguoiDung,
-      idDiaChi: defaultAddress.idDiaChi,
-      items: selectedItems,
-    };
-
     try {
-      const response = await apiService.confirmPayment(paymentData, token); 
+      console.log(token);
+      const response = await axios.post(
+        'http://127.0.0.1:8000/api/create-payment',
+        {
+          idDiaChi: defaultAddress.idDiaChi,
+          listSanPham: selectedItems,
+          phuongThucThanhToan:paymentMethod,
+          tongSoTien:totalAmount
+        },
+        {
+          headers:{
+            "Content-Type": "application/json",
+              'Authorization':`Bearer ${token}`
+          }
+        }
+      ); 
+      console.log(response.data)
       if (response.data.success) {
-        message.success("Thanh toán thành công!");
+        window.location.href=response.data.data;
       } else {
         message.error(response.data.message);
       }
     } catch (error) {
-      message.error("Lỗi khi xác nhận thanh toán: " + error.message);
+      console.log(error.response);
     }
   };
 
-  const totalAmount = selectedItems.reduce((total, item) => total + item.price * item.quantity, 0);
 
   return (
     <Layout className="checkout-layout">
@@ -206,9 +225,9 @@ const PaymentBasic = () => {
               </div>
               <div className="payment-method">
                 <h4>Phương thức thanh toán</h4>
-                <Radio.Group>
-                  <Radio value="cash">Tiền mặt</Radio>
-                  <Radio value="VNPay">VNPay</Radio>
+                <Radio.Group onChange={handleChange} >
+                  <Radio value="0">Tiền mặt</Radio>
+                  <Radio value="1">VNPay</Radio>
                 </Radio.Group>
               </div>
               <Button type="primary" className="confirm-button" onClick={handleConfirmPayment}>Xác nhận</Button>

@@ -6,7 +6,7 @@ import axios from "axios";
 import { UserContext } from '../../../routes/UserContext'; 
 
 
-export default function ProfileOrderPendingConfirm() {
+export default function ProfileOrderReceived() {
   const {id} = useParams();
   const {token} = useContext(UserContext);
   const [orderData, setOrderData] = useState([]);
@@ -114,7 +114,7 @@ export default function ProfileOrderPendingConfirm() {
     <div style={{ padding: "20px", maxWidth: "800px", fontFamily: "Arial, sans-serif" }}>
       <h2 style={{ textAlign: "center" }}>Lịch sử đơn hàng {orderData[0]?.idHoaDon??""}</h2>
       <p>
-        <strong>Tên khách hàng: {orderData[0]?.hoVaTen ?? ""}</strong> 
+        <strong>Tên khách hàng: {orderData[0]?.hoVaTenDC ?? ""}</strong> 
       </p>
       <p>
         <strong>Địa chỉ giao hàng:</strong> {orderData[0]?.diaChi??""}

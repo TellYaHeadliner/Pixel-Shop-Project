@@ -110,7 +110,7 @@ class UserController extends Controller
             'anhDaiDien' => $User['anhDaiDien'],
             'role' => $User['vaiTro'],
             'iat' => time(),
-            'exp' => time() + 60 * 60,
+            'exp' => time() + 3600*2,
         ];
 
         session()->forget(["login_solanthu_{$User['idNguoiDung']}", "login_timeblock_{$User['idNguoiDung']}", "login_captcha_{$User['idNguoiDung']}"]);
@@ -216,7 +216,7 @@ class UserController extends Controller
         } catch (\Exception $err) {
             return response()->json([
                 'success' => false,
-                'message' => 'Gửi mã thất bại. vui lòng thử lại',
+                'message' => 'Gửi mã thất bại. vui lòng thử lại'.$err->getMessage(),
                 'data' => [],
             ], 500);
         }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext , useLocation } from "react";
 import { Layout, Button, Input, Checkbox, Pagination, message, notification, Modal } from "antd";
 import { AiFillDelete } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
@@ -15,6 +15,9 @@ const ShoppingCart = () => {
   const [loading, setLoading] = useState(false);
   const { setTrigger , token } = useContext(UserContext);
   const [currentPage, setCurrentPage] = useState(1);
+
+  const queryParams = new URLSearchParams(window.location.search);
+  const message = queryParams.get('message');
 
   const itemsPerPage = 5;
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -55,6 +58,12 @@ const ShoppingCart = () => {
       }
     };
 
+    if(message){
+      notification.open({
+        message:"Lỗi Thanh Toán",
+        description:message
+      });
+    }
     fetchCartItems();
   }, []);
   const showRemoveAllConfirm = () => {

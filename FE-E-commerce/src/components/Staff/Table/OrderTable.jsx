@@ -1,11 +1,17 @@
 import { Table, Button, message, Popconfirm } from "antd";
-import { useState } from "react";
+import { useState , useContext } from "react";
 
 import DetailOrder from "../Modal/DetailOrder";
+import donhangService from "../../../services/donHangService";
+import Cookies from "js-cookie";
+import { UserContext } from "../../../routes/UserContext";
+import axios from 'axios';
+
 
 const OrderTable = ({ data }) => {
-  const [orders, setOrders] = useState(data);
-  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState([]);
+  const { token } =useContext(UserContext);
+  axios.defaults.withCredentials=true;
 
   const columns = [
     {
@@ -14,55 +20,33 @@ const OrderTable = ({ data }) => {
       key: "idHoaDon",
     },
     {
-      title: "Người đặt hàng",
-      dataIndex: "nguoiDatHang",
-      key: "nguoiDatHang",
-    },
-    {
-      title: "Ngày đặt hàng",
-      dataIndex: "ngayDat",
-      key: "ngayDat",
-    },
-    {
-      title: "Tổng tiền",
+      title: "Tổng số tiền",
       dataIndex: "tongSoTien",
       key: "tongSoTien",
+      render: (text) => <span>{Number(text).toLocaleString()} VNĐ</span>, // Format currency
     },
     {
-      title: "Trạng thái",
-      dataIndex: "trangThai",
-      key: "trangThai",
-      render: (trangThai) =>
-        trangThai === 1 ? "Đã xác nhận" : "Chưa xác nhận",
+      title: "Số điện thoại",
+      dataIndex: "sdt",
+      key: "sdt",
+    },
+    {
+      title: "Địa chỉ",
+      dataIndex: "diaChi",
+      key: "diaChi",
     },
     {
       title: "Phương thức thanh toán",
       dataIndex: "phuongThucThanhToan",
       key: "phuongThucThanhToan",
-      render: (phuongThucThanhToan) =>
-        phuongThucThanhToan ? "Tiền mặt" : "Ngân hàng",
+      render: (phuongThucThanhToan) => {
+        return phuongThucThanhToan === 0 ? "Tiền mặt" : "VNPAY";
+      },
     },
     {
-      title: "Người xác nhận",
-      dataIndex: "nhanVienXacNhan",
-      key: "nhanVienXacNhan",
-      render: (nhanVienXacNhan) =>
-        nhanVienXacNhan ? nhanVienXacNhan : "Chưa xác nhận",
-    },
-    {
-      title: "Ngày xác nhận",
-      dataIndex: "ngayXacNhan",
-      key: "ngayXacNhan",
-    },
-    {
-      title: "Số lần",
-      dataIndex: "soLan",
-      key: "soLan",
-    },
-    {
-      title: "Thời gian khóa",
-      dataIndex: "thoiGianKhoa",
-      key: "thoiGianKhoa",
+      title: "Trạng thái",
+      dataIndex: "trangThai",
+      key: "trangThai",
     },
     {
       title: "Hành động",
@@ -77,54 +61,100 @@ const OrderTable = ({ data }) => {
   const [isShowDetail, setIsShowDetail] = useState(false);
 
   const handleShowDetail = (order) => {
-    console.log(order);
-    setSelectedOrder(order);
+    const findDetailOrder = async () => {
+      try {
+        const token = Cookies.get("token");
+        const response = await donhangService.getHoaDonById(order.idHoaDon, {
+          headers: {
+            Authorization: `Bearer ${token}`, 
+          },
+        });
+        if (response.data.data == null) {
+          message.error("Không tìm thấy hóa đơn");
+          return;
+        }
+        setSelectedOrder(response.data.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    findDetailOrder();
     setIsShowDetail(true);
   };
 
   const handleClose = () => {
-    console.log(`Sẽ đóng`);
     setIsShowDetail(false);
-    setSelectedOrder(null);
   };
 
   const handleConfirm = (order) => {
     setSelectedOrder(order);
-    if (selectedOrder?.trangThai == 1) {
-      message.error("Sản phẩm đã được xác nhận");
-      setIsShowDetail(false);
-    } else {
-      const updatedOrder = { ...selectedOrder, trangThai: 1 };
-      setOrders(
-        orders.map((o) =>
-          o.idHoaDon === selectedOrder.idHoaDon ? updatedOrder : o
-        )
-      );
-      message.success("Đã xác nhận sản phẩm");
-      setSelectedOrder(updatedOrder);
-      setIsShowDetail(false);
-    }
-    
+    const handleConfirm = async () => {
+      try {
+        console.log(order.idHoaDon);
+        const response = await axios.put(
+          '/api/updateStatusHoaDon/', 
+          { idHoaDon: order.idHoaDon, trangThai: 1 }, 
+          { headers: { "Content-Type": "application/json", 'Authorization': `Bearer ${token}` } }
+        );
+
+        console.log(response)
+        if (response.status === 200) {
+          message.success(
+            "Đã xác nhận sản phẩm ! Trang web sẽ reload lại trong 5s"
+          );
+          setInterval(() => {
+            window.location.reload();
+          }, 5000);
+        }
+      } catch (error) {
+        message.error("Có lỗi trong quá trình xác nhận", error);
+      }
+    };
+    handleConfirm();
+    setSelectedOrder([]);
+    setIsShowDetail(false);
   };
 
   const handleDelete = (order) => {
     setSelectedOrder(order);
-    const updatedContact = orders.filter((o) => o.idHoaDon !== selectedOrder.idHoaDon)
-    setOrders(updatedContact);
-    message.success("Xóa thành công hóa đơn");
+    const handleHidden = async () => {
+      try {
+        const response = await donhangService.updateStatusHoaDon(
+          selectedOrder.idHoaDon,
+          3
+        );
+
+
+
+        if (response.status === 401) {
+          message.error("Không tìm thấy hóa đơn này");
+          return;
+        }
+        if (response.status === 200) {
+          message.success("Đã hủy hóa đơn! Trang web reload 5s");
+          setInterval(() => {
+            window.location.reload();
+          }, 5000);
+        }
+      } catch (error) {
+        message.error(`Có lỗi trong quá trình xóa`, error);
+      }
+    };
+    handleHidden();
+    setSelectedOrder([]);
     setIsShowDetail(false);
-  }
+  };
 
   return (
     <>
-      <Table columns={columns} dataSource={orders} rowKey="idHoaDon" />
+      <Table columns={columns} dataSource={data} rowKey="idHoaDon" />
       {selectedOrder && (
         <DetailOrder
           order={selectedOrder}
           open={isShowDetail}
           onClose={handleClose}
           onConfirm={handleConfirm}
-          onDelete={handleDelete} 
+          onDelete={handleDelete}
         />
       )}
     </>

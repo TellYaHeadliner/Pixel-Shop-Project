@@ -20,7 +20,7 @@ use App\Http\Controllers\LoHangController;
 
 
 use App\Http\Middleware\CheckEmailSignUp;
-
+use App\Http\Middleware\Jwt1;
 
 Route::controller(UserController::class)->group(function () {
 	Route::post('/api/login', [UserController::class, 'login']);
@@ -46,7 +46,7 @@ Route::controller(DanhGiaController::class)->group(function () {
 	Route::get('/api/getDanhGiaByIdSanPham/{id}','getDanhGiaByIdSanPham');
 	Route::get('/api/checkDanhGia/{idNguoiDung}/{idSanPham}','checkDanhGia'); 
 	Route::get('/api/getDanhGiaById/{idNguoiDung}/{idSanPham}','getDanhGiaById'); 
-	Route::get('/api/getListDanhGia', 'getListDanhGia')->middleware(JWT::class.':3');
+	Route::get('/api/getListDanhGia', 'getListDanhGia')->middleware(JWT::class.':1');
 	Route::post('/api/addDanhGia','addDanhGia');
 	Route::delete('/api/deleteDanhGia','deleteDanhGia');
 	
@@ -121,15 +121,18 @@ Route::controller(HoaDonController::class)->group(function(){
 	Route::get('/api/sanPhamDaBanTheoThang','thongKeSanPhamDaBanTheoThang');
 	Route::get('/api/getListHoaDon','getListHoaDon');
 	Route::get('/api/getListHoaDonHidden','getListHoaDonHidden');
-	Route::get('/api/getHoaDonById/{idHoaDon}','getHoaDonById')->middleware(JWT::class.':3');
+	Route::get('/api/getHoaDonById/{idHoaDon}','getHoaDonById')->middleware(JWT::class.':2,3');
 	Route::post('/api/getListHoaDonBySdt','getListHoaDonBySdt');
 	Route::get('/api/getListHoaDonByStatusAndDay/{status}/{day}','getListHoaDonByStatusAndDay');
-	Route::post('/api/getListHoaDonByStatus','getListHoaDonByStatus')->middleware(JWT::class.':3');
-	Route::put('/api/updateStatusHoaDon','updateStatusHoaDon')->middleware(JWT::class.':3');
+	Route::post('/api/getListHoaDonByStatus','getListHoaDonByStatus')->middleware(JWT::class.':1');
+	Route::put('/api/updateStatusHoaDon','updateStatusHoaDon')->middleware(JWT::class.':1');
 	Route::put('/api/updateHiddenHoaDon','updateHiddenHoaDon');
 	Route::get('/api/thongKeDoanhThuTheoTatCaNguoiDung', 'thongKeDoanhThuTheoTatCaNguoiDung');
 	Route::get('/api/thongKeDoanhThuSanPhamTheoNgay','thongKeDoanhThuSanPhamTheoNgay');
-	Route::get('/api/thongKeDonHangTheoNgay/', 'thongKeDonHangTheoNgay');
+	Route::get('/api/thongKeDonHangTheoNgay', 'thongKeDonHangTheoNgay');
+	Route::post('/api/create-payment','create_payment')->middleware(Jwt::class.':3');
+	Route::get('/api/callback-vnpay','callback_vnpay');
+
 });
 
 Route::controller(YeuThichController::class)->group(function(){
@@ -138,8 +141,6 @@ Route::controller(YeuThichController::class)->group(function(){
 	Route::post('/api/addYeuThich','addYeuThich');
 	Route::delete('/api/deleteYeuThich','deleteYeuThich')->middleware(JWT::class.':3');
 	Route::post('/api/getListYeuThich','getListByIdUser')->middleware(JWT::class.':3');
-
-
 });
 Route::controller(LoHangController::class)->group(function(){
 	Route::get('/api/getListLoHang','getList');

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, Row, Col, Spin, Alert, Table } from 'antd';
 import { Bar } from '@ant-design/charts';
 import apiService from '../../../api/api';
@@ -33,7 +33,7 @@ const AudienceStatistics = () => {
                 const productRevenueResponse = await apiService.thongKeDoanhThuSanPhamTheoNgay();
                 const productRevenueData = productRevenueResponse.data.data.map(item => ({
                     TenSanPham: item.TenSanPham,
-                    Ngay: item.Ngay.substring(0, 10), // Extract date only
+                    Ngay: item.Ngay?.substring(0, 10), // Extract date only
                     TongSoLuong: item.TongSoLuong,
                     TongTien: item.TongTien,
                 }));
