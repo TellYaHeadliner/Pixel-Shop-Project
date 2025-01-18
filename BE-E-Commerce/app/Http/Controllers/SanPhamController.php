@@ -385,7 +385,12 @@ class SanPhamController extends Controller
 		//Phân trang mỗi trang 12 sản phẩm
 		$data["page"] = $data["page"] ?? null;
 		//trạng thái của sản phẩm 0(chưa bán),1(đang bán),2(ngưng bán)
-		$data["trangThai"] = $data["trangThai"] ?? null;
+		// $data["trangThai"] = $data["trangThai"] ?? null;
+		$data["trangThai"] = isset($data["trangThai"]) 
+    ? (is_array($data["trangThai"]) 
+        ? $data["trangThai"] 
+        : [$data["trangThai"]]) 
+    : null;
 		//Kiểu sắp xếp 1 giá tăng dần, 2 giá giảm dần, 3 mới nhất, 4 cũ nhất, 5 bán chạy nhất, 6 ít mua nhất.
 		$data["condition"] = $data["condition"] ?? null;
 		//Sản phẩm có giảm giá không: 0 những sản phẩm không giảm giá hoặc hết hạn giảm giá, 1 những sản phẩm đang giảm giá hoặc sẽ giảm giá
@@ -397,7 +402,7 @@ class SanPhamController extends Controller
 					return $query->whereIn('idDanhMuc', $dm->getChildrenList($data['idDanhMuc']));
 				})
 				->when($data['trangThai'] !== null, function ($query) use ($data) {
-					return $query->where('sanpham.trangThai', $data['trangThai']);
+					return $query->whereIn('sanpham.trangThai', $data['trangThai']);
 				})
 				->when($data['discount'] !== null, function ($query) use ($data) {
 					if ($data['discount'] == 1)
@@ -510,5 +515,43 @@ class SanPhamController extends Controller
 			],500);
 		}
 	}
-	
+
+	function changeNoiBat(Request $request){
+		$data = $request->all();
+		try {
+        $sp = SanPham::find($data['idSanPham']);
+        if (!$sp) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không tìm thấy sản phẩm!',
+            ], 404);
+        }
+        $sp->noiBat = !$sp->noiBat;
+        $sp->save();
+        return response()->json([
+            'success' => true,
+            'message' => 'Thay đổi trạng thái nổi bật thành công!',
+        ], 200);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Lỗi hệ thống: ' . $e->getMessage(),
+        ], 500);
+    }
+	}
+	function delete(Request $request){
+		try{
+			$sp = SanPham::find($request->idSanPham);
+			$sp->update(['trangThai'=>2]);
+			return response()->json([
+				'success' => true,
+				'message' => 'Xóa sản phẩm thành công'
+			],200);
+		}catch(\Exception $e){
+			return response()->json([
+				'success' => false,
+				'message' => $e->getMessage(),
+			], 500);
+		}
+	}
 }
