@@ -75,6 +75,7 @@ const Home = () => {
       }
     };
     fetchBestProductList();
+    console.log(bestSellerList);
   }, [bestSellerList]);
 
   useEffect(() => {

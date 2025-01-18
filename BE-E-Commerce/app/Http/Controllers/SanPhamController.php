@@ -117,6 +117,7 @@ class SanPhamController extends Controller
 				'message' => "Danh sách sản phẩm bán chạy",
 				'data' => $listSanPham
 			], 200);
+			
 		} catch (\Exception $err) {
 			return response()->json([
 				'success' => false,
