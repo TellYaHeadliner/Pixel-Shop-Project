@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
-import { Button, Input, Table, Dropdown, Menu, message } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Button, Input, Table, Dropdown, Menu, message} from 'antd';
 import { EllipsisOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router';
+import axios from 'axios';
 
 const BatchManagement = () => {
+		const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState('');
-
+		const [loHang,setLoHang] = useState([])
+		const [nhaCungCap,setNhaCungCap] = useState([]);
     // Dữ liệu mẫu cho bảng
     const dataSource = [
         {
@@ -27,64 +31,52 @@ const BatchManagement = () => {
     const columns = [
         {
             title: 'Mã lô hàng',
-            dataIndex: 'maLoHang',
-            key: 'maLoHang',
+            dataIndex: 'idLoHang',
+            key: 'idLoHang',
         },
         {
-            title: 'Nhà cung cấp',
-            dataIndex: 'nhaCungCap',
-            key: 'nhaCungCap',
-        },
+					title: 'Nhà cung cấp',
+					dataIndex: 'idNhaCungCap',
+					key: 'idNhaCungCap',
+					render: (text) => {
+						// Kiểm tra giá trị của text trước khi tìm kiếm
+						const n = nhaCungCap.find(ncc => ncc?.idNhaCungCap == text);
+						return n ? n.tenNhaCungCap : "Chưa có nhà cung cấp"; // Trả về "Chưa có nhà cung cấp" nếu không tìm thấy
+					}
+				},
         {
-            title: 'Số lượng',
-            dataIndex: 'soLuong',
-            key: 'soLuong',
+            title: 'Tổng giá nhập',
+            dataIndex: 'tongNhap',
+            key: 'tongNhap',
+						render: (text)=>{return text+' VNĐ'}
         },
         {
             title: 'Ngày nhập lô',
-            dataIndex: 'ngayNhap',
-            key: 'ngayNhap',
-        },
-        {
-            title: 'Hành động',
-            key: 'action',
-            render: (_, record) => (
-                <Dropdown overlay={actionMenu(record)} trigger={['click']}>
-                    <Button icon={<EllipsisOutlined />} />
-                </Dropdown>
-            ),
+            dataIndex: 'date',
+            key: 'date',
         },
     ];
-
-    const actionMenu = (record) => (
-        <Menu>
-            <Menu.Item onClick={() => handleUpdate(record)}>
-                Cập nhật
-            </Menu.Item>
-            <Menu.Item onClick={() => handleDelete(record.key)}>
-                Xóa
-            </Menu.Item>
-            <Menu.Item onClick={() => handleHighlight(record.key)}>
-                Nổi bật
-            </Menu.Item>
-        </Menu>
-    );
-
-    const handleUpdate = (record) => {
-        message.info(`Cập nhật lô hàng: ${record.maLoHang}`);
-        // Logic cập nhật lô hàng sẽ ở đây
-    };
-
-    const handleDelete = (key) => {
-        message.warning(`Xóa lô hàng có mã: ${key}`);
-        // Logic xóa lô hàng sẽ ở đây
-    };
-
-    const handleHighlight = (key) => {
-        message.success(`Nổi bật lô hàng có mã: ${key}`);
-        // Logic nổi bật lô hàng sẽ ở đây
-    };
-
+		const handleGetLH = async () => {
+			try{
+				const response = await axios.get('http://127.0.0.1:8000/api/getListLoHang');
+				console.log(response.data.data);
+				setLoHang(response.data.data);
+			}catch(e){
+				message.error(e.response.data.message);
+			}
+		}
+		const handleGetNCC = async () => {
+			try{
+				const response = await axios.get('http://127.0.0.1:8000/api/listNhaCungCap');
+				setNhaCungCap(response.data.data);
+			}catch(e){
+				message.error(e.response.data.message);
+			}
+		}
+		useEffect(() => {
+			handleGetLH();
+			handleGetNCC();
+		},[]);
     return (
         <div style={{ padding: '20px' }}>
             <h2>Quản lý lô hàng</h2>
@@ -95,11 +87,11 @@ const BatchManagement = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 style={{ width: '300px', marginBottom: '20px' }}
             />
-            <Button type="primary" style={{ marginLeft: '10px' }}>
+            <Button type="primary" style={{ marginLeft: '10px' }} onClick={()=>navigate('add')}>
                 Thêm lô hàng
             </Button>
             <Table
-                dataSource={dataSource.filter(item => item.maLoHang.toLowerCase().includes(searchTerm.toLowerCase()))}
+                dataSource={loHang.filter(item => String(item?.idLoHang).includes(searchTerm.toLowerCase()))}
                 columns={columns}
                 style={{ marginTop: '20px' }}
                 pagination={false}

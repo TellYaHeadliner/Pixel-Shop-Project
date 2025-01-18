@@ -10,15 +10,16 @@ class LoHang extends Model
     use HasFactory;
 		protected $table = 'lohang';
 		protected $primaryKey = 'idLoHang';
-		public $timestamp = false;
+		public $timestamps = false;
     protected $fillable = [
         'idLoHang',
         'idNhaCungCap',
         'date'
     ];
 
-    public function chitietlohang(){
-        return $this->hasMany(ChiTietLoHang::class, 'idLoHang');
+    public function chiTietLoHang()
+    {
+        return $this->hasMany(ChiTietLoHang::class, 'idLoHang', 'idLoHang');
     }
 
     public function nhacungcap(){

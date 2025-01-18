@@ -163,14 +163,38 @@ const ProductManagement = () => {
         // Logic cập nhật sản phẩm sẽ ở đây
     };
 
-    const handleDelete = (key) => {
-        message.warning(`Xóa sản phẩm có STT: ${key}`);
-        // Logic xóa sản phẩm sẽ ở đây
+    const handleDelete = async (key) => {
+        try{
+				const response = await axios.post(
+					'http://127.0.0.1:8000/api/deleteSanPham',
+					{ idSanPham : key },
+					{
+						headers: { 'Content-Type': 'application/json' },
+					}
+				);
+				console.log(key);
+				message.success(response.data.message);
+				handleGetListPrd();
+			}catch(e){
+				message.error(e.response.data.message);
+			}
     };
 
-    const handleHighlight = (key) => {
-        message.success(`Nổi bật sản phẩm có STT: ${key}`);
-        // Logic nổi bật sản phẩm sẽ ở đây
+    const handleHighlight = async (key) => {
+      try{
+				const response = await axios.post(
+					'http://127.0.0.1:8000/api/changeNoiBatSanPham',
+					{ idSanPham : key },
+					{
+						headers: { 'Content-Type': 'application/json' },
+					}
+				);
+				console.log(key);
+				message.success(response.data.message);
+				handleGetListPrd();
+			}catch(e){
+				message.error(e.response.data.message);
+			}
     };
 
 		if (loading2) {
@@ -180,6 +204,7 @@ const ProductManagement = () => {
             </div>
         );
     }
+		
     return (
         <div style={{ padding: '20px' }} className='w-100'>
             <h2>Quản lý sản phẩm</h2>
@@ -248,6 +273,7 @@ const ProductManagement = () => {
 						}
         </div>
     );
+		
 };
 
 export default ProductManagement;
