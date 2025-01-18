@@ -16,6 +16,8 @@ use App\Http\Controllers\BaiVietController;
 use App\Http\Controllers\DanhGiaController;
 use App\Http\Controllers\HoaDonController;
 use App\Http\Controllers\YeuThichController;
+use App\Http\Controllers\LoHangController;
+
 
 use App\Http\Middleware\CheckEmailSignUp;
 
@@ -77,17 +79,19 @@ Route::controller(LienHeController::class)->group(function () {
 });
 
 Route::controller(SanPhamController::class)->group(function(){
-    Route::get('/api/getListNewProducts',[SanPhamController::class,'getListNewProducts']);
-    Route::get('/api/getListBestSellingProducts',[SanPhamController::class,'getListBestSellingProducts']);
-    Route::get('/api/getListProductsKhuyenMai',[SanPhamController::class,'getListProductsKhuyenMai']);
+  Route::get('/api/getListNewProducts',[SanPhamController::class,'getListNewProducts']);
+  Route::get('/api/getListBestSellingProducts',[SanPhamController::class,'getListBestSellingProducts']);
+  Route::get('/api/getListProductsKhuyenMai',[SanPhamController::class,'getListProductsKhuyenMai']);
 	Route::get('api/product/{slug}', [SanPhamController::class, 'getProduct']);
-    Route::get('/api/getChiTietSanPham', [SanPhamController::class, 'getChiTiet']);
+  Route::get('/api/getChiTietSanPham', [SanPhamController::class, 'getChiTiet']);
 	Route::get('/api/listLaptop', [SanPhamController::class, 'getListProductsLaptop']);
 	Route::get('/api/getListSanPhamNoiBat', [SanPhamController::class, 'getListProductNoiBat']);
 	Route::post('/api/addSanPham','addSanPham');
 	Route::post('/api/getListSanPham','search');
 	Route::post('/api/getProductBySlug','getProductBySlug');
 	Route::post('api/updateSanPham','update');
+	Route::post('/api/changeNoiBatSanPham','changeNoiBat');
+	Route::post('/api/deleteSanPham','delete');
 });
 
 Route::controller(GioHangController::class)->group(function(){
@@ -102,7 +106,7 @@ Route::controller(GioHangController::class)->group(function(){
 Route::controller(BaiVietController::class)->group(function(){
 	Route::post('/api/getBaiViet','get');
 	Route::post('/api/getListBaiViet','getList');
-    Route::get('/api/getDetailBaiViet/{id}',[BaiVietController::class,'get']);
+  Route::get('/api/getDetailBaiViet/{id}',[BaiVietController::class,'get']);
 	Route::get('/api/getListBaiVietKhuyenMai', [BaiVietController::class, 'getListKhuyenMai']);
 	Route::get('/api/getListQuangCao', [BaiVietController::class, 'getListQuangCao']);
 });
@@ -136,6 +140,10 @@ Route::controller(YeuThichController::class)->group(function(){
 	Route::post('/api/getListYeuThich','getListByIdUser')->middleware(JWT::class.':3');
 
 
+});
+Route::controller(LoHangController::class)->group(function(){
+	Route::get('/api/getListLoHang','getList');
+	Route::post('/api/addLoHang','add');
 });
 
 

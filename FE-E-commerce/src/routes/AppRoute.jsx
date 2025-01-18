@@ -57,6 +57,7 @@ const ProductManagement = lazy(() => import("../pages/Admin/ProductManagement/Pr
 const ProductManagementUpdate = lazy(() => import("../pages/Admin/ProductManagement/ProductManagementUpdate"));
 const ProductManagementAdd = lazy(() => import("../pages/Admin/ProductManagement/ProductManagementAdd"));
 const BatchManagement = lazy(() => import("../pages/Admin/BatchManagement/BatchManagement"));
+const BatchManagementAdd = lazy(() => import("../pages/Admin/BatchManagement/BatchManagementAdd"));
 const CommentManagement = lazy(() => import("../pages/Admin/CommentManagement/CommentManagement"));
 const AudienceStatistics = lazy(() => import("../pages/Admin/AudienceStatistics/AudienceStatistics"));
 const OrderStatistics = lazy(() => import("../pages/Admin/OrderStatistics/OrderStatistics"));
@@ -144,7 +145,10 @@ const AppRoutes = () => {
           <Route path="add" element={<ProductManagementAdd />} />
           <Route path="update/:slug" element={<ProductManagementUpdate/>} />
         </Route>
-        <Route path="batches" element={<BatchManagement />} />
+        <Route path="batches">
+					<Route index element={<BatchManagement />}/>
+					<Route path="add" element={<BatchManagementAdd/>} />
+				</Route>
         <Route path="comments" element={<CommentManagement />} />
         <Route path="audience-statistics" element={<AudienceStatistics />} />
         <Route path="order-statistics" element={<OrderStatistics />} />
